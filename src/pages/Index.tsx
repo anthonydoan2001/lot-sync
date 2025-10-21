@@ -317,7 +317,7 @@ const Index = () => {
       {/* Main Content */}
       <main className="container mx-auto px-4 py-8">
         <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as "pallets" | "lots")}>
-          <div className="mb-6 flex items-center justify-between">
+          <div className="mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <TabsList>
               <TabsTrigger value="pallets">
                 Pallets ({filteredPallets.length})
@@ -327,21 +327,22 @@ const Index = () => {
               </TabsTrigger>
             </TabsList>
             
-            <div className="flex gap-2">
+            <div className="flex flex-wrap gap-2 w-full sm:w-auto">
               {activeTab === "pallets" && (
                 <Button
                   onClick={() => setPalletViewMode(palletViewMode === "card" ? "list" : "card")}
                   variant="outline"
+                  className="flex-shrink-0"
                 >
                   {palletViewMode === "card" ? (
                     <>
-                      <List className="h-4 w-4 mr-2" />
-                      List View
+                      <List className="h-4 w-4 sm:mr-2" />
+                      <span className="hidden sm:inline">List View</span>
                     </>
                   ) : (
                     <>
-                      <Edit className="h-4 w-4 mr-2" />
-                      Edit Mode
+                      <Edit className="h-4 w-4 sm:mr-2" />
+                      <span className="hidden sm:inline">Edit Mode</span>
                     </>
                   )}
                 </Button>
@@ -354,20 +355,20 @@ const Index = () => {
                       setEditingPallet(null);
                       setPalletModalOpen(true);
                     }}
-                    className="bg-secondary hover:bg-secondary/90"
+                    className="bg-secondary hover:bg-secondary/90 flex-shrink-0"
                   >
-                    <Plus className="h-4 w-4 mr-2" />
-                    Add Pallet
+                    <Plus className="h-4 w-4 sm:mr-2" />
+                    <span className="hidden sm:inline">Add Pallet</span>
                   </Button>
                   <Button
                     onClick={() => {
                       setEditingLot(null);
                       setLotModalOpen(true);
                     }}
-                    className="bg-secondary hover:bg-secondary/90"
+                    className="bg-secondary hover:bg-secondary/90 flex-shrink-0"
                   >
-                    <Plus className="h-4 w-4 mr-2" />
-                    Add Lot
+                    <Plus className="h-4 w-4 sm:mr-2" />
+                    <span className="hidden sm:inline">Add Lot</span>
                   </Button>
                 </>
               )}
