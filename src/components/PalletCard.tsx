@@ -44,27 +44,27 @@ export function PalletCard({ pallet, onEdit, onRetire, onUnretire, onDelete, isH
               size="sm"
               variant="default"
               onClick={() => onEdit(pallet)}
-              className="flex-1"
+              className="flex-1 h-8 text-xs"
             >
-              <Pencil className="h-4 w-4 mr-1" />
+              <Pencil className="h-3 w-3 mr-1" />
               Edit
             </Button>
             <Button
               size="sm"
               variant="outline"
               onClick={() => onRetire(pallet.id)}
-              className="flex-1 text-accent border-accent hover:bg-accent hover:text-accent-foreground"
+              className="flex-1 h-8 text-xs text-accent border-accent hover:bg-accent hover:text-accent-foreground"
             >
-              <Archive className="h-4 w-4 mr-1" />
+              <Archive className="h-3 w-3 mr-1" />
               Retire
             </Button>
             <Button
               size="sm"
               variant="destructive"
               onClick={() => onDelete(pallet.id)}
-              className="flex-1"
+              className="flex-1 h-8 text-xs"
             >
-              <Trash2 className="h-4 w-4 mr-1" />
+              <Trash2 className="h-3 w-3 mr-1" />
               Delete
             </Button>
           </>
@@ -73,9 +73,9 @@ export function PalletCard({ pallet, onEdit, onRetire, onUnretire, onDelete, isH
             size="sm"
             variant="default"
             onClick={() => onUnretire(pallet.id)}
-            className="flex-1"
+            className="flex-1 h-8 text-xs"
           >
-            <Archive className="h-4 w-4 mr-1" />
+            <Archive className="h-3 w-3 mr-1" />
             Unretire
           </Button>
         )}
