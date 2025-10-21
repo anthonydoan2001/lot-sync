@@ -60,22 +60,20 @@ export function LotCard({ lot, onEdit, onRetire, onUnretire, onDelete, isHistory
       <CardFooter className="flex gap-2">
         {!isHistory ? (
           <Button
-            size="sm"
             variant="outline"
             onClick={() => onRetire(lot.id)}
-            className="flex-1 h-8 text-xs text-accent border-accent hover:bg-accent hover:text-accent-foreground"
+            className="h-8 px-3 text-xs text-accent border-accent hover:bg-accent hover:text-accent-foreground"
           >
-            <Archive className="h-3 w-3 mr-1" />
+            <Archive className="h-3.5 w-3.5 mr-1" />
             Retire
           </Button>
         ) : (
           <Button
-            size="sm"
             variant="default"
             onClick={() => onUnretire(lot.id)}
-            className="flex-1 h-8 text-xs"
+            className="h-8 px-3 text-xs"
           >
-            <Archive className="h-3 w-3 mr-1" />
+            <Archive className="h-3.5 w-3.5 mr-1" />
             Unretire
           </Button>
         )}
