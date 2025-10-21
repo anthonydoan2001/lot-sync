@@ -17,7 +17,7 @@ export function PalletCard({ pallet, onEdit, onRetire, onUnretire, onDelete, isH
   return (
     <Card className="hover:shadow-lg transition-shadow duration-200">
       <CardHeader className="space-y-2">
-        <div className="flex items-start justify-between gap-2">
+        <div className="flex items-start justify-between gap-3">
           <div className="flex-1 space-y-2">
             <div className="flex items-center gap-3">
               {pallet.grade && (
@@ -30,22 +30,22 @@ export function PalletCard({ pallet, onEdit, onRetire, onUnretire, onDelete, isH
             <h3 className="text-2xl font-bold text-primary uppercase">{pallet.pallet_number}</h3>
           </div>
           {!isHistory && (
-            <div className="flex gap-1">
+            <div className="flex gap-1.5 pt-0.5">
               <Button
                 size="icon"
                 variant="ghost"
                 onClick={() => onEdit(pallet)}
-                className="h-7 w-7"
+                className="h-8 w-8 hover:bg-muted"
               >
-                <Pencil className="h-3.5 w-3.5" />
+                <Pencil className="h-4 w-4" />
               </Button>
               <Button
                 size="icon"
                 variant="ghost"
                 onClick={() => onDelete(pallet.id)}
-                className="h-7 w-7 hover:bg-destructive/10 hover:text-destructive"
+                className="h-8 w-8 hover:bg-destructive/10 hover:text-destructive"
               >
-                <Trash2 className="h-3.5 w-3.5" />
+                <Trash2 className="h-4 w-4" />
               </Button>
             </div>
           )}
