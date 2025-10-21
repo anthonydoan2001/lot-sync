@@ -5,6 +5,7 @@ import { PalletCard } from "@/components/PalletCard";
 import { LotCard } from "@/components/LotCard";
 import { PalletModal } from "@/components/PalletModal";
 import { LotModal } from "@/components/LotModal";
+import { PalletListView } from "@/components/PalletListView";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -18,7 +19,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Plus, Search } from "lucide-react";
+import { Plus, Search, List, Edit } from "lucide-react";
 import { toast } from "sonner";
 
 const Index = () => {
@@ -27,6 +28,7 @@ const Index = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [viewMode, setViewMode] = useState<"active" | "history">("active");
   const [activeTab, setActiveTab] = useState<"pallets" | "lots">("pallets");
+  const [palletViewMode, setPalletViewMode] = useState<"card" | "list">("card");
   
   const [palletModalOpen, setPalletModalOpen] = useState(false);
   const [lotModalOpen, setLotModalOpen] = useState(false);
@@ -325,30 +327,51 @@ const Index = () => {
               </TabsTrigger>
             </TabsList>
             
-            {viewMode === "active" && (
-              <div className="flex gap-2">
+            <div className="flex gap-2">
+              {activeTab === "pallets" && (
                 <Button
-                  onClick={() => {
-                    setEditingPallet(null);
-                    setPalletModalOpen(true);
-                  }}
-                  className="bg-secondary hover:bg-secondary/90"
+                  onClick={() => setPalletViewMode(palletViewMode === "card" ? "list" : "card")}
+                  variant="outline"
                 >
-                  <Plus className="h-4 w-4 mr-2" />
-                  Add Pallet
+                  {palletViewMode === "card" ? (
+                    <>
+                      <List className="h-4 w-4 mr-2" />
+                      List View
+                    </>
+                  ) : (
+                    <>
+                      <Edit className="h-4 w-4 mr-2" />
+                      Edit Mode
+                    </>
+                  )}
                 </Button>
-                <Button
-                  onClick={() => {
-                    setEditingLot(null);
-                    setLotModalOpen(true);
-                  }}
-                  className="bg-secondary hover:bg-secondary/90"
-                >
-                  <Plus className="h-4 w-4 mr-2" />
-                  Add Lot
-                </Button>
-              </div>
-            )}
+              )}
+              
+              {viewMode === "active" && palletViewMode === "card" && (
+                <>
+                  <Button
+                    onClick={() => {
+                      setEditingPallet(null);
+                      setPalletModalOpen(true);
+                    }}
+                    className="bg-secondary hover:bg-secondary/90"
+                  >
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add Pallet
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      setEditingLot(null);
+                      setLotModalOpen(true);
+                    }}
+                    className="bg-secondary hover:bg-secondary/90"
+                  >
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add Lot
+                  </Button>
+                </>
+              )}
+            </div>
           </div>
 
           {/* Pallets Tab */}
@@ -357,6 +380,8 @@ const Index = () => {
               <div className="text-center py-12 text-muted-foreground">
                 No pallets found
               </div>
+            ) : palletViewMode === "list" ? (
+              <PalletListView pallets={filteredPallets} />
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3">
                 {filteredPallets.map((pallet) => (
