@@ -278,44 +278,61 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="border-b bg-card">
-        <div className="container mx-auto px-4 py-6">
-          <h1 className="text-3xl font-bold text-foreground mb-4">
-            Secure ITAD
-          </h1>
-          
-          <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
-            <div className="flex gap-2">
-              <Button
-                variant={viewMode === "active" ? "default" : "outline"}
-                onClick={() => setViewMode("active")}
-              >
-                Active
-              </Button>
-              <Button
-                variant={viewMode === "history" ? "default" : "outline"}
-                onClick={() => setViewMode("history")}
-              >
-                History
-              </Button>
-            </div>
-
-            <div className="relative w-full sm:w-64">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Search..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-9"
-              />
-            </div>
+      {palletViewMode === "list" && activeTab === "pallets" ? (
+        /* List View - Minimal UI */
+        <div className="container mx-auto px-4 py-8">
+          <div className="mb-6">
+            <Button
+              onClick={() => setPalletViewMode("card")}
+              variant="outline"
+              size="lg"
+            >
+              <Edit className="h-4 w-4 mr-2" />
+              Edit Mode
+            </Button>
           </div>
+          <PalletListView pallets={filteredPallets} />
         </div>
-      </header>
+      ) : (
+        <>
+          {/* Header */}
+          <header className="border-b bg-card">
+            <div className="container mx-auto px-4 py-6">
+              <h1 className="text-3xl font-bold text-foreground mb-4">
+                Secure ITAD
+              </h1>
+              
+              <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+                <div className="flex gap-2">
+                  <Button
+                    variant={viewMode === "active" ? "default" : "outline"}
+                    onClick={() => setViewMode("active")}
+                  >
+                    Active
+                  </Button>
+                  <Button
+                    variant={viewMode === "history" ? "default" : "outline"}
+                    onClick={() => setViewMode("history")}
+                  >
+                    History
+                  </Button>
+                </div>
 
-      {/* Main Content */}
-      <main className="container mx-auto px-4 py-8">
+                <div className="relative w-full sm:w-64">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    placeholder="Search..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="pl-9"
+                  />
+                </div>
+              </div>
+            </div>
+          </header>
+
+          {/* Main Content */}
+          <main className="container mx-auto px-4 py-8">
         <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as "pallets" | "lots")}>
           <div className="mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <TabsList>
@@ -381,8 +398,6 @@ const Index = () => {
               <div className="text-center py-12 text-muted-foreground">
                 No pallets found
               </div>
-            ) : palletViewMode === "list" ? (
-              <PalletListView pallets={filteredPallets} />
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3">
                 {filteredPallets.map((pallet) => (
@@ -438,6 +453,8 @@ const Index = () => {
           </TabsContent>
         </Tabs>
       </main>
+        </>
+      )}
 
       {/* Modals */}
       <PalletModal
