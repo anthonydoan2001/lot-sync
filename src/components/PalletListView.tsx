@@ -16,6 +16,31 @@ const categorizePallet = (description: string): Category => {
   return "OTHER";
 };
 
+const cleanDescription = (description: string, category: Category): string => {
+  let cleaned = description;
+  
+  switch (category) {
+    case "DESKTOPS":
+      cleaned = cleaned.replace(/\bdesktops?\b/gi, "");
+      break;
+    case "LAPTOPS":
+      cleaned = cleaned.replace(/\blaptops?\b/gi, "");
+      break;
+    case "DISPLAYS":
+      cleaned = cleaned.replace(/\b(displays?|monitors?)\b/gi, "");
+      break;
+    case "WORKSTATIONS":
+      cleaned = cleaned.replace(/\bworkstations?\b/gi, "");
+      break;
+    case "CHROMEBOOKS":
+      cleaned = cleaned.replace(/\bchromebooks?\b/gi, "");
+      break;
+  }
+  
+  // Clean up extra spaces and trim
+  return cleaned.replace(/\s+/g, " ").trim();
+};
+
 export function PalletListView({ pallets }: PalletListViewProps) {
   // Group pallets by category
   const categorizedPallets = pallets.reduce((acc, pallet) => {
@@ -54,7 +79,7 @@ export function PalletListView({ pallets }: PalletListViewProps) {
                   key={pallet.id}
                   className="text-foreground hover:bg-accent/50 px-2 py-1 rounded transition-colors"
                 >
-                  {pallet.pallet_number} - {pallet.description}
+                  {pallet.pallet_number} - {cleanDescription(pallet.description, category)}
                 </div>
               ))}
             </div>
