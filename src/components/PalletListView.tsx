@@ -63,7 +63,7 @@ export function PalletListView({ pallets }: PalletListViewProps) {
   ];
 
   return (
-    <div className="space-y-8 font-mono text-2xl">
+    <div className="space-y-8 font-mono text-2xl uppercase">
       {categoryOrder.map((category) => {
         const categoryPallets = categorizedPallets[category];
         if (!categoryPallets || categoryPallets.length === 0) return null;
@@ -74,14 +74,18 @@ export function PalletListView({ pallets }: PalletListViewProps) {
               {category}
             </h2>
             <div className="space-y-2">
-              {categoryPallets.map((pallet) => (
-                <div
-                  key={pallet.id}
-                  className="text-foreground hover:bg-accent/50 px-3 py-2 rounded transition-colors"
-                >
-                  {pallet.pallet_number} - {cleanDescription(pallet.description, category)}
-                </div>
-              ))}
+              {categoryPallets.map((pallet) => {
+                const grade = pallet.grade ? ` - ${pallet.grade}` : '';
+                const description = cleanDescription(pallet.description, category);
+                return (
+                  <div
+                    key={pallet.id}
+                    className="text-foreground hover:bg-accent/50 px-3 py-2 rounded transition-colors"
+                  >
+                    {pallet.pallet_number}{grade} - {description}
+                  </div>
+                );
+              })}
             </div>
           </div>
         );
