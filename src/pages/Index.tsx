@@ -168,6 +168,20 @@ const Index = () => {
     }
   };
 
+  const handleUnretirePallet = async (id: string) => {
+    const { error } = await supabase
+      .from("pallets")
+      .update({ is_retired: false, retired_at: null })
+      .eq("id", id);
+
+    if (error) {
+      toast.error("Failed to unretire pallet");
+      console.error(error);
+    } else {
+      toast.success("Pallet unretired successfully");
+    }
+  };
+
   const handleDeletePallet = async () => {
     if (!deletingId) return;
 
@@ -227,6 +241,20 @@ const Index = () => {
       console.error(error);
     } else {
       toast.success("Lot retired successfully");
+    }
+  };
+
+  const handleUnretireLot = async (id: string) => {
+    const { error } = await supabase
+      .from("lots")
+      .update({ is_retired: false, retired_at: null })
+      .eq("id", id);
+
+    if (error) {
+      toast.error("Failed to unretire lot");
+      console.error(error);
+    } else {
+      toast.success("Lot unretired successfully");
     }
   };
 
@@ -340,6 +368,7 @@ const Index = () => {
                       setPalletModalOpen(true);
                     }}
                     onRetire={handleRetirePallet}
+                    onUnretire={handleUnretirePallet}
                     onDelete={(id) => {
                       setDeletingId(id);
                       setDeletingType("pallet");
@@ -369,6 +398,7 @@ const Index = () => {
                       setLotModalOpen(true);
                     }}
                     onRetire={handleRetireLot}
+                    onUnretire={handleUnretireLot}
                     onDelete={(id) => {
                       setDeletingId(id);
                       setDeletingType("lot");
