@@ -132,6 +132,7 @@ const Index = () => {
     } else {
       toast.success("Pallet added successfully");
       setPalletModalOpen(false);
+      setActiveTab("pallets");
     }
   };
 
@@ -193,6 +194,7 @@ const Index = () => {
     } else {
       toast.success("Lot added successfully");
       setLotModalOpen(false);
+      setActiveTab("lots");
     }
   };
 
@@ -285,44 +287,44 @@ const Index = () => {
       {/* Main Content */}
       <main className="container mx-auto px-4 py-8">
         <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as "pallets" | "lots")}>
-          <TabsList className="mb-6">
-            <TabsTrigger value="pallets">
-              Pallets ({filteredPallets.length})
-            </TabsTrigger>
-            <TabsTrigger value="lots">
-              Lots ({filteredLots.length})
-            </TabsTrigger>
-          </TabsList>
+          <div className="mb-6 flex items-center justify-between">
+            <TabsList>
+              <TabsTrigger value="pallets">
+                Pallets ({filteredPallets.length})
+              </TabsTrigger>
+              <TabsTrigger value="lots">
+                Lots ({filteredLots.length})
+              </TabsTrigger>
+            </TabsList>
+            
+            {viewMode === "active" && (
+              <div className="flex gap-2">
+                <Button
+                  onClick={() => {
+                    setEditingPallet(null);
+                    setPalletModalOpen(true);
+                  }}
+                  className="bg-secondary hover:bg-secondary/90"
+                >
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add Pallet
+                </Button>
+                <Button
+                  onClick={() => {
+                    setEditingLot(null);
+                    setLotModalOpen(true);
+                  }}
+                  className="bg-secondary hover:bg-secondary/90"
+                >
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add Lot
+                </Button>
+              </div>
+            )}
+          </div>
 
           {/* Pallets Tab */}
           <TabsContent value="pallets">
-            <div className="mb-6 flex gap-2">
-              {viewMode === "active" && (
-                <>
-                  <Button
-                    onClick={() => {
-                      setEditingPallet(null);
-                      setPalletModalOpen(true);
-                    }}
-                    className="bg-secondary hover:bg-secondary/90"
-                  >
-                    <Plus className="h-4 w-4 mr-2" />
-                    Add Pallet
-                  </Button>
-                  <Button
-                    onClick={() => {
-                      setEditingLot(null);
-                      setLotModalOpen(true);
-                    }}
-                    className="bg-secondary hover:bg-secondary/90"
-                  >
-                    <Plus className="h-4 w-4 mr-2" />
-                    Add Lot
-                  </Button>
-                </>
-              )}
-            </div>
-
             {filteredPallets.length === 0 ? (
               <div className="text-center py-12 text-muted-foreground">
                 No pallets found
@@ -352,33 +354,6 @@ const Index = () => {
 
           {/* Lots Tab */}
           <TabsContent value="lots">
-            <div className="mb-6 flex gap-2">
-              {viewMode === "active" && (
-                <>
-                  <Button
-                    onClick={() => {
-                      setEditingPallet(null);
-                      setPalletModalOpen(true);
-                    }}
-                    className="bg-secondary hover:bg-secondary/90"
-                  >
-                    <Plus className="h-4 w-4 mr-2" />
-                    Add Pallet
-                  </Button>
-                  <Button
-                    onClick={() => {
-                      setEditingLot(null);
-                      setLotModalOpen(true);
-                    }}
-                    className="bg-secondary hover:bg-secondary/90"
-                  >
-                    <Plus className="h-4 w-4 mr-2" />
-                    Add Lot
-                  </Button>
-                </>
-              )}
-            </div>
-
             {filteredLots.length === 0 ? (
               <div className="text-center py-12 text-muted-foreground">
                 No lots found
