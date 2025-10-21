@@ -296,18 +296,30 @@ const Index = () => {
 
           {/* Pallets Tab */}
           <TabsContent value="pallets">
-            <div className="mb-6">
+            <div className="mb-6 flex gap-2">
               {viewMode === "active" && (
-                <Button
-                  onClick={() => {
-                    setEditingPallet(null);
-                    setPalletModalOpen(true);
-                  }}
-                  className="bg-secondary hover:bg-secondary/90"
-                >
-                  <Plus className="h-4 w-4 mr-2" />
-                  Add Pallet
-                </Button>
+                <>
+                  <Button
+                    onClick={() => {
+                      setEditingPallet(null);
+                      setPalletModalOpen(true);
+                    }}
+                    className="bg-secondary hover:bg-secondary/90"
+                  >
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add Pallet
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      setEditingLot(null);
+                      setLotModalOpen(true);
+                    }}
+                    className="bg-secondary hover:bg-secondary/90"
+                  >
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add Lot
+                  </Button>
+                </>
               )}
             </div>
 
@@ -340,18 +352,30 @@ const Index = () => {
 
           {/* Lots Tab */}
           <TabsContent value="lots">
-            <div className="mb-6">
+            <div className="mb-6 flex gap-2">
               {viewMode === "active" && (
-                <Button
-                  onClick={() => {
-                    setEditingLot(null);
-                    setLotModalOpen(true);
-                  }}
-                  className="bg-secondary hover:bg-secondary/90"
-                >
-                  <Plus className="h-4 w-4 mr-2" />
-                  Add Lot
-                </Button>
+                <>
+                  <Button
+                    onClick={() => {
+                      setEditingPallet(null);
+                      setPalletModalOpen(true);
+                    }}
+                    className="bg-secondary hover:bg-secondary/90"
+                  >
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add Pallet
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      setEditingLot(null);
+                      setLotModalOpen(true);
+                    }}
+                    className="bg-secondary hover:bg-secondary/90"
+                  >
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add Lot
+                  </Button>
+                </>
               )}
             </div>
 

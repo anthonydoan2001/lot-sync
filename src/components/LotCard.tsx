@@ -19,11 +19,11 @@ export function LotCard({ lot, onEdit, onRetire, onDelete, isHistory = false }: 
         <h3 className="text-2xl font-bold text-secondary">{lot.lot_number}</h3>
       </CardHeader>
       <CardContent className="space-y-2">
-        <p className="text-sm">
-          <span className="font-semibold">Customer:</span> {lot.customer_name}
+        <p className="text-sm text-muted-foreground">
+          {lot.customer_name}
         </p>
-        <p className="text-sm">
-          <span className="font-semibold">Contents:</span> {lot.contents}
+        <p className="text-sm text-muted-foreground">
+          {lot.contents}
         </p>
         <p className="text-xs text-muted-foreground">
           Created: {format(new Date(lot.created_at), "PPpp")}
