@@ -63,14 +63,14 @@ export function PalletListView({ pallets }: PalletListViewProps) {
   ];
 
   return (
-    <div className="space-y-8 font-mono text-sm">
+    <div className="space-y-8 font-mono text-base">
       {categoryOrder.map((category) => {
         const categoryPallets = categorizedPallets[category];
         if (!categoryPallets || categoryPallets.length === 0) return null;
 
         return (
           <div key={category} className="space-y-2">
-            <h2 className="text-lg font-bold text-primary border-b border-border pb-1 mb-3">
+            <h2 className="text-2xl font-bold text-primary border-b border-border pb-1 mb-3">
               {category}
             </h2>
             <div className="space-y-1">
