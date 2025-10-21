@@ -16,8 +16,8 @@ export function LotCard({ lot, onEdit, onRetire, onDelete, isHistory = false }: 
   return (
     <Card className="hover:shadow-lg transition-shadow duration-200">
       <CardHeader className="space-y-2">
-        <p className="text-xl font-semibold text-foreground uppercase">{lot.customer_name}</p>
         <h3 className="text-2xl font-bold text-secondary uppercase">{lot.lot_number}</h3>
+        <p className="text-xl font-semibold text-foreground uppercase">{lot.customer_name}</p>
       </CardHeader>
       <CardContent className="space-y-2">
         <p className="text-sm text-muted-foreground uppercase">
