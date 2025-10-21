@@ -14,7 +14,66 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      lots: {
+        Row: {
+          contents: string
+          created_at: string
+          customer_name: string
+          id: string
+          is_retired: boolean
+          lot_number: string
+          retired_at: string | null
+        }
+        Insert: {
+          contents: string
+          created_at?: string
+          customer_name: string
+          id?: string
+          is_retired?: boolean
+          lot_number: string
+          retired_at?: string | null
+        }
+        Update: {
+          contents?: string
+          created_at?: string
+          customer_name?: string
+          id?: string
+          is_retired?: boolean
+          lot_number?: string
+          retired_at?: string | null
+        }
+        Relationships: []
+      }
+      pallets: {
+        Row: {
+          created_at: string
+          description: string
+          grade: string | null
+          id: string
+          is_retired: boolean
+          pallet_number: string
+          retired_at: string | null
+        }
+        Insert: {
+          created_at?: string
+          description: string
+          grade?: string | null
+          id?: string
+          is_retired?: boolean
+          pallet_number: string
+          retired_at?: string | null
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          grade?: string | null
+          id?: string
+          is_retired?: boolean
+          pallet_number?: string
+          retired_at?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
