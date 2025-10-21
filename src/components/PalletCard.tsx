@@ -19,14 +19,14 @@ export function PalletCard({ pallet, onEdit, onRetire, onDelete, isHistory = fal
         <h3 className="text-2xl font-bold text-primary">{pallet.pallet_number}</h3>
       </CardHeader>
       <CardContent className="space-y-2">
+        <p className="text-sm text-muted-foreground">
+          {pallet.description}
+        </p>
         {pallet.grade && (
-          <p className="text-sm">
-            <span className="font-semibold">Grade:</span> {pallet.grade}
+          <p className="text-sm text-muted-foreground">
+            {pallet.grade}
           </p>
         )}
-        <p className="text-sm">
-          <span className="font-semibold">Description:</span> {pallet.description}
-        </p>
         <p className="text-xs text-muted-foreground">
           Created: {format(new Date(pallet.created_at), "PPpp")}
         </p>
