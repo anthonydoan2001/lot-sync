@@ -15,13 +15,11 @@ interface LotCardProps {
 export function LotCard({ lot, onEdit, onRetire, onDelete, isHistory = false }: LotCardProps) {
   return (
     <Card className="hover:shadow-lg transition-shadow duration-200">
-      <CardHeader>
+      <CardHeader className="space-y-1">
+        <p className="text-2xl font-bold text-foreground">{lot.customer_name}</p>
         <h3 className="text-2xl font-bold text-secondary">{lot.lot_number}</h3>
       </CardHeader>
       <CardContent className="space-y-2">
-        <p className="text-sm text-muted-foreground">
-          {lot.customer_name}
-        </p>
         <p className="text-sm text-muted-foreground">
           {lot.contents}
         </p>

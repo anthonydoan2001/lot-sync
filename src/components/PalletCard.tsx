@@ -15,13 +15,11 @@ interface PalletCardProps {
 export function PalletCard({ pallet, onEdit, onRetire, onDelete, isHistory = false }: PalletCardProps) {
   return (
     <Card className="hover:shadow-lg transition-shadow duration-200">
-      <CardHeader>
+      <CardHeader className="space-y-1">
+        <p className="text-2xl font-bold text-foreground">{pallet.description}</p>
         <h3 className="text-2xl font-bold text-primary">{pallet.pallet_number}</h3>
       </CardHeader>
       <CardContent className="space-y-2">
-        <p className="text-sm text-muted-foreground">
-          {pallet.description}
-        </p>
         {pallet.grade && (
           <p className="text-sm text-muted-foreground">
             {pallet.grade}
