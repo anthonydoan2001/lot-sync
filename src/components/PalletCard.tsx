@@ -16,7 +16,6 @@ export function PalletCard({ pallet, onEdit, onRetire, onDelete, isHistory = fal
   return (
     <Card className="hover:shadow-lg transition-shadow duration-200">
       <CardHeader className="space-y-2">
-        <h3 className="text-2xl font-bold text-primary uppercase">{pallet.pallet_number}</h3>
         <div className="flex items-center gap-3">
           {pallet.grade && (
             <span className="text-lg font-semibold text-foreground uppercase px-3 py-1 bg-muted rounded">
@@ -25,6 +24,7 @@ export function PalletCard({ pallet, onEdit, onRetire, onDelete, isHistory = fal
           )}
           <p className="text-xl font-semibold text-foreground uppercase flex-1">{pallet.description}</p>
         </div>
+        <h3 className="text-2xl font-bold text-primary uppercase">{pallet.pallet_number}</h3>
       </CardHeader>
       <CardContent className="space-y-2">
         <p className="text-xs text-muted-foreground">
