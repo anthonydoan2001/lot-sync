@@ -8,11 +8,12 @@ interface PalletCardProps {
   pallet: Pallet;
   onEdit: (pallet: Pallet) => void;
   onRetire: (id: string) => void;
+  onUnretire: (id: string) => void;
   onDelete: (id: string) => void;
   isHistory?: boolean;
 }
 
-export function PalletCard({ pallet, onEdit, onRetire, onDelete, isHistory = false }: PalletCardProps) {
+export function PalletCard({ pallet, onEdit, onRetire, onUnretire, onDelete, isHistory = false }: PalletCardProps) {
   return (
     <Card className="hover:shadow-lg transition-shadow duration-200">
       <CardHeader className="space-y-2">
@@ -36,37 +37,49 @@ export function PalletCard({ pallet, onEdit, onRetire, onDelete, isHistory = fal
           </p>
         )}
       </CardContent>
-      {!isHistory && (
-        <CardFooter className="flex gap-2">
+      <CardFooter className="flex gap-2">
+        {!isHistory ? (
+          <>
+            <Button
+              size="sm"
+              variant="default"
+              onClick={() => onEdit(pallet)}
+              className="flex-1"
+            >
+              <Pencil className="h-4 w-4 mr-1" />
+              Edit
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => onRetire(pallet.id)}
+              className="flex-1 text-accent border-accent hover:bg-accent hover:text-accent-foreground"
+            >
+              <Archive className="h-4 w-4 mr-1" />
+              Retire
+            </Button>
+            <Button
+              size="sm"
+              variant="destructive"
+              onClick={() => onDelete(pallet.id)}
+              className="flex-1"
+            >
+              <Trash2 className="h-4 w-4 mr-1" />
+              Delete
+            </Button>
+          </>
+        ) : (
           <Button
             size="sm"
             variant="default"
-            onClick={() => onEdit(pallet)}
+            onClick={() => onUnretire(pallet.id)}
             className="flex-1"
-          >
-            <Pencil className="h-4 w-4 mr-1" />
-            Edit
-          </Button>
-          <Button
-            size="sm"
-            variant="outline"
-            onClick={() => onRetire(pallet.id)}
-            className="flex-1 text-accent border-accent hover:bg-accent hover:text-accent-foreground"
           >
             <Archive className="h-4 w-4 mr-1" />
-            Retire
+            Unretire
           </Button>
-          <Button
-            size="sm"
-            variant="destructive"
-            onClick={() => onDelete(pallet.id)}
-            className="flex-1"
-          >
-            <Trash2 className="h-4 w-4 mr-1" />
-            Delete
-          </Button>
-        </CardFooter>
-      )}
+        )}
+      </CardFooter>
     </Card>
   );
 }
