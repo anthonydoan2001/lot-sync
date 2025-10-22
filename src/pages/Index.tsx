@@ -22,6 +22,8 @@ import {
 import { Plus, Search, List, Edit } from "lucide-react";
 import { toast } from "sonner";
 
+type PalletCategory = "DESKTOPS" | "LAPTOPS" | "DISPLAYS" | "WORKSTATIONS" | "CHROMEBOOKS" | "OTHER";
+
 const Index = () => {
   const [pallets, setPallets] = useState<Pallet[]>([]);
   const [lots, setLots] = useState<Lot[]>([]);
@@ -38,6 +40,12 @@ const Index = () => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [deletingType, setDeletingType] = useState<"pallet" | "lot">("pallet");
+
+  // Helper function to categorize pallets
+  const categorizePallet = (pallet: Pallet): PalletCategory => {
+    if (!pallet.type) return "OTHER";
+    return pallet.type as PalletCategory;
+  };
 
   // Fetch pallets
   const fetchPallets = async () => {
@@ -123,6 +131,26 @@ const Index = () => {
   const filteredLots = lots.filter((lot) =>
     lot.lot_number.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  // Group pallets by category
+  const categorizedPallets = filteredPallets.reduce((acc, pallet) => {
+    const category = categorizePallet(pallet);
+    if (!acc[category]) {
+      acc[category] = [];
+    }
+    acc[category].push(pallet);
+    return acc;
+  }, {} as Record<PalletCategory, Pallet[]>);
+
+  // Define category order (matching dropdown order)
+  const categoryOrder: PalletCategory[] = [
+    "DESKTOPS",
+    "LAPTOPS",
+    "DISPLAYS",
+    "WORKSTATIONS",
+    "CHROMEBOOKS",
+    "OTHER"
+  ];
 
   // Pallet operations
   const handleAddPallet = async (data: Partial<Pallet>) => {
@@ -395,25 +423,39 @@ const Index = () => {
                 No pallets found
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3">
-                {filteredPallets.map((pallet) => (
-                  <PalletCard
-                    key={pallet.id}
-                    pallet={pallet}
-                    onEdit={(p) => {
-                      setEditingPallet(p);
-                      setPalletModalOpen(true);
-                    }}
-                    onRetire={handleRetirePallet}
-                    onUnretire={handleUnretirePallet}
-                    onDelete={(id) => {
-                      setDeletingId(id);
-                      setDeletingType("pallet");
-                      setDeleteDialogOpen(true);
-                    }}
-                    isHistory={viewMode === "history"}
-                  />
-                ))}
+              <div className="space-y-8">
+                {categoryOrder.map((category) => {
+                  const categoryPallets = categorizedPallets[category];
+                  if (!categoryPallets || categoryPallets.length === 0) return null;
+
+                  return (
+                    <div key={category} className="space-y-4">
+                      <h2 className="text-2xl font-bold text-primary border-b-2 border-border pb-2">
+                        {category}
+                      </h2>
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3">
+                        {categoryPallets.map((pallet) => (
+                          <PalletCard
+                            key={pallet.id}
+                            pallet={pallet}
+                            onEdit={(p) => {
+                              setEditingPallet(p);
+                              setPalletModalOpen(true);
+                            }}
+                            onRetire={handleRetirePallet}
+                            onUnretire={handleUnretirePallet}
+                            onDelete={(id) => {
+                              setDeletingId(id);
+                              setDeletingType("pallet");
+                              setDeleteDialogOpen(true);
+                            }}
+                            isHistory={viewMode === "history"}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             )}
           </TabsContent>
