@@ -1,6 +1,7 @@
 export interface Pallet {
   id: string;
   pallet_number: string;
+  type: string | null;
   grade: string | null;
   description: string;
   is_retired: boolean;

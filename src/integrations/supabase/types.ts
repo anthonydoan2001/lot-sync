@@ -53,6 +53,7 @@ export type Database = {
           is_retired: boolean
           pallet_number: string
           retired_at: string | null
+          type: string | null
         }
         Insert: {
           created_at?: string
@@ -62,6 +63,7 @@ export type Database = {
           is_retired?: boolean
           pallet_number: string
           retired_at?: string | null
+          type?: string | null
         }
         Update: {
           created_at?: string
@@ -71,6 +73,7 @@ export type Database = {
           is_retired?: boolean
           pallet_number?: string
           retired_at?: string | null
+          type?: string | null
         }
         Relationships: []
       }

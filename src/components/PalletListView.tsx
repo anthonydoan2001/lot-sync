@@ -6,14 +6,9 @@ interface PalletListViewProps {
 
 type Category = "DESKTOPS" | "LAPTOPS" | "DISPLAYS" | "WORKSTATIONS" | "CHROMEBOOKS" | "OTHER";
 
-const categorizePallet = (description: string): Category => {
-  const desc = description.toLowerCase();
-  if (desc.includes("desktop")) return "DESKTOPS";
-  if (desc.includes("laptop")) return "LAPTOPS";
-  if (desc.includes("display") || desc.includes("monitor")) return "DISPLAYS";
-  if (desc.includes("workstation")) return "WORKSTATIONS";
-  if (desc.includes("chromebook")) return "CHROMEBOOKS";
-  return "OTHER";
+const categorizePallet = (pallet: Pallet): Category => {
+  if (!pallet.type) return "OTHER";
+  return pallet.type as Category;
 };
 
 const cleanDescription = (description: string, category: Category): string => {
@@ -44,7 +39,7 @@ const cleanDescription = (description: string, category: Category): string => {
 export function PalletListView({ pallets }: PalletListViewProps) {
   // Group pallets by category
   const categorizedPallets = pallets.reduce((acc, pallet) => {
-    const category = categorizePallet(pallet.description);
+    const category = categorizePallet(pallet);
     if (!acc[category]) {
       acc[category] = [];
     }
