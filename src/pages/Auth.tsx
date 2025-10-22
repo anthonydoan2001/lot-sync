@@ -8,7 +8,7 @@ import { toast } from "sonner";
 import { z } from "zod";
 
 const pinSchema = z.string()
-  .regex(/^\d{4,6}$/, "PIN must be 4-6 digits");
+  .regex(/^\d{6}$/, "PIN must be exactly 6 digits");
 
 export default function Auth() {
   const [pin, setPin] = useState("");
@@ -72,7 +72,7 @@ export default function Auth() {
             Enter PIN
           </CardTitle>
           <CardDescription className="text-center">
-            Enter your 4-6 digit PIN to access your account
+            Enter your 6 digit PIN to access your account
           </CardDescription>
         </CardHeader>
         <CardContent>
