@@ -132,6 +132,60 @@ const Index = () => {
     lot.lot_number.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  // Define sort orders for each category
+  const DESKTOP_SORT_ORDER = ["B/C ↓ 4TH GEN", "B/C 5-7TH GEN", "B/C ↑ 8TH GEN", "D/F", "OTHER"];
+  const LAPTOP_SORT_ORDER = ["B/C ↓ 4TH GEN", "B/C ↑ 5TH GEN", "D/F", "OTHER"];
+  const DISPLAY_SORT_ORDER = ["B LCD", "CLCD", "OTHER"];
+  const CHROMEBOOK_SORT_ORDER = ["B/C MANAGED", "B/C NON-MANAGED", "D", "F", "OTHER"];
+
+  // Function to sort pallets within a category
+  const sortPalletsByDescription = (pallets: Pallet[], category: PalletCategory): Pallet[] => {
+    let sortOrder: string[] = [];
+    
+    switch (category) {
+      case "DESKTOPS":
+        sortOrder = DESKTOP_SORT_ORDER;
+        break;
+      case "LAPTOPS":
+        sortOrder = LAPTOP_SORT_ORDER;
+        break;
+      case "DISPLAYS":
+        sortOrder = DISPLAY_SORT_ORDER;
+        break;
+      case "CHROMEBOOKS":
+        sortOrder = CHROMEBOOK_SORT_ORDER;
+        break;
+      case "WORKSTATIONS":
+      case "OTHER":
+        // No specific order, sort by created_at (newest first)
+        return [...pallets].sort((a, b) => 
+          new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+        );
+      default:
+        return pallets;
+    }
+
+    return [...pallets].sort((a, b) => {
+      const aGrade = a.grade?.toUpperCase() || "OTHER";
+      const bGrade = b.grade?.toUpperCase() || "OTHER";
+      
+      const aIndex = sortOrder.indexOf(aGrade);
+      const bIndex = sortOrder.indexOf(bGrade);
+      
+      // If both are in the sort order, sort by order
+      if (aIndex !== -1 && bIndex !== -1) {
+        return aIndex - bIndex;
+      }
+      
+      // If only one is in the sort order, prioritize it
+      if (aIndex !== -1) return -1;
+      if (bIndex !== -1) return 1;
+      
+      // If neither is in sort order, sort by created_at (newest first)
+      return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+    });
+  };
+
   // Group pallets by category
   const categorizedPallets = filteredPallets.reduce((acc, pallet) => {
     const category = categorizePallet(pallet);
@@ -141,6 +195,14 @@ const Index = () => {
     acc[category].push(pallet);
     return acc;
   }, {} as Record<PalletCategory, Pallet[]>);
+
+  // Sort pallets within each category
+  Object.keys(categorizedPallets).forEach((category) => {
+    categorizedPallets[category as PalletCategory] = sortPalletsByDescription(
+      categorizedPallets[category as PalletCategory],
+      category as PalletCategory
+    );
+  });
 
   // Define category order (matching dropdown order)
   const categoryOrder: PalletCategory[] = [
