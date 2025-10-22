@@ -14,6 +14,18 @@ interface PalletCardProps {
 }
 
 export function PalletCard({ pallet, onEdit, onRetire, onUnretire, onDelete, isHistory = false }: PalletCardProps) {
+  const getDisplayDescription = () => {
+    let desc = pallet.description;
+    
+    // If there's a grade, remove it from the start of the description
+    if (pallet.grade && desc.startsWith(pallet.grade)) {
+      desc = desc.substring(pallet.grade.length).trim();
+    }
+    
+    // Append type if it exists
+    return `${desc} ${pallet.type || ''}`.trim();
+  };
+
   return (
     <Card className="hover:shadow-lg transition-shadow duration-200">
       <CardHeader className="space-y-2">
@@ -26,7 +38,7 @@ export function PalletCard({ pallet, onEdit, onRetire, onUnretire, onDelete, isH
                 </span>
               )}
               <p className="text-xl font-semibold text-foreground uppercase flex-1">
-                {pallet.description} {pallet.type ? pallet.type : ''}
+                {getDisplayDescription()}
               </p>
             </div>
             <h3 className="text-2xl font-bold text-primary uppercase">{pallet.pallet_number}</h3>
