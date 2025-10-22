@@ -123,7 +123,7 @@ export function PalletListView({ pallets }: PalletListViewProps) {
 
         return (
           <div key={category} className="space-y-4">
-            <h2 className="text-3xl font-bold text-primary border-b-2 border-primary/20 pb-2">
+            <h2 className="text-4xl font-bold text-primary border-b-2 border-primary/20 pb-2">
               {category}
             </h2>
             <div className="space-y-1.5">
@@ -142,18 +142,18 @@ export function PalletListView({ pallets }: PalletListViewProps) {
                     key={pallet.id}
                     className="flex items-center gap-3 px-4 py-2 rounded-lg border border-border/50"
                   >
-                    <Badge variant="outline" className="font-mono text-base font-bold px-3 py-1.5 bg-muted border-2">
+                    <Badge variant="outline" className="font-mono text-xl font-bold px-3 py-1.5 bg-muted border-2">
                       {pallet.pallet_number}
                     </Badge>
                     {pallet.grade && (
                       <Badge 
                         variant={isLowGrade ? "destructive" : "secondary"} 
-                        className="font-semibold text-sm px-3 py-1"
+                        className="font-semibold text-base px-3 py-1"
                       >
                         {pallet.grade}
                       </Badge>
                     )}
-                    <span className="text-base font-medium text-foreground uppercase flex-1">
+                    <span className="text-xl font-medium text-foreground uppercase flex-1">
                       {description}
                     </span>
                   </div>
