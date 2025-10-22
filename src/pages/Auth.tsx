@@ -27,7 +27,7 @@ export default function Auth() {
       }
 
       // Use a single shared account
-      const email = `shared-access@example.com`;
+      const email = `itadsecure@gmail.com`;
       
       // Try to sign in first
       const { error: signInError } = await supabase.auth.signInWithPassword({
