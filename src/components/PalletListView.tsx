@@ -71,6 +71,25 @@ const sortPalletsByDescription = (pallets: Pallet[], category: Category): Pallet
   }
 
   return [...pallets].sort((a, b) => {
+    const aGrade = a.grade?.toUpperCase() || "";
+    const bGrade = b.grade?.toUpperCase() || "";
+    
+    // Define low grades that should appear at the end
+    const lowGrades = ["D/F", "D", "F"];
+    const aIsLowGrade = lowGrades.includes(aGrade);
+    const bIsLowGrade = lowGrades.includes(bGrade);
+    
+    // If one is a low grade and the other isn't, low grade goes last
+    if (aIsLowGrade && !bIsLowGrade) return 1;
+    if (!aIsLowGrade && bIsLowGrade) return -1;
+    
+    // If both are low grades, sort by specific order: D/F, D, F
+    if (aIsLowGrade && bIsLowGrade) {
+      const lowGradeOrder = ["D/F", "D", "F"];
+      return lowGradeOrder.indexOf(aGrade) - lowGradeOrder.indexOf(bGrade);
+    }
+    
+    // If neither are low grades, sort by description or created_at
     const aDesc = a.description?.toUpperCase() || "OTHER";
     const bDesc = b.description?.toUpperCase() || "OTHER";
     
