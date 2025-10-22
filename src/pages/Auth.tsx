@@ -7,11 +7,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { toast } from "sonner";
 import { z } from "zod";
 
-const pinSchema = z.string()
-  .regex(/^\d{6}$/, "PIN must be exactly 6 digits");
+const SHARED_PASSWORD = "676767";
 
 export default function Auth() {
-  const [pin, setPin] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
@@ -20,35 +19,34 @@ export default function Auth() {
     setLoading(true);
 
     try {
-      // Validate PIN format
-      const validation = pinSchema.safeParse(pin);
-      if (!validation.success) {
-        toast.error(validation.error.errors[0].message);
+      // Check if password matches
+      if (password !== SHARED_PASSWORD) {
+        toast.error("Incorrect password");
         setLoading(false);
         return;
       }
 
-      // Convert PIN to email format: pin-{PIN}@app.local
-      const email = `pin-${pin}@app.local`;
+      // Use a single shared account
+      const email = `pin-${SHARED_PASSWORD}@app.local`;
       
       // Try to sign in first
       const { error: signInError } = await supabase.auth.signInWithPassword({
         email,
-        password: pin,
+        password: SHARED_PASSWORD,
       });
 
       if (signInError) {
-        // If user doesn't exist, create account automatically
+        // If account doesn't exist, create it
         if (signInError.message.includes("Invalid login credentials")) {
           const { error: signUpError } = await supabase.auth.signUp({
             email,
-            password: pin,
+            password: SHARED_PASSWORD,
             options: {
               emailRedirectTo: `${window.location.origin}/`,
             },
           });
           if (signUpError) throw signUpError;
-          toast.success("Account created successfully!");
+          toast.success("Logged in successfully");
         } else {
           throw signInError;
         }
@@ -69,10 +67,10 @@ export default function Auth() {
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl font-bold text-center">
-            Enter PIN
+            Enter Password
           </CardTitle>
           <CardDescription className="text-center">
-            Enter your 6 digit PIN to access your account
+            Enter the shared password to access the system
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -80,14 +78,11 @@ export default function Auth() {
             <div className="space-y-2">
               <Input
                 type="password"
-                placeholder="Enter PIN"
-                value={pin}
-                onChange={(e) => setPin(e.target.value)}
+                placeholder="Enter Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 required
                 disabled={loading}
-                inputMode="numeric"
-                pattern="\d*"
-                maxLength={6}
                 className="text-center text-2xl tracking-widest"
               />
             </div>
