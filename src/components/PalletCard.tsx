@@ -25,7 +25,9 @@ export function PalletCard({ pallet, onEdit, onRetire, onUnretire, onDelete, isH
                   {pallet.grade}
                 </span>
               )}
-              <p className="text-xl font-semibold text-foreground uppercase flex-1">{pallet.description}</p>
+              <p className="text-xl font-semibold text-foreground uppercase flex-1">
+                {pallet.description} {pallet.type ? pallet.type : ''}
+              </p>
             </div>
             <h3 className="text-2xl font-bold text-primary uppercase">{pallet.pallet_number}</h3>
           </div>
