@@ -386,31 +386,35 @@ const Index = () => {
       ) : (
         <>
           {/* Header */}
-          <header className="border-b bg-card">
-            <div className="container mx-auto px-4 py-6">
-              <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
-                <div className="flex gap-2">
+          <header className="border-b bg-card shadow-sm">
+            <div className="container mx-auto px-4 py-8">
+              <div className="flex flex-col sm:flex-row gap-6 items-start sm:items-center justify-between">
+                <div className="flex gap-3">
                   <Button
                     variant={viewMode === "active" ? "default" : "outline"}
                     onClick={() => setViewMode("active")}
+                    size="lg"
+                    className="font-semibold"
                   >
                     Active
                   </Button>
                   <Button
                     variant={viewMode === "history" ? "default" : "outline"}
                     onClick={() => setViewMode("history")}
+                    size="lg"
+                    className="font-semibold"
                   >
                     History
                   </Button>
                 </div>
 
-                <div className="relative w-full sm:w-64">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <div className="relative w-full sm:w-80">
+                  <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                   <Input
-                    placeholder="Search..."
+                    placeholder="Search by number..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-9"
+                    className="pl-12 h-12 text-base"
                   />
                 </div>
               </div>
@@ -491,11 +495,14 @@ const Index = () => {
                   if (!categoryPallets || categoryPallets.length === 0) return null;
 
                   return (
-                    <div key={category} className="space-y-4">
-                      <h2 className="text-2xl font-bold text-primary border-b-2 border-border pb-2">
-                        {category}
-                      </h2>
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-4 gap-4">
+                    <div key={category} className="space-y-6">
+                      <div className="flex items-center gap-3 pb-3 border-b-2 border-primary/30">
+                        <div className="h-1 w-12 bg-primary rounded-full" />
+                        <h2 className="text-3xl font-bold text-primary tracking-tight">
+                          {category}
+                        </h2>
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-4 gap-6">
                         {categoryPallets.map((pallet) => (
                           <PalletCard
                             key={pallet.id}

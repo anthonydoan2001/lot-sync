@@ -15,20 +15,20 @@ interface LotCardProps {
 
 export function LotCard({ lot, onEdit, onRetire, onUnretire, onDelete, isHistory = false }: LotCardProps) {
   return (
-    <Card className="hover:shadow-lg transition-shadow duration-200">
-      <CardHeader className="space-y-2">
+    <Card className="hover:shadow-xl transition-all duration-300 hover:border-accent/30 border-2">
+      <CardHeader className="space-y-3 p-6">
         <div className="flex items-start justify-between gap-3">
-          <div className="flex-1">
-            <p className="text-xl font-semibold text-foreground uppercase">{lot.customer_name}</p>
-            <h3 className="text-2xl font-bold text-secondary uppercase">{lot.lot_number}</h3>
+          <div className="flex-1 space-y-2">
+            <p className="text-xl font-semibold text-foreground uppercase tracking-wide">{lot.customer_name}</p>
+            <h3 className="text-3xl font-bold text-secondary uppercase tracking-wide">{lot.lot_number}</h3>
           </div>
           {!isHistory && (
-            <div className="flex gap-1.5 pt-0.5">
+            <div className="flex gap-2 pt-1">
               <Button
                 size="icon"
                 variant="ghost"
                 onClick={() => onEdit(lot)}
-                className="h-8 w-8 hover:bg-muted"
+                className="h-9 w-9 hover:bg-primary/10 hover:text-primary transition-colors"
               >
                 <Pencil className="h-4 w-4" />
               </Button>
@@ -36,7 +36,7 @@ export function LotCard({ lot, onEdit, onRetire, onUnretire, onDelete, isHistory
                 size="icon"
                 variant="ghost"
                 onClick={() => onDelete(lot.id)}
-                className="h-8 w-8 hover:bg-destructive/10 hover:text-destructive"
+                className="h-9 w-9 hover:bg-destructive/10 hover:text-destructive transition-colors"
               >
                 <Trash2 className="h-4 w-4" />
               </Button>
@@ -44,36 +44,36 @@ export function LotCard({ lot, onEdit, onRetire, onUnretire, onDelete, isHistory
           )}
         </div>
       </CardHeader>
-      <CardContent className="space-y-2">
-        <p className="text-sm text-muted-foreground uppercase">
+      <CardContent className="space-y-3 px-6 pb-4">
+        <p className="text-base text-foreground uppercase font-medium">
           {lot.contents}
         </p>
-        <p className="text-xs text-muted-foreground">
+        <p className="text-sm text-muted-foreground">
           Created: {format(new Date(lot.created_at), "PPpp")}
         </p>
         {isHistory && lot.retired_at && (
-          <p className="text-xs text-muted-foreground">
+          <p className="text-sm text-muted-foreground">
             Retired: {format(new Date(lot.retired_at), "PPpp")}
           </p>
         )}
       </CardContent>
-      <CardFooter className="flex gap-2">
+      <CardFooter className="flex gap-2 px-6 pb-6">
         {!isHistory ? (
           <Button
             variant="outline"
             onClick={() => onRetire(lot.id)}
-            className="h-8 px-3 text-xs text-accent border-accent hover:bg-accent hover:text-accent-foreground"
+            className="h-10 px-5 font-semibold text-accent border-2 border-accent hover:bg-accent hover:text-accent-foreground transition-all"
           >
-            <Archive className="h-3.5 w-3.5 mr-1" />
+            <Archive className="h-4 w-4 mr-2" />
             Retire
           </Button>
         ) : (
           <Button
             variant="default"
             onClick={() => onUnretire(lot.id)}
-            className="h-8 px-3 text-xs"
+            className="h-10 px-5 font-semibold"
           >
-            <Archive className="h-3.5 w-3.5 mr-1" />
+            <Archive className="h-4 w-4 mr-2" />
             Unretire
           </Button>
         )}
