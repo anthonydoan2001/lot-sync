@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Pallet, Lot } from "@/types/database.types";
 import { PalletCard } from "@/components/PalletCard";
@@ -19,12 +20,16 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Plus, Search, List, Edit } from "lucide-react";
+import { Plus, Search, List, Edit, LogOut } from "lucide-react";
 import { toast } from "sonner";
+import { useAuth } from "@/hooks/useAuth";
 
 type PalletCategory = "DESKTOPS" | "LAPTOPS" | "DISPLAYS" | "WORKSTATIONS" | "CHROMEBOOKS" | "OTHER";
 
 const Index = () => {
+  const navigate = useNavigate();
+  const { user, loading, signOut } = useAuth();
+  
   const [pallets, setPallets] = useState<Pallet[]>([]);
   const [lots, setLots] = useState<Lot[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
@@ -40,6 +45,13 @@ const Index = () => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [deletingType, setDeletingType] = useState<"pallet" | "lot">("pallet");
+
+  // Check authentication
+  useEffect(() => {
+    if (!loading && !user) {
+      navigate("/auth");
+    }
+  }, [user, loading, navigate]);
 
   // Helper function to categorize pallets
   const categorizePallet = (pallet: Pallet): PalletCategory => {
@@ -81,12 +93,16 @@ const Index = () => {
 
   // Initial fetch
   useEffect(() => {
-    fetchPallets();
-    fetchLots();
-  }, [viewMode]);
+    if (user) {
+      fetchPallets();
+      fetchLots();
+    }
+  }, [viewMode, user]);
 
   // Real-time subscriptions
   useEffect(() => {
+    if (!user) return;
+    
     const palletChannel = supabase
       .channel("pallets-changes")
       .on(
@@ -121,7 +137,7 @@ const Index = () => {
       supabase.removeChannel(palletChannel);
       supabase.removeChannel(lotChannel);
     };
-  }, [viewMode]);
+  }, [viewMode, user]);
 
   // Filter data based on search
   const filteredPallets = pallets.filter((pallet) =>
@@ -366,6 +382,23 @@ const Index = () => {
     setDeletingId(null);
   };
 
+  const handleLogout = async () => {
+    await signOut();
+    navigate("/auth");
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-muted-foreground">Loading...</p>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return null;
+  }
+
   return (
     <div className="min-h-screen bg-background">
       {palletViewMode === "list" && activeTab === "pallets" ? (
@@ -408,14 +441,25 @@ const Index = () => {
                   </Button>
                 </div>
 
-                <div className="relative w-full sm:w-80">
-                  <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                  <Input
-                    placeholder="Search by number..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-12 h-12 text-base"
-                  />
+                <div className="flex gap-3 items-center w-full sm:w-auto">
+                  <div className="relative flex-1 sm:w-80">
+                    <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                    <Input
+                      placeholder="Search by number..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="pl-12 h-12 text-base"
+                    />
+                  </div>
+                  <Button
+                    onClick={handleLogout}
+                    variant="outline"
+                    size="lg"
+                    className="flex-shrink-0"
+                  >
+                    <LogOut className="h-4 w-4 sm:mr-2" />
+                    <span className="hidden sm:inline">Logout</span>
+                  </Button>
                 </div>
               </div>
             </div>
