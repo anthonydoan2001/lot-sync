@@ -27,7 +27,7 @@ export default function Auth() {
       }
 
       // Use a single shared account
-      const email = `pin-${SHARED_PASSWORD}@app.local`;
+      const email = `shared-access@inventory.app`;
       
       // Try to sign in first
       const { error: signInError } = await supabase.auth.signInWithPassword({
