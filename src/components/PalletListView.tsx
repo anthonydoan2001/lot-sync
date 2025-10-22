@@ -137,7 +137,7 @@ export function PalletListView({ pallets }: PalletListViewProps) {
                 return (
                   <div
                     key={pallet.id}
-                    className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-accent/50 transition-colors border border-border/50"
+                    className="flex items-center gap-3 px-4 py-3 rounded-lg border border-border/50"
                   >
                     <Badge variant="outline" className="font-mono text-sm px-3 py-1 bg-muted">
                       {pallet.pallet_number}
