@@ -123,7 +123,7 @@ export function PalletListView({ pallets }: PalletListViewProps) {
 
         return (
           <div key={category} className="space-y-4">
-            <h2 className="text-5xl font-bold text-primary border-b-2 border-primary/20 pb-2">
+            <h2 className="text-4xl font-bold text-primary border-b-2 border-primary/20 pb-2">
               {category}
             </h2>
             <div className="space-y-1.5">
