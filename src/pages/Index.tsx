@@ -166,11 +166,11 @@ const Index = () => {
     }
 
     return [...pallets].sort((a, b) => {
-      const aGrade = a.grade?.toUpperCase() || "OTHER";
-      const bGrade = b.grade?.toUpperCase() || "OTHER";
+      const aDesc = a.description?.toUpperCase() || "OTHER";
+      const bDesc = b.description?.toUpperCase() || "OTHER";
       
-      const aIndex = sortOrder.indexOf(aGrade);
-      const bIndex = sortOrder.indexOf(bGrade);
+      const aIndex = sortOrder.indexOf(aDesc);
+      const bIndex = sortOrder.indexOf(bDesc);
       
       // If both are in the sort order, sort by order
       if (aIndex !== -1 && bIndex !== -1) {
