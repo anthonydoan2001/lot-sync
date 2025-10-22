@@ -132,7 +132,7 @@ export function PalletListView({ pallets }: PalletListViewProps) {
   ];
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-10">
       {categoryOrder.map((category) => {
         const categoryPallets = categorizedPallets[category];
         if (!categoryPallets || categoryPallets.length === 0) return null;
@@ -142,10 +142,13 @@ export function PalletListView({ pallets }: PalletListViewProps) {
 
         return (
           <div key={category} className="space-y-4">
-            <h2 className="text-4xl font-bold text-primary border-b-2 border-primary/20 pb-2">
-              {category}
-            </h2>
-            <div className="space-y-1.5">
+            <div className="flex items-center gap-3 pb-3 border-b border-primary/30">
+              <div className="h-1 w-12 bg-primary rounded-full" />
+              <h2 className="text-4xl font-bold text-primary tracking-tight">
+                {category}
+              </h2>
+            </div>
+            <div className="space-y-2">
               {sortedPallets.map((pallet) => {
                 // Remove grade from description if it exists at the start
                 let description = cleanDescription(pallet.description, category);
@@ -159,20 +162,20 @@ export function PalletListView({ pallets }: PalletListViewProps) {
                 return (
                   <div
                     key={pallet.id}
-                    className="flex items-center gap-3 px-4 py-2 rounded-lg border border-border/50"
+                    className="flex items-center gap-4 px-5 py-3 rounded-lg border border-border bg-card hover:bg-accent/5 hover:border-accent/30 transition-all duration-200 shadow-sm hover:shadow-md"
                   >
-                    <Badge variant="outline" className="font-mono text-3xl font-bold px-3 py-1.5 bg-muted border-2">
+                    <Badge variant="outline" className="font-mono text-3xl font-bold px-4 py-2 bg-muted/70 border-2 border-primary/20 shadow-sm">
                       {pallet.pallet_number}
                     </Badge>
                     {pallet.grade && (
                       <Badge 
                         variant={isLowGrade ? "destructive" : "secondary"} 
-                        className="font-semibold text-xl px-3 py-1"
+                        className="font-bold text-xl px-4 py-1.5 shadow-sm"
                       >
                         {pallet.grade}
                       </Badge>
                     )}
-                    <span className="text-3xl font-medium text-foreground uppercase flex-1">
+                    <span className="text-3xl font-semibold text-foreground uppercase flex-1 tracking-wide">
                       {description}
                     </span>
                   </div>
