@@ -126,7 +126,7 @@ export function PalletListView({ pallets }: PalletListViewProps) {
             <h2 className="text-3xl font-bold text-primary border-b-2 border-primary/20 pb-2">
               {category}
             </h2>
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               {sortedPallets.map((pallet) => {
                 // Remove grade from description if it exists at the start
                 let description = cleanDescription(pallet.description, category);
@@ -134,20 +134,26 @@ export function PalletListView({ pallets }: PalletListViewProps) {
                   description = description.substring(pallet.grade.length).trim();
                 }
                 
+                // Determine if grade should be red (D/F, D, or F)
+                const isLowGrade = pallet.grade && ['D/F', 'D', 'F'].includes(pallet.grade.toUpperCase());
+                
                 return (
                   <div
                     key={pallet.id}
-                    className="flex items-center gap-3 px-4 py-3 rounded-lg border border-border/50"
+                    className="flex items-center gap-3 px-4 py-2 rounded-lg border border-border/50"
                   >
-                    <Badge variant="outline" className="font-mono text-sm px-3 py-1 bg-muted">
+                    <Badge variant="outline" className="font-mono text-base font-bold px-3 py-1.5 bg-muted border-2">
                       {pallet.pallet_number}
                     </Badge>
                     {pallet.grade && (
-                      <Badge variant="secondary" className="font-semibold text-sm px-3 py-1">
+                      <Badge 
+                        variant={isLowGrade ? "destructive" : "secondary"} 
+                        className="font-semibold text-sm px-3 py-1"
+                      >
                         {pallet.grade}
                       </Badge>
                     )}
-                    <span className="text-lg font-medium text-foreground uppercase flex-1">
+                    <span className="text-base font-medium text-foreground uppercase flex-1">
                       {description}
                     </span>
                   </div>
