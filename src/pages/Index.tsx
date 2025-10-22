@@ -495,7 +495,7 @@ const Index = () => {
                       <h2 className="text-2xl font-bold text-primary border-b-2 border-border pb-2">
                         {category}
                       </h2>
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3">
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-4 gap-4">
                         {categoryPallets.map((pallet) => (
                           <PalletCard
                             key={pallet.id}
@@ -529,7 +529,7 @@ const Index = () => {
                 No lots found
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-4 gap-4">
                 {filteredLots.map((lot) => (
                   <LotCard
                     key={lot.id}
