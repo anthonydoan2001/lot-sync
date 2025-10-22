@@ -5,11 +5,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
+import { z } from "zod";
+
+const pinSchema = z.string()
+  .regex(/^\d{4,6}$/, "PIN must be 4-6 digits");
 
 export default function Auth() {
-  const [isLogin, setIsLogin] = useState(true);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [pin, setPin] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
@@ -18,25 +20,43 @@ export default function Auth() {
     setLoading(true);
 
     try {
-      if (isLogin) {
-        const { error } = await supabase.auth.signInWithPassword({
-          email,
-          password,
-        });
-        if (error) throw error;
-        toast.success("Logged in successfully");
-        navigate("/");
-      } else {
-        const { error } = await supabase.auth.signUp({
-          email,
-          password,
-          options: {
-            emailRedirectTo: `${window.location.origin}/`,
-          },
-        });
-        if (error) throw error;
-        toast.success("Account created! Please check your email to verify.");
+      // Validate PIN format
+      const validation = pinSchema.safeParse(pin);
+      if (!validation.success) {
+        toast.error(validation.error.errors[0].message);
+        setLoading(false);
+        return;
       }
+
+      // Convert PIN to email format: pin-{PIN}@app.local
+      const email = `pin-${pin}@app.local`;
+      
+      // Try to sign in first
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        email,
+        password: pin,
+      });
+
+      if (signInError) {
+        // If user doesn't exist, create account automatically
+        if (signInError.message.includes("Invalid login credentials")) {
+          const { error: signUpError } = await supabase.auth.signUp({
+            email,
+            password: pin,
+            options: {
+              emailRedirectTo: `${window.location.origin}/`,
+            },
+          });
+          if (signUpError) throw signUpError;
+          toast.success("Account created successfully!");
+        } else {
+          throw signInError;
+        }
+      } else {
+        toast.success("Logged in successfully");
+      }
+      
+      navigate("/");
     } catch (error: any) {
       toast.error(error.message || "An error occurred");
     } finally {
@@ -49,49 +69,32 @@ export default function Auth() {
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl font-bold text-center">
-            {isLogin ? "Welcome Back" : "Create Account"}
+            Enter PIN
           </CardTitle>
           <CardDescription className="text-center">
-            {isLogin ? "Sign in to your account" : "Sign up for a new account"}
+            Enter your 4-6 digit PIN to access your account
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
               <Input
-                type="email"
-                placeholder="Email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                disabled={loading}
-              />
-            </div>
-            <div className="space-y-2">
-              <Input
                 type="password"
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Enter PIN"
+                value={pin}
+                onChange={(e) => setPin(e.target.value)}
                 required
                 disabled={loading}
-                minLength={6}
+                inputMode="numeric"
+                pattern="\d*"
+                maxLength={6}
+                className="text-center text-2xl tracking-widest"
               />
             </div>
             <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? "Loading..." : isLogin ? "Sign In" : "Sign Up"}
+              {loading ? "Loading..." : "Enter"}
             </Button>
           </form>
-          <div className="mt-4 text-center text-sm">
-            <button
-              type="button"
-              onClick={() => setIsLogin(!isLogin)}
-              className="text-primary hover:underline"
-              disabled={loading}
-            >
-              {isLogin ? "Need an account? Sign up" : "Already have an account? Sign in"}
-            </button>
-          </div>
         </CardContent>
       </Card>
     </div>
