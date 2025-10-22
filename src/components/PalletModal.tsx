@@ -32,12 +32,14 @@ const DESKTOP_DESCRIPTIONS = [
   "B/C ↓ 4TH GEN",
   "B/C 5-7TH GEN",
   "B/C ↑ 8TH GEN",
+  "D/F",
   "OTHER"
 ];
 
 const LAPTOP_DESCRIPTIONS = [
   "B/C ↓ 4TH GEN",
   "B/C ↑ 5TH GEN",
+  "D/F",
   "OTHER"
 ];
 
@@ -109,8 +111,14 @@ export function PalletModal({ open, onClose, onSubmit, pallet }: PalletModalProp
   };
 
   const getAutoGrade = (palletType: PalletType, desc: string): string | null => {
-    if (palletType === "DESKTOPS" && desc !== "OTHER") return "B/C";
-    if (palletType === "LAPTOPS" && desc !== "OTHER") return "B/C";
+    if (palletType === "DESKTOPS") {
+      if (desc === "D/F") return "D/F";
+      if (desc !== "OTHER") return "B/C";
+    }
+    if (palletType === "LAPTOPS") {
+      if (desc === "D/F") return "D/F";
+      if (desc !== "OTHER") return "B/C";
+    }
     if (palletType === "DISPLAYS") {
       if (desc === "B LCD") return "B";
       if (desc === "C LCD") return "C";
