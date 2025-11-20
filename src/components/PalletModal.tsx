@@ -29,7 +29,9 @@ interface PalletModalProps {
 type PalletType = "DESKTOPS" | "LAPTOPS" | "DISPLAYS" | "WORKSTATIONS" | "CHROMEBOOKS" | "OTHER";
 
 const DESKTOP_DESCRIPTIONS = [
-  "B/C ↓ 4TH GEN",
+  "B/C 1-2ND GEN",
+  "B/C 3RD GEN",
+  "B/C 4TH GEN",
   "B/C 5-7TH GEN",
   "B/C ↑ 8TH GEN",
   "D/F",
@@ -57,14 +59,6 @@ const CHROMEBOOK_DESCRIPTIONS = [
   "OTHER"
 ];
 
-const DESKTOP_GENERATIONS = [
-  "1-2 GEN",
-  "3RD GEN",
-  "4TH GEN",
-  "5-7TH GEN",
-  "8TH GEN"
-];
-
 export function PalletModal({ open, onClose, onSubmit, pallet }: PalletModalProps) {
   const [palletNumber, setPalletNumber] = useState("");
   const [type, setType] = useState<PalletType | "">("");
@@ -72,7 +66,6 @@ export function PalletModal({ open, onClose, onSubmit, pallet }: PalletModalProp
   const [description, setDescription] = useState("");
   const [selectedDescription, setSelectedDescription] = useState("");
   const [customDescription, setCustomDescription] = useState("");
-  const [generation, setGeneration] = useState("");
 
   useEffect(() => {
     if (pallet) {
@@ -82,7 +75,6 @@ export function PalletModal({ open, onClose, onSubmit, pallet }: PalletModalProp
       setType((pallet.type as PalletType) || "");
       setGrade(pallet.grade || "");
       setDescription(pallet.description);
-      setGeneration(pallet.generation || "");
       
       // Check if description matches a predefined option
       if (pallet.type) {
@@ -102,7 +94,6 @@ export function PalletModal({ open, onClose, onSubmit, pallet }: PalletModalProp
       setDescription("");
       setSelectedDescription("");
       setCustomDescription("");
-      setGeneration("");
     }
   }, [pallet, open]);
 
@@ -216,7 +207,6 @@ export function PalletModal({ open, onClose, onSubmit, pallet }: PalletModalProp
       type: type,
       grade: finalGrade,
       description: finalDescription,
-      generation: generation || null,
     });
   };
 
@@ -275,24 +265,6 @@ export function PalletModal({ open, onClose, onSubmit, pallet }: PalletModalProp
                     {getDescriptionsForType(type as PalletType).map((desc) => (
                       <SelectItem key={desc} value={desc}>
                         {desc}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            )}
-
-            {type === "DESKTOPS" && selectedDescription && selectedDescription.includes("B/C") && selectedDescription !== "OTHER" && (
-              <div className="space-y-2">
-                <Label htmlFor="generation">Desktop Generation</Label>
-                <Select value={generation} onValueChange={setGeneration}>
-                  <SelectTrigger id="generation">
-                    <SelectValue placeholder="Select generation" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-background z-50">
-                    {DESKTOP_GENERATIONS.map((gen) => (
-                      <SelectItem key={gen} value={gen}>
-                        {gen}
                       </SelectItem>
                     ))}
                   </SelectContent>
