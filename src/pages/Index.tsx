@@ -20,7 +20,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Plus, Search, List, Edit, LogOut } from "lucide-react";
+import { Plus, Search, List, Edit, LogOut, Package, Box } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
 
@@ -29,19 +29,19 @@ type PalletCategory = "DESKTOPS" | "LAPTOPS" | "DISPLAYS" | "WORKSTATIONS" | "CH
 const Index = () => {
   const navigate = useNavigate();
   const { user, loading, signOut } = useAuth();
-  
+
   const [pallets, setPallets] = useState<Pallet[]>([]);
   const [lots, setLots] = useState<Lot[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [viewMode, setViewMode] = useState<"active" | "history">("active");
   const [activeTab, setActiveTab] = useState<"pallets" | "lots">("pallets");
   const [palletViewMode, setPalletViewMode] = useState<"card" | "list">("card");
-  
+
   const [palletModalOpen, setPalletModalOpen] = useState(false);
   const [lotModalOpen, setLotModalOpen] = useState(false);
   const [editingPallet, setEditingPallet] = useState<Pallet | null>(null);
   const [editingLot, setEditingLot] = useState<Lot | null>(null);
-  
+
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [deletingType, setDeletingType] = useState<"pallet" | "lot">("pallet");
@@ -102,7 +102,7 @@ const Index = () => {
   // Real-time subscriptions
   useEffect(() => {
     if (!user) return;
-    
+
     const palletChannel = supabase
       .channel("pallets-changes")
       .on(
@@ -114,7 +114,7 @@ const Index = () => {
         },
         () => {
           fetchPallets();
-        }
+        },
       )
       .subscribe();
 
@@ -129,7 +129,7 @@ const Index = () => {
         },
         () => {
           fetchLots();
-        }
+        },
       )
       .subscribe();
 
@@ -141,12 +141,10 @@ const Index = () => {
 
   // Filter data based on search
   const filteredPallets = pallets.filter((pallet) =>
-    pallet.pallet_number.toLowerCase().includes(searchQuery.toLowerCase())
+    pallet.pallet_number.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
-  const filteredLots = lots.filter((lot) =>
-    lot.lot_number.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredLots = lots.filter((lot) => lot.lot_number.toLowerCase().includes(searchQuery.toLowerCase()));
 
   // Define sort orders for each category
   const DESKTOP_SORT_ORDER = ["B/C ↓ 4TH GEN", "B/C 5-7TH GEN", "B/C ↑ 8TH GEN", "D/F", "OTHER"];
@@ -157,7 +155,7 @@ const Index = () => {
   // Function to sort pallets within a category
   const sortPalletsByDescription = (pallets: Pallet[], category: PalletCategory): Pallet[] => {
     let sortOrder: string[] = [];
-    
+
     switch (category) {
       case "DESKTOPS":
         sortOrder = DESKTOP_SORT_ORDER;
@@ -173,10 +171,7 @@ const Index = () => {
         break;
       case "WORKSTATIONS":
       case "OTHER":
-        // No specific order, sort by created_at (newest first)
-        return [...pallets].sort((a, b) => 
-          new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-        );
+        return [...pallets].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
       default:
         return pallets;
     }
@@ -184,51 +179,44 @@ const Index = () => {
     return [...pallets].sort((a, b) => {
       const aDesc = a.description?.toUpperCase() || "OTHER";
       const bDesc = b.description?.toUpperCase() || "OTHER";
-      
+
       const aIndex = sortOrder.indexOf(aDesc);
       const bIndex = sortOrder.indexOf(bDesc);
-      
-      // If both are in the sort order, sort by order
+
       if (aIndex !== -1 && bIndex !== -1) {
         return aIndex - bIndex;
       }
-      
-      // If only one is in the sort order, prioritize it
+
       if (aIndex !== -1) return -1;
       if (bIndex !== -1) return 1;
-      
-      // If neither is in sort order, sort by created_at (newest first)
+
       return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
     });
   };
 
   // Group pallets by category
-  const categorizedPallets = filteredPallets.reduce((acc, pallet) => {
-    const category = categorizePallet(pallet);
-    if (!acc[category]) {
-      acc[category] = [];
-    }
-    acc[category].push(pallet);
-    return acc;
-  }, {} as Record<PalletCategory, Pallet[]>);
+  const categorizedPallets = filteredPallets.reduce(
+    (acc, pallet) => {
+      const category = categorizePallet(pallet);
+      if (!acc[category]) {
+        acc[category] = [];
+      }
+      acc[category].push(pallet);
+      return acc;
+    },
+    {} as Record<PalletCategory, Pallet[]>,
+  );
 
   // Sort pallets within each category
   Object.keys(categorizedPallets).forEach((category) => {
     categorizedPallets[category as PalletCategory] = sortPalletsByDescription(
       categorizedPallets[category as PalletCategory],
-      category as PalletCategory
+      category as PalletCategory,
     );
   });
 
-  // Define category order (matching dropdown order)
-  const categoryOrder: PalletCategory[] = [
-    "DESKTOPS",
-    "LAPTOPS",
-    "DISPLAYS",
-    "WORKSTATIONS",
-    "CHROMEBOOKS",
-    "OTHER"
-  ];
+  // Define category order
+  const categoryOrder: PalletCategory[] = ["DESKTOPS", "LAPTOPS", "DISPLAYS", "WORKSTATIONS", "CHROMEBOOKS", "OTHER"];
 
   // Pallet operations
   const handleAddPallet = async (data: Partial<Pallet>) => {
@@ -247,10 +235,7 @@ const Index = () => {
   const handleEditPallet = async (data: Partial<Pallet>) => {
     if (!editingPallet) return;
 
-    const { error } = await supabase
-      .from("pallets")
-      .update(data)
-      .eq("id", editingPallet.id);
+    const { error } = await supabase.from("pallets").update(data).eq("id", editingPallet.id);
 
     if (error) {
       toast.error("Failed to update pallet");
@@ -277,10 +262,7 @@ const Index = () => {
   };
 
   const handleUnretirePallet = async (id: string) => {
-    const { error } = await supabase
-      .from("pallets")
-      .update({ is_retired: false, retired_at: null })
-      .eq("id", id);
+    const { error } = await supabase.from("pallets").update({ is_retired: false, retired_at: null }).eq("id", id);
 
     if (error) {
       toast.error("Failed to unretire pallet");
@@ -323,10 +305,7 @@ const Index = () => {
   const handleEditLot = async (data: Partial<Lot>) => {
     if (!editingLot) return;
 
-    const { error } = await supabase
-      .from("lots")
-      .update(data)
-      .eq("id", editingLot.id);
+    const { error } = await supabase.from("lots").update(data).eq("id", editingLot.id);
 
     if (error) {
       toast.error("Failed to update lot");
@@ -353,10 +332,7 @@ const Index = () => {
   };
 
   const handleUnretireLot = async (id: string) => {
-    const { error } = await supabase
-      .from("lots")
-      .update({ is_retired: false, retired_at: null })
-      .eq("id", id);
+    const { error } = await supabase.from("lots").update({ is_retired: false, retired_at: null }).eq("id", id);
 
     if (error) {
       toast.error("Failed to unretire lot");
@@ -389,8 +365,11 @@ const Index = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="text-muted-foreground">Loading...</p>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-accent/5 to-secondary/5">
+        <div className="text-center space-y-4">
+          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-primary mx-auto"></div>
+          <p className="text-muted-foreground text-lg">Loading...</p>
+        </div>
       </div>
     );
   }
@@ -400,7 +379,7 @@ const Index = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-accent/5">
       {palletViewMode === "list" && activeTab === "pallets" ? (
         /* List View - Minimal UI */
         <div className="container mx-auto px-4 py-8">
@@ -409,6 +388,7 @@ const Index = () => {
               onClick={() => setPalletViewMode("card")}
               variant="outline"
               size="lg"
+              className="shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
             >
               <Edit className="h-4 w-4 mr-2" />
               Edit Mode
@@ -419,26 +399,31 @@ const Index = () => {
       ) : (
         <>
           {/* Header */}
-          <header className="border-b bg-card shadow-sm">
-            <div className="container mx-auto px-4 py-8">
+          <header className="border-b bg-card/95 backdrop-blur-sm shadow-lg sticky top-0 z-50">
+            <div className="container mx-auto px-4 py-6">
               <div className="flex flex-col sm:flex-row gap-6 items-start sm:items-center justify-between">
-                <div className="flex gap-3">
-                  <Button
-                    variant={viewMode === "active" ? "default" : "outline"}
-                    onClick={() => setViewMode("active")}
-                    size="lg"
-                    className="font-semibold"
-                  >
-                    Active
-                  </Button>
-                  <Button
-                    variant={viewMode === "history" ? "default" : "outline"}
-                    onClick={() => setViewMode("history")}
-                    size="lg"
-                    className="font-semibold"
-                  >
-                    History
-                  </Button>
+                <div className="flex items-center gap-4">
+                  <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent hidden sm:block">
+                    Inventory Manager
+                  </h1>
+                  <div className="flex gap-2">
+                    <Button
+                      variant={viewMode === "active" ? "default" : "outline"}
+                      onClick={() => setViewMode("active")}
+                      size="lg"
+                      className="font-semibold shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105"
+                    >
+                      Active
+                    </Button>
+                    <Button
+                      variant={viewMode === "history" ? "default" : "outline"}
+                      onClick={() => setViewMode("history")}
+                      size="lg"
+                      className="font-semibold shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105"
+                    >
+                      History
+                    </Button>
+                  </div>
                 </div>
 
                 <div className="flex gap-3 items-center w-full sm:w-auto">
@@ -448,14 +433,14 @@ const Index = () => {
                       placeholder="Search by number..."
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      className="pl-12 h-12 text-base"
+                      className="pl-12 h-12 text-base shadow-md focus:shadow-lg transition-all duration-300"
                     />
                   </div>
                   <Button
                     onClick={handleLogout}
                     variant="outline"
                     size="lg"
-                    className="flex-shrink-0"
+                    className="flex-shrink-0 shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105"
                   >
                     <LogOut className="h-4 w-4 sm:mr-2" />
                     <span className="hidden sm:inline">Logout</span>
@@ -467,143 +452,167 @@ const Index = () => {
 
           {/* Main Content */}
           <main className="container mx-auto px-4 py-8">
-        <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as "pallets" | "lots")}>
-          <div className="mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-            <TabsList>
-              <TabsTrigger value="pallets">
-                Pallets ({filteredPallets.length})
-              </TabsTrigger>
-              <TabsTrigger value="lots">
-                Lots ({filteredLots.length})
-              </TabsTrigger>
-            </TabsList>
-            
-            <div className="flex flex-wrap gap-2 w-full sm:w-auto">
-              {activeTab === "pallets" && (
-                <Button
-                  onClick={() => setPalletViewMode(palletViewMode === "card" ? "list" : "card")}
-                  variant="outline"
-                  className="flex-shrink-0"
-                >
-                  {palletViewMode === "card" ? (
+            <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as "pallets" | "lots")}>
+              <div className="mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <TabsList className="shadow-md">
+                  <TabsTrigger value="pallets" className="gap-2">
+                    <Package className="h-4 w-4" />
+                    Pallets ({filteredPallets.length})
+                  </TabsTrigger>
+                  <TabsTrigger value="lots" className="gap-2">
+                    <Box className="h-4 w-4" />
+                    Lots ({filteredLots.length})
+                  </TabsTrigger>
+                </TabsList>
+
+                <div className="flex flex-wrap gap-2 w-full sm:w-auto">
+                  {activeTab === "pallets" && (
+                    <Button
+                      onClick={() => setPalletViewMode(palletViewMode === "card" ? "list" : "card")}
+                      variant="outline"
+                      className="flex-shrink-0 shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105"
+                    >
+                      {palletViewMode === "card" ? (
+                        <>
+                          <List className="h-4 w-4 sm:mr-2" />
+                          <span className="hidden sm:inline">List View</span>
+                        </>
+                      ) : (
+                        <>
+                          <Edit className="h-4 w-4 sm:mr-2" />
+                          <span className="hidden sm:inline">Edit Mode</span>
+                        </>
+                      )}
+                    </Button>
+                  )}
+
+                  {viewMode === "active" && palletViewMode === "card" && (
                     <>
-                      <List className="h-4 w-4 sm:mr-2" />
-                      <span className="hidden sm:inline">List View</span>
-                    </>
-                  ) : (
-                    <>
-                      <Edit className="h-4 w-4 sm:mr-2" />
-                      <span className="hidden sm:inline">Edit Mode</span>
+                      <Button
+                        onClick={() => {
+                          setEditingPallet(null);
+                          setPalletModalOpen(true);
+                        }}
+                        className="bg-secondary hover:bg-secondary/90 flex-shrink-0 shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105"
+                      >
+                        <Plus className="h-4 w-4 sm:mr-2" />
+                        <span className="hidden sm:inline">Add Pallet</span>
+                      </Button>
+                      <Button
+                        onClick={() => {
+                          setEditingLot(null);
+                          setLotModalOpen(true);
+                        }}
+                        className="bg-secondary hover:bg-secondary/90 flex-shrink-0 shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105"
+                      >
+                        <Plus className="h-4 w-4 sm:mr-2" />
+                        <span className="hidden sm:inline">Add Lot</span>
+                      </Button>
                     </>
                   )}
-                </Button>
-              )}
-              
-              {viewMode === "active" && palletViewMode === "card" && (
-                <>
-                  <Button
-                    onClick={() => {
-                      setEditingPallet(null);
-                      setPalletModalOpen(true);
-                    }}
-                    className="bg-secondary hover:bg-secondary/90 flex-shrink-0"
-                  >
-                    <Plus className="h-4 w-4 sm:mr-2" />
-                    <span className="hidden sm:inline">Add Pallet</span>
-                  </Button>
-                  <Button
-                    onClick={() => {
-                      setEditingLot(null);
-                      setLotModalOpen(true);
-                    }}
-                    className="bg-secondary hover:bg-secondary/90 flex-shrink-0"
-                  >
-                    <Plus className="h-4 w-4 sm:mr-2" />
-                    <span className="hidden sm:inline">Add Lot</span>
-                  </Button>
-                </>
-              )}
-            </div>
-          </div>
-
-          {/* Pallets Tab */}
-          <TabsContent value="pallets">
-            {filteredPallets.length === 0 ? (
-              <div className="text-center py-12 text-muted-foreground">
-                No pallets found
+                </div>
               </div>
-            ) : (
-              <div className="space-y-8">
-                {categoryOrder.map((category) => {
-                  const categoryPallets = categorizedPallets[category];
-                  if (!categoryPallets || categoryPallets.length === 0) return null;
 
-                  return (
-                    <div key={category} className="space-y-6">
-                      <div className="flex items-center gap-3 pb-3 border-b-2 border-primary/30">
-                        <div className="h-1 w-12 bg-primary rounded-full" />
-                        <h2 className="text-3xl font-bold text-primary tracking-tight">
-                          {category}
-                        </h2>
-                      </div>
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-4 gap-6">
-                        {categoryPallets.map((pallet) => (
-                          <PalletCard
-                            key={pallet.id}
-                            pallet={pallet}
-                            onEdit={(p) => {
-                              setEditingPallet(p);
-                              setPalletModalOpen(true);
-                            }}
-                            onRetire={handleRetirePallet}
-                            onUnretire={handleUnretirePallet}
-                            onDelete={(id) => {
-                              setDeletingId(id);
-                              setDeletingType("pallet");
-                              setDeleteDialogOpen(true);
-                            }}
-                            isHistory={viewMode === "history"}
-                          />
-                        ))}
-                      </div>
+              {/* Pallets Tab */}
+              <TabsContent value="pallets" className="mt-6">
+                {filteredPallets.length === 0 ? (
+                  <div className="text-center py-20">
+                    <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-muted mb-4">
+                      <Package className="h-10 w-10 text-muted-foreground" />
                     </div>
-                  );
-                })}
-              </div>
-            )}
-          </TabsContent>
+                    <p className="text-xl text-muted-foreground">No pallets found</p>
+                  </div>
+                ) : (
+                  <div className="space-y-10">
+                    {categoryOrder.map((category) => {
+                      const categoryPallets = categorizedPallets[category];
+                      if (!categoryPallets || categoryPallets.length === 0) return null;
 
-          {/* Lots Tab */}
-          <TabsContent value="lots">
-            {filteredLots.length === 0 ? (
-              <div className="text-center py-12 text-muted-foreground">
-                No lots found
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-4 gap-4">
-                {filteredLots.map((lot) => (
-                  <LotCard
-                    key={lot.id}
-                    lot={lot}
-                    onEdit={(l) => {
-                      setEditingLot(l);
-                      setLotModalOpen(true);
-                    }}
-                    onRetire={handleRetireLot}
-                    onUnretire={handleUnretireLot}
-                    onDelete={(id) => {
-                      setDeletingId(id);
-                      setDeletingType("lot");
-                      setDeleteDialogOpen(true);
-                    }}
-                    isHistory={viewMode === "history"}
-                  />
-                ))}
-              </div>
-            )}
-          </TabsContent>
-        </Tabs>
-      </main>
+                      return (
+                        <div
+                          key={category}
+                          className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500"
+                        >
+                          <div className="flex items-center gap-4 pb-4 border-b-2 border-primary/20">
+                            <div className="h-1.5 w-16 bg-gradient-to-r from-primary to-secondary rounded-full" />
+                            <h2 className="text-4xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent tracking-tight">
+                              {category}
+                            </h2>
+                            <span className="text-sm font-medium text-muted-foreground bg-muted px-3 py-1 rounded-full">
+                              {categoryPallets.length}
+                            </span>
+                          </div>
+                          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-4 gap-6">
+                            {categoryPallets.map((pallet, index) => (
+                              <div
+                                key={pallet.id}
+                                className="animate-in fade-in slide-in-from-bottom-4"
+                                style={{ animationDelay: `${index * 50}ms` }}
+                              >
+                                <PalletCard
+                                  pallet={pallet}
+                                  onEdit={(p) => {
+                                    setEditingPallet(p);
+                                    setPalletModalOpen(true);
+                                  }}
+                                  onRetire={handleRetirePallet}
+                                  onUnretire={handleUnretirePallet}
+                                  onDelete={(id) => {
+                                    setDeletingId(id);
+                                    setDeletingType("pallet");
+                                    setDeleteDialogOpen(true);
+                                  }}
+                                  isHistory={viewMode === "history"}
+                                />
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </TabsContent>
+
+              {/* Lots Tab */}
+              <TabsContent value="lots" className="mt-6">
+                {filteredLots.length === 0 ? (
+                  <div className="text-center py-20">
+                    <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-muted mb-4">
+                      <Box className="h-10 w-10 text-muted-foreground" />
+                    </div>
+                    <p className="text-xl text-muted-foreground">No lots found</p>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-4 gap-6">
+                    {filteredLots.map((lot, index) => (
+                      <div
+                        key={lot.id}
+                        className="animate-in fade-in slide-in-from-bottom-4"
+                        style={{ animationDelay: `${index * 50}ms` }}
+                      >
+                        <LotCard
+                          lot={lot}
+                          onEdit={(l) => {
+                            setEditingLot(l);
+                            setLotModalOpen(true);
+                          }}
+                          onRetire={handleRetireLot}
+                          onUnretire={handleUnretireLot}
+                          onDelete={(id) => {
+                            setDeletingId(id);
+                            setDeletingType("lot");
+                            setDeleteDialogOpen(true);
+                          }}
+                          isHistory={viewMode === "history"}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </TabsContent>
+            </Tabs>
+          </main>
         </>
       )}
 
@@ -630,12 +639,11 @@ const Index = () => {
 
       {/* Delete Confirmation Dialog */}
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <AlertDialogContent>
+        <AlertDialogContent className="shadow-2xl">
           <AlertDialogHeader>
             <AlertDialogTitle>Are you sure?</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete the{" "}
-              {deletingType}.
+              This action cannot be undone. This will permanently delete the {deletingType}.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
