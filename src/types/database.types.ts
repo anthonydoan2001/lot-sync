@@ -4,6 +4,7 @@ export interface Pallet {
   type: string | null;
   grade: string | null;
   description: string;
+  generation: string | null;
   is_retired: boolean;
   created_at: string;
   retired_at: string | null;
