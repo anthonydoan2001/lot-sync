@@ -75,6 +75,13 @@ export function PalletCard({ pallet, onEdit, onRetire, onUnretire, onDelete, isH
       </CardHeader>
 
       <CardContent className="space-y-2 px-6 pb-4 relative">
+        {pallet.generation && (
+          <div className="inline-block px-3 py-1 rounded-full bg-primary/10 backdrop-blur-sm">
+            <p className="text-sm text-primary font-semibold">
+              Generation: {pallet.generation}
+            </p>
+          </div>
+        )}
         <div className="inline-block px-3 py-1 rounded-full bg-muted/50 backdrop-blur-sm">
           <p className="text-sm text-muted-foreground font-medium">
             Created: {format(new Date(pallet.created_at), "PPpp")}

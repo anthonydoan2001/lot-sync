@@ -160,6 +160,14 @@ export function PalletListView({ pallets }: PalletListViewProps) {
                         {pallet.grade}
                       </Badge>
                     )}
+                    {pallet.generation && (
+                      <Badge
+                        variant="outline"
+                        className="font-semibold text-lg px-4 py-1.5 bg-primary/10 border-primary/30 text-primary"
+                      >
+                        {pallet.generation}
+                      </Badge>
+                    )}
                     <span className="text-3xl font-semibold text-foreground uppercase flex-1 tracking-wide">
                       {description}
                     </span>
