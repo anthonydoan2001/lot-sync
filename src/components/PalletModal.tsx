@@ -264,24 +264,6 @@ export function PalletModal({ open, onClose, onSubmit, pallet }: PalletModalProp
               </Select>
             </div>
 
-            {type === "DESKTOPS" && (
-              <div className="space-y-2">
-                <Label htmlFor="generation">Desktop Generation</Label>
-                <Select value={generation} onValueChange={setGeneration}>
-                  <SelectTrigger id="generation">
-                    <SelectValue placeholder="Select generation" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-background z-50">
-                    {DESKTOP_GENERATIONS.map((gen) => (
-                      <SelectItem key={gen} value={gen}>
-                        {gen}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            )}
-
             {shouldShowDescriptionDropdown() && (
               <div className="space-y-2">
                 <Label htmlFor="description-select">Description *</Label>
@@ -293,6 +275,24 @@ export function PalletModal({ open, onClose, onSubmit, pallet }: PalletModalProp
                     {getDescriptionsForType(type as PalletType).map((desc) => (
                       <SelectItem key={desc} value={desc}>
                         {desc}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+
+            {type === "DESKTOPS" && selectedDescription && selectedDescription.includes("B/C") && selectedDescription !== "OTHER" && (
+              <div className="space-y-2">
+                <Label htmlFor="generation">Desktop Generation</Label>
+                <Select value={generation} onValueChange={setGeneration}>
+                  <SelectTrigger id="generation">
+                    <SelectValue placeholder="Select generation" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-background z-50">
+                    {DESKTOP_GENERATIONS.map((gen) => (
+                      <SelectItem key={gen} value={gen}>
+                        {gen}
                       </SelectItem>
                     ))}
                   </SelectContent>
