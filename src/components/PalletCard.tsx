@@ -16,47 +16,48 @@ interface PalletCardProps {
 export function PalletCard({ pallet, onEdit, onRetire, onUnretire, onDelete, isHistory = false }: PalletCardProps) {
   const getDisplayDescription = () => {
     let desc = pallet.description;
-    
-    // If there's a grade, remove it from the start of the description
+
     if (pallet.grade && desc.startsWith(pallet.grade)) {
       desc = desc.substring(pallet.grade.length).trim();
     }
-    
-    // Append type if it exists
-    return `${desc} ${pallet.type || ''}`.trim();
+
+    return `${desc} ${pallet.type || ""}`.trim();
   };
 
-  // Determine if grade should be red (D/F, D, or F)
-  const isLowGrade = pallet.grade && ['D/F', 'D', 'F'].includes(pallet.grade.toUpperCase());
+  const isLowGrade = pallet.grade && ["D/F", "D", "F"].includes(pallet.grade.toUpperCase());
 
   return (
-    <Card className="hover:shadow-xl transition-all duration-300 hover:border-accent/30 border-2">
-      <CardHeader className="space-y-3 p-6">
+    <Card className="group hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 hover:border-accent/50 border-2 overflow-hidden bg-gradient-to-br from-card to-card/80">
+      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-secondary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+
+      <CardHeader className="space-y-3 p-6 relative">
         <div className="flex items-start justify-between gap-3">
           <div className="flex-1 space-y-3">
             <div className="flex items-center gap-3 flex-wrap">
               {pallet.grade && (
-                <span className={`text-lg font-bold uppercase px-4 py-2 rounded-lg shadow-sm ${
-                  isLowGrade 
-                    ? 'bg-destructive text-destructive-foreground' 
-                    : 'bg-secondary text-secondary-foreground'
-                }`}>
+                <span
+                  className={`text-lg font-bold uppercase px-4 py-2 rounded-lg shadow-md transition-all duration-300 group-hover:shadow-lg ${
+                    isLowGrade
+                      ? "bg-gradient-to-br from-destructive to-destructive/80 text-destructive-foreground"
+                      : "bg-gradient-to-br from-secondary to-secondary/80 text-secondary-foreground"
+                  }`}
+                >
                   {pallet.grade}
                 </span>
               )}
-              <p className="text-xl font-semibold text-foreground uppercase flex-1">
-                {getDisplayDescription()}
-              </p>
+              <p className="text-xl font-semibold text-foreground uppercase flex-1">{getDisplayDescription()}</p>
             </div>
-            <h3 className="text-3xl font-bold text-primary uppercase tracking-wide">{pallet.pallet_number}</h3>
+            <h3 className="text-4xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent uppercase tracking-wide">
+              {pallet.pallet_number}
+            </h3>
           </div>
           {!isHistory && (
-            <div className="flex gap-2 pt-1">
+            <div className="flex gap-2 pt-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
               <Button
                 size="icon"
                 variant="ghost"
                 onClick={() => onEdit(pallet)}
-                className="h-9 w-9 hover:bg-primary/10 hover:text-primary transition-colors"
+                className="h-9 w-9 hover:bg-primary/10 hover:text-primary transition-all duration-300 hover:scale-110 shadow-sm"
               >
                 <Pencil className="h-4 w-4" />
               </Button>
@@ -64,7 +65,7 @@ export function PalletCard({ pallet, onEdit, onRetire, onUnretire, onDelete, isH
                 size="icon"
                 variant="ghost"
                 onClick={() => onDelete(pallet.id)}
-                className="h-9 w-9 hover:bg-destructive/10 hover:text-destructive transition-colors"
+                className="h-9 w-9 hover:bg-destructive/10 hover:text-destructive transition-all duration-300 hover:scale-110 shadow-sm"
               >
                 <Trash2 className="h-4 w-4" />
               </Button>
@@ -72,22 +73,28 @@ export function PalletCard({ pallet, onEdit, onRetire, onUnretire, onDelete, isH
           )}
         </div>
       </CardHeader>
-      <CardContent className="space-y-2 px-6 pb-4">
-        <p className="text-sm text-muted-foreground">
-          Created: {format(new Date(pallet.created_at), "PPpp")}
-        </p>
-        {isHistory && pallet.retired_at && (
-          <p className="text-sm text-muted-foreground">
-            Retired: {format(new Date(pallet.retired_at), "PPpp")}
+
+      <CardContent className="space-y-2 px-6 pb-4 relative">
+        <div className="inline-block px-3 py-1 rounded-full bg-muted/50 backdrop-blur-sm">
+          <p className="text-sm text-muted-foreground font-medium">
+            Created: {format(new Date(pallet.created_at), "PPpp")}
           </p>
+        </div>
+        {isHistory && pallet.retired_at && (
+          <div className="inline-block px-3 py-1 rounded-full bg-muted/50 backdrop-blur-sm">
+            <p className="text-sm text-muted-foreground font-medium">
+              Retired: {format(new Date(pallet.retired_at), "PPpp")}
+            </p>
+          </div>
         )}
       </CardContent>
-      <CardFooter className="flex gap-2 px-6 pb-6">
+
+      <CardFooter className="flex gap-2 px-6 pb-6 relative">
         {!isHistory ? (
           <Button
             variant="outline"
             onClick={() => onRetire(pallet.id)}
-            className="h-10 px-5 font-semibold text-accent border-2 border-accent hover:bg-accent hover:text-accent-foreground transition-all"
+            className="h-10 px-5 font-semibold text-accent border-2 border-accent hover:bg-accent hover:text-accent-foreground transition-all duration-300 hover:scale-105 shadow-md hover:shadow-lg"
           >
             <Archive className="h-4 w-4 mr-2" />
             Retire
@@ -96,7 +103,7 @@ export function PalletCard({ pallet, onEdit, onRetire, onUnretire, onDelete, isH
           <Button
             variant="default"
             onClick={() => onUnretire(pallet.id)}
-            className="h-10 px-5 font-semibold"
+            className="h-10 px-5 font-semibold transition-all duration-300 hover:scale-105 shadow-md hover:shadow-lg"
           >
             <Archive className="h-4 w-4 mr-2" />
             Unretire
