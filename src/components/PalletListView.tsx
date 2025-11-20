@@ -124,7 +124,7 @@ export function PalletListView({ pallets }: PalletListViewProps) {
           <div key={category} className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
             <div className="flex items-center gap-4 pb-4 border-b-2 border-primary/20 sticky top-0 bg-background/95 backdrop-blur-sm z-10 py-2">
               <div className="h-1.5 w-16 bg-gradient-to-r from-primary to-secondary rounded-full" />
-              <h2 className="text-5xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent tracking-tight">
+              <h2 className="text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent tracking-tight">
                 {category}
               </h2>
               <span className="text-sm font-medium text-muted-foreground bg-muted px-3 py-1 rounded-full">
@@ -148,19 +148,19 @@ export function PalletListView({ pallets }: PalletListViewProps) {
                   >
                     <Badge
                       variant="outline"
-                      className="font-mono text-4xl font-bold px-5 py-2.5 bg-gradient-to-br from-primary/10 to-primary/5 border-2 border-primary/30 shadow-md min-w-[140px] justify-center"
+                      className="font-mono text-2xl font-bold px-4 py-2 bg-gradient-to-br from-primary/10 to-primary/5 border-2 border-primary/30 shadow-md min-w-[120px] justify-center"
                     >
                       {pallet.pallet_number}
                     </Badge>
                     {pallet.grade && (
                       <Badge
                         variant={isLowGrade ? "destructive" : "secondary"}
-                        className="font-bold text-2xl px-5 py-2 shadow-md min-w-[80px] justify-center"
+                        className="font-bold text-xl px-4 py-1.5 shadow-md min-w-[70px] justify-center"
                       >
                         {pallet.grade}
                       </Badge>
                     )}
-                    <span className="text-3xl font-semibold text-foreground uppercase flex-1 tracking-wide">
+                    <span className="text-2xl font-semibold text-foreground uppercase flex-1 tracking-wide">
                       {description}
                     </span>
                   </div>
