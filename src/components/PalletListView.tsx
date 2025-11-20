@@ -36,7 +36,7 @@ const cleanDescription = (description: string, category: Category): string => {
   return cleaned.replace(/\s+/g, " ").trim();
 };
 
-const DESKTOP_SORT_ORDER = ["B/C ↓ 4TH GEN", "B/C 5-7TH GEN", "B/C ↑ 8TH GEN", "OTHER", "D/F", "D", "F"];
+const DESKTOP_SORT_ORDER = ["B/C 1-2ND GEN", "B/C 3RD GEN", "B/C 4TH GEN", "B/C 5-7TH GEN", "B/C ↑ 8TH GEN", "OTHER", "D/F", "D", "F"];
 const LAPTOP_SORT_ORDER = ["B/C ↓ 4TH GEN", "B/C ↑ 5TH GEN", "OTHER", "D/F", "D", "F"];
 const DISPLAY_SORT_ORDER = ["B LCD", "CLCD", "OTHER", "D/F", "D", "F"];
 const CHROMEBOOK_SORT_ORDER = ["B/C MANAGED", "B/C NON-MANAGED", "OTHER", "D/F", "D", "F"];
@@ -158,14 +158,6 @@ export function PalletListView({ pallets }: PalletListViewProps) {
                         className="font-bold text-2xl px-5 py-2 shadow-md min-w-[80px] justify-center"
                       >
                         {pallet.grade}
-                      </Badge>
-                    )}
-                    {pallet.generation && (
-                      <Badge
-                        variant="outline"
-                        className="font-semibold text-lg px-4 py-1.5 bg-primary/10 border-primary/30 text-primary"
-                      >
-                        {pallet.generation}
                       </Badge>
                     )}
                     <span className="text-3xl font-semibold text-foreground uppercase flex-1 tracking-wide">
