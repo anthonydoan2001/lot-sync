@@ -143,24 +143,24 @@ export function PalletListView({ pallets }: PalletListViewProps) {
                 return (
                   <div
                     key={pallet.id}
-                    className="flex items-center gap-5 px-6 py-4 rounded-xl border-2 border-border bg-card hover:bg-accent/5 hover:border-accent/30 transition-all duration-300 shadow-sm hover:shadow-lg hover:-translate-y-0.5 animate-in fade-in slide-in-from-bottom-4"
+                    className="flex items-center gap-4 px-6 py-4 rounded-xl border-2 border-border bg-background hover:border-primary hover:shadow-lg transition-all duration-200 hover:translate-x-1 animate-in fade-in slide-in-from-bottom-4"
                     style={{ animationDelay: `${index * 30}ms` }}
                   >
-                    <Badge
-                      variant="outline"
-                      className="font-mono text-2xl font-bold px-4 py-2 bg-gradient-to-br from-primary/10 to-primary/5 border-2 border-primary/30 shadow-md min-w-[120px] justify-center"
-                    >
+                    <div className="font-sans text-4xl font-bold text-blue-700 min-w-[160px] px-5 py-2.5 bg-background border-[3px] border-blue-500 rounded-lg text-center tracking-wider shadow-sm">
                       {pallet.pallet_number}
-                    </Badge>
+                    </div>
                     {pallet.grade && (
-                      <Badge
-                        variant={isLowGrade ? "destructive" : "secondary"}
-                        className="font-bold text-xl px-4 py-1.5 shadow-md min-w-[70px] justify-center"
+                      <div
+                        className={`text-xl font-bold px-5 py-1.5 rounded-lg uppercase tracking-wider min-w-[70px] text-center shadow-md ${
+                          isLowGrade
+                            ? "bg-gradient-to-br from-red-500 to-red-600 text-white"
+                            : "bg-gradient-to-br from-green-500 to-green-600 text-white"
+                        }`}
                       >
                         {pallet.grade}
-                      </Badge>
+                      </div>
                     )}
-                    <span className="text-2xl font-semibold text-foreground uppercase flex-1 tracking-wide">
+                    <span className="text-3xl font-semibold text-foreground uppercase flex-1 tracking-wide">
                       {description}
                     </span>
                   </div>
