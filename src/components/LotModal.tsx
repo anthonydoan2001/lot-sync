@@ -21,28 +21,24 @@ interface LotModalProps {
 
 export function LotModal({ open, onClose, onSubmit, lot }: LotModalProps) {
   const [lotNumber, setLotNumber] = useState("");
-  const [customerName, setCustomerName] = useState("");
   const [contents, setContents] = useState("");
 
   useEffect(() => {
     if (lot) {
       setLotNumber(lot.lot_number);
-      setCustomerName(lot.customer_name);
       setContents(lot.contents);
     } else {
       setLotNumber("");
-      setCustomerName("");
       setContents("");
     }
   }, [lot, open]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!lotNumber.trim() || !customerName.trim() || !contents.trim()) return;
+    if (!lotNumber.trim() || !contents.trim()) return;
 
     onSubmit({
       lot_number: lotNumber.trim(),
-      customer_name: customerName.trim(),
       contents: contents.trim(),
     });
   };
@@ -62,16 +58,6 @@ export function LotModal({ open, onClose, onSubmit, lot }: LotModalProps) {
                 value={lotNumber}
                 onChange={(e) => setLotNumber(e.target.value)}
                 placeholder="e.g., Lot 1234"
-                required
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="customer-name">Customer Name *</Label>
-              <Input
-                id="customer-name"
-                value={customerName}
-                onChange={(e) => setCustomerName(e.target.value)}
-                placeholder="Customer name"
                 required
               />
             </div>

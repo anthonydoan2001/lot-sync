@@ -21,7 +21,6 @@ export function LotCard({ lot, onEdit, onRetire, onUnretire, onDelete, isHistory
       <CardHeader className="space-y-3 p-6 relative">
         <div className="flex items-start justify-between gap-3">
           <div className="flex-1 space-y-2">
-            <p className="text-xl font-semibold text-foreground uppercase tracking-wide">{lot.customer_name}</p>
             <h3 className="text-4xl font-bold bg-gradient-to-r from-secondary to-secondary/60 bg-clip-text text-transparent uppercase tracking-wide">
               {lot.lot_number}
             </h3>

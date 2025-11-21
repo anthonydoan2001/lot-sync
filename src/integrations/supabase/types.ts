@@ -18,7 +18,6 @@ export type Database = {
         Row: {
           contents: string
           created_at: string
-          customer_name: string
           id: string
           is_retired: boolean
           lot_number: string
@@ -27,7 +26,6 @@ export type Database = {
         Insert: {
           contents: string
           created_at?: string
-          customer_name: string
           id?: string
           is_retired?: boolean
           lot_number: string
@@ -36,7 +34,6 @@ export type Database = {
         Update: {
           contents?: string
           created_at?: string
-          customer_name?: string
           id?: string
           is_retired?: boolean
           lot_number?: string
