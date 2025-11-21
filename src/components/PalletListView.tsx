@@ -160,7 +160,7 @@ export function PalletListView({ pallets }: PalletListViewProps) {
                         {pallet.grade}
                       </div>
                     )}
-                    <span className="text-3xl font-semibold text-foreground uppercase flex-1 tracking-wide">
+                    <span className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-semibold text-foreground uppercase flex-1 tracking-wide">
                       {description}
                     </span>
                   </div>
