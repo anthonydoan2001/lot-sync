@@ -147,7 +147,7 @@ const Index = () => {
   const filteredLots = lots.filter((lot) => lot.lot_number.toLowerCase().includes(searchQuery.toLowerCase()));
 
   // Define sort orders for each category
-  const DESKTOP_SORT_ORDER = ["B/C ↓ 4TH GEN", "B/C 5-7TH GEN", "B/C ↑ 8TH GEN", "D/F", "OTHER"];
+  const DESKTOP_SORT_ORDER = ["B/C 1-2ND GEN", "B/C 3RD GEN", "B/C 4TH GEN", "B/C 5-7TH GEN", "B/C ↑ 8TH GEN", "OTHER", "D/F"];
   const LAPTOP_SORT_ORDER = ["B/C ↓ 4TH GEN", "B/C ↑ 5TH GEN", "D/F", "OTHER"];
   const DISPLAY_SORT_ORDER = ["B LCD", "CLCD", "OTHER"];
   const CHROMEBOOK_SORT_ORDER = ["B/C MANAGED", "B/C NON-MANAGED", "D", "F", "OTHER"];
