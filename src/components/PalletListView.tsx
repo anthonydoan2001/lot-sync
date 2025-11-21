@@ -65,10 +65,14 @@ const sortPalletsByDescription = (pallets: Pallet[], category: Category): Pallet
   }
 
   return [...pallets].sort((a, b) => {
-    const aDesc = a.description?.toUpperCase() || "OTHER";
-    const bDesc = b.description?.toUpperCase() || "OTHER";
+    let aDesc = a.description?.toUpperCase() || "OTHER";
+    let bDesc = b.description?.toUpperCase() || "OTHER";
     const aGrade = a.grade?.toUpperCase() || "";
     const bGrade = b.grade?.toUpperCase() || "";
+
+    // Strip "B/C " prefix from descriptions for comparison
+    aDesc = aDesc.replace(/^B\/C\s+/, "");
+    bDesc = bDesc.replace(/^B\/C\s+/, "");
 
     // For desktops, strictly follow the sort order (which has D/F at the end)
     if (category === "DESKTOPS") {
