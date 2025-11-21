@@ -13,7 +13,6 @@ export interface Pallet {
 export interface Lot {
   id: string;
   lot_number: string;
-  customer_name: string;
   contents: string;
   is_retired: boolean;
   created_at: string;
