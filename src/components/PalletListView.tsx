@@ -36,10 +36,10 @@ const cleanDescription = (description: string, category: Category): string => {
   return cleaned.replace(/\s+/g, " ").trim();
 };
 
-const DESKTOP_SORT_ORDER = ["1-2ND GEN", "3RD GEN", "4TH GEN", "5-7TH GEN", "↑ 8TH GEN", "OTHER", "D/F", "D", "F"];
-const LAPTOP_SORT_ORDER = ["B/C ↓ 4TH GEN", "B/C ↑ 5TH GEN", "OTHER", "D/F", "D", "F"];
-const DISPLAY_SORT_ORDER = ["B LCD", "CLCD", "OTHER", "D/F", "D", "F"];
-const CHROMEBOOK_SORT_ORDER = ["B/C MANAGED", "B/C NON-MANAGED", "OTHER", "D/F", "D", "F"];
+const DESKTOP_SORT_ORDER = ["B/C ↓ 4TH GEN", "B/C 5-7TH GEN", "B/C ↑ 8TH GEN", "D/F", "OTHER"];
+const LAPTOP_SORT_ORDER = ["B/C ↓ 4TH GEN", "B/C ↑ 5TH GEN", "D/F", "OTHER"];
+const DISPLAY_SORT_ORDER = ["B LCD", "CLCD", "OTHER"];
+const CHROMEBOOK_SORT_ORDER = ["B/C MANAGED", "B/C NON-MANAGED", "D", "F", "OTHER"];
 
 const sortPalletsByDescription = (pallets: Pallet[], category: Category): Pallet[] => {
   let sortOrder: string[] = [];
@@ -65,45 +65,8 @@ const sortPalletsByDescription = (pallets: Pallet[], category: Category): Pallet
   }
 
   return [...pallets].sort((a, b) => {
-    let aDesc = a.description?.toUpperCase() || "OTHER";
-    let bDesc = b.description?.toUpperCase() || "OTHER";
-    const aGrade = a.grade?.toUpperCase() || "";
-    const bGrade = b.grade?.toUpperCase() || "";
-
-    // Strip "B/C " prefix from descriptions for comparison
-    aDesc = aDesc.replace(/^B\/C\s+/, "");
-    bDesc = bDesc.replace(/^B\/C\s+/, "");
-
-    // For desktops, strictly follow the sort order (which has D/F at the end)
-    if (category === "DESKTOPS") {
-      let aIndex = sortOrder.indexOf(aDesc);
-      let bIndex = sortOrder.indexOf(bDesc);
-
-      // If description not found, treat as "OTHER"
-      if (aIndex === -1) aIndex = sortOrder.indexOf("OTHER");
-      if (bIndex === -1) bIndex = sortOrder.indexOf("OTHER");
-
-      // Sort by index
-      if (aIndex !== bIndex) {
-        return aIndex - bIndex;
-      }
-
-      // Same index, sort by creation date
-      return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
-    }
-
-    // For other categories, use the old logic with grade priority
-    const lowGrades = ["D/F", "D", "F"];
-    const aIsLowGrade = lowGrades.includes(aGrade);
-    const bIsLowGrade = lowGrades.includes(bGrade);
-
-    if (aIsLowGrade && !bIsLowGrade) return 1;
-    if (!aIsLowGrade && bIsLowGrade) return -1;
-
-    if (aIsLowGrade && bIsLowGrade) {
-      const lowGradeOrder = ["D/F", "D", "F"];
-      return lowGradeOrder.indexOf(aGrade) - lowGradeOrder.indexOf(bGrade);
-    }
+    const aDesc = a.description?.toUpperCase() || "OTHER";
+    const bDesc = b.description?.toUpperCase() || "OTHER";
 
     const aIndex = sortOrder.indexOf(aDesc);
     const bIndex = sortOrder.indexOf(bDesc);
