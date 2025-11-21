@@ -183,6 +183,13 @@ const Index = () => {
       const aIndex = sortOrder.indexOf(aDesc);
       const bIndex = sortOrder.indexOf(bDesc);
 
+      // Special handling for D/F - always comes last
+      const aIsDF = aDesc === "D/F";
+      const bIsDF = bDesc === "D/F";
+
+      if (aIsDF && !bIsDF) return 1; // D/F comes after everything
+      if (!aIsDF && bIsDF) return -1; // Everything comes before D/F
+
       if (aIndex !== -1 && bIndex !== -1) {
         return aIndex - bIndex;
       }
