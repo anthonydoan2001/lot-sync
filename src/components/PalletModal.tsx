@@ -18,6 +18,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Package } from "lucide-react";
 
 interface PalletModalProps {
   open: boolean;
@@ -212,38 +213,48 @@ export function PalletModal({ open, onClose, onSubmit, pallet }: PalletModalProp
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle>{pallet ? "Edit Pallet" : "Add New Pallet"}</DialogTitle>
+      <DialogContent className="max-h-[90vh] overflow-y-auto max-w-[520px]">
+        <DialogHeader className="px-8 pt-7 pb-5 -mx-6 -mt-6 bg-gradient-to-br from-[hsl(var(--modal-header-from))] to-[hsl(var(--modal-header-to))] border-b-2">
+          <DialogTitle className="text-3xl font-bold flex items-center gap-3">
+            <div className="w-9 h-9 bg-gradient-to-br from-[hsl(var(--modal-icon-from))] to-[hsl(var(--modal-icon-to))] rounded-[10px] flex items-center justify-center text-white">
+              <Package className="w-5 h-5" />
+            </div>
+            {pallet ? "Edit Pallet" : "Add New Pallet"}
+          </DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit}>
-          <div className="space-y-4 py-4">
-            <div className="space-y-2">
-              <Label htmlFor="pallet-number">Pallet Number *</Label>
-              <div className="flex items-center gap-2">
-                <span className="text-sm font-medium">PL-</span>
+          <div className="space-y-7 py-8">
+            <div className="space-y-2.5">
+              <Label htmlFor="pallet-number" className="text-[15px] font-semibold">
+                Pallet Number <span className="text-destructive">*</span>
+              </Label>
+              <div className="relative">
+                <div className="absolute left-0 top-0 bottom-0 flex items-center px-[18px] bg-gradient-to-br from-muted to-muted/80 border-r-2 border-border rounded-l-[10px] font-bold text-lg text-muted-foreground">
+                  PL-
+                </div>
                 <Input
                   id="pallet-number"
                   value={palletNumber}
                   onChange={(e) => {
-                    // Only allow numbers
                     const value = e.target.value.replace(/[^0-9]/g, "");
                     setPalletNumber(value);
                   }}
                   placeholder="123"
                   required
-                  className="flex-1"
+                  className="pl-[70px] h-[50px] text-[17px] font-medium border-2 rounded-[10px]"
                 />
               </div>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="type">Type *</Label>
+            <div className="space-y-2.5">
+              <Label htmlFor="type" className="text-[15px] font-semibold">
+                Type <span className="text-destructive">*</span>
+              </Label>
               <Select value={type} onValueChange={handleTypeChange} required>
-                <SelectTrigger id="type">
-                  <SelectValue placeholder="Select type" />
+                <SelectTrigger id="type" className="h-[50px] text-[17px] font-medium border-2 rounded-[10px]">
+                  <SelectValue placeholder="Select type..." />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="bg-background">
                   <SelectItem value="DESKTOPS">DESKTOPS</SelectItem>
                   <SelectItem value="LAPTOPS">LAPTOPS</SelectItem>
                   <SelectItem value="DISPLAYS">DISPLAYS</SelectItem>
@@ -255,11 +266,13 @@ export function PalletModal({ open, onClose, onSubmit, pallet }: PalletModalProp
             </div>
 
             {shouldShowDescriptionDropdown() && (
-              <div className="space-y-2">
-                <Label htmlFor="description-select">Description *</Label>
+              <div className="space-y-2.5">
+                <Label htmlFor="description-select" className="text-[15px] font-semibold">
+                  Description <span className="text-destructive">*</span>
+                </Label>
                 <Select value={selectedDescription} onValueChange={handleDescriptionChange} required>
-                  <SelectTrigger id="description-select">
-                    <SelectValue placeholder="Select description" />
+                  <SelectTrigger id="description-select" className="h-[50px] text-[17px] font-medium border-2 rounded-[10px]">
+                    <SelectValue placeholder="Select description..." />
                   </SelectTrigger>
                   <SelectContent className="bg-background z-50">
                     {getDescriptionsForType(type as PalletType).map((desc) => (
@@ -273,8 +286,10 @@ export function PalletModal({ open, onClose, onSubmit, pallet }: PalletModalProp
             )}
 
             {shouldShowCustomDescription() && (
-              <div className="space-y-2">
-                <Label htmlFor="custom-description">Description *</Label>
+              <div className="space-y-2.5">
+                <Label htmlFor="custom-description" className="text-[15px] font-semibold">
+                  Description <span className="text-destructive">*</span>
+                </Label>
                 <Textarea
                   id="custom-description"
                   value={customDescription}
@@ -282,28 +297,30 @@ export function PalletModal({ open, onClose, onSubmit, pallet }: PalletModalProp
                   placeholder="Enter description"
                   required
                   rows={3}
+                  className="text-[17px] font-medium border-2 rounded-[10px]"
                 />
               </div>
             )}
 
             {shouldShowGradeInput() && (
-              <div className="space-y-2">
-                <Label htmlFor="grade">Grade</Label>
+              <div className="space-y-2.5">
+                <Label htmlFor="grade" className="text-[15px] font-semibold">Grade</Label>
                 <Input
                   id="grade"
                   value={grade}
                   onChange={(e) => setGrade(e.target.value)}
                   placeholder="e.g., B/C"
+                  className="h-[50px] text-[17px] font-medium border-2 rounded-[10px]"
                 />
               </div>
             )}
           </div>
-          <DialogFooter>
-            <Button type="button" variant="outline" onClick={onClose}>
+          <DialogFooter className="px-8 pb-6 pt-6 -mx-6 -mb-6 bg-muted border-t-2 rounded-b-[16px] gap-3">
+            <Button type="button" variant="outline" onClick={onClose} className="h-[48px] px-7 text-base font-semibold border-2 rounded-[10px]">
               Cancel
             </Button>
-            <Button type="submit">
-              {pallet ? "Update" : "Add"}
+            <Button type="submit" className="h-[48px] px-7 text-base font-semibold rounded-[10px] bg-gradient-to-br from-[hsl(var(--modal-icon-from))] to-[hsl(var(--modal-icon-to))] shadow-lg hover:shadow-xl transition-all hover:-translate-y-0.5">
+              {pallet ? "Update" : "Add Pallet"}
             </Button>
           </DialogFooter>
         </form>
