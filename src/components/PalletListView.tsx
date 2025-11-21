@@ -146,7 +146,7 @@ export function PalletListView({ pallets }: PalletListViewProps) {
                     className="flex items-center gap-4 px-6 py-4 rounded-xl border-2 border-border bg-background hover:border-primary hover:shadow-lg transition-all duration-200 hover:translate-x-1 animate-in fade-in slide-in-from-bottom-4"
                     style={{ animationDelay: `${index * 30}ms` }}
                   >
-                    <div className="font-sans text-4xl font-bold text-blue-700 min-w-[160px] px-5 py-2.5 bg-background border-[3px] border-blue-500 rounded-lg text-center tracking-wider shadow-sm">
+                    <div className="font-sans text-2xl font-bold text-blue-700 min-w-[140px] px-4 py-2 bg-background border-[3px] border-blue-500 rounded-lg text-center tracking-wider shadow-sm">
                       {pallet.pallet_number}
                     </div>
                     {pallet.grade && (
