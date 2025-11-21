@@ -36,7 +36,7 @@ const cleanDescription = (description: string, category: Category): string => {
   return cleaned.replace(/\s+/g, " ").trim();
 };
 
-const DESKTOP_SORT_ORDER = ["B/C 1-2ND GEN", "B/C 3RD GEN", "B/C 4TH GEN", "B/C 5-7TH GEN", "B/C ↑ 8TH GEN", "OTHER", "D/F", "D", "F"];
+const DESKTOP_SORT_ORDER = ["1-2ND GEN", "3RD GEN", "4TH GEN", "5-7TH GEN", "↑ 8TH GEN", "OTHER", "D/F", "D", "F"];
 const LAPTOP_SORT_ORDER = ["B/C ↓ 4TH GEN", "B/C ↑ 5TH GEN", "OTHER", "D/F", "D", "F"];
 const DISPLAY_SORT_ORDER = ["B LCD", "CLCD", "OTHER", "D/F", "D", "F"];
 const CHROMEBOOK_SORT_ORDER = ["B/C MANAGED", "B/C NON-MANAGED", "OTHER", "D/F", "D", "F"];
