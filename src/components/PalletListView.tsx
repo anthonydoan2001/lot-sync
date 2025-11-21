@@ -72,26 +72,19 @@ const sortPalletsByDescription = (pallets: Pallet[], category: Category): Pallet
 
     // For desktops, strictly follow the sort order (which has D/F at the end)
     if (category === "DESKTOPS") {
-      const aIndex = sortOrder.indexOf(aDesc);
-      const bIndex = sortOrder.indexOf(bDesc);
+      let aIndex = sortOrder.indexOf(aDesc);
+      let bIndex = sortOrder.indexOf(bDesc);
 
-      // If both descriptions are in the sort order, sort by that
-      if (aIndex !== -1 && bIndex !== -1) {
-        if (aIndex === bIndex) {
-          // Same description, sort by grade
-          const lowGrades = ["D/F", "D", "F"];
-          const aIsLowGrade = lowGrades.includes(aGrade);
-          const bIsLowGrade = lowGrades.includes(bGrade);
-          if (aIsLowGrade && bIsLowGrade) {
-            return lowGrades.indexOf(aGrade) - lowGrades.indexOf(bGrade);
-          }
-        }
+      // If description not found, treat as "OTHER"
+      if (aIndex === -1) aIndex = sortOrder.indexOf("OTHER");
+      if (bIndex === -1) bIndex = sortOrder.indexOf("OTHER");
+
+      // Sort by index
+      if (aIndex !== bIndex) {
         return aIndex - bIndex;
       }
 
-      if (aIndex !== -1) return -1;
-      if (bIndex !== -1) return 1;
-
+      // Same index, sort by creation date
       return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
     }
 
