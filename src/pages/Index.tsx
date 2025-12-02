@@ -20,7 +20,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Plus, Search, List, Edit, LogOut, Package, Box } from "lucide-react";
+import { Plus, Search, List, Edit, LogOut, Package, Box, BookOpen } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
 
@@ -443,6 +443,15 @@ const Index = () => {
                       className="pl-12 h-12 text-base shadow-md focus:shadow-lg transition-all duration-300"
                     />
                   </div>
+                  <Button
+                    onClick={() => navigate("/manual")}
+                    variant="outline"
+                    size="lg"
+                    className="flex-shrink-0 shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105"
+                  >
+                    <BookOpen className="h-4 w-4 sm:mr-2" />
+                    <span className="hidden sm:inline">Manual</span>
+                  </Button>
                   <Button
                     onClick={handleLogout}
                     variant="outline"
