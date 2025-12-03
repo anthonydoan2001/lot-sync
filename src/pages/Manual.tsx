@@ -1,4 +1,4 @@
-import { useState, lazy, Suspense } from "react";
+import { useState, lazy, Suspense, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Keyboard, Monitor, Cpu, MemoryStick, HardDrive } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -41,6 +41,13 @@ const sections = [
 const Manual = () => {
   const navigate = useNavigate();
   const [activeSection, setActiveSection] = useState<Section>("bios-keys");
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTo({ top: 0 });
+    }
+  }, [activeSection]);
 
   return (
     <div className="min-h-screen bg-background flex">
@@ -100,7 +107,7 @@ const Manual = () => {
 
       {/* Main Content */}
       <main className="flex-1 md:pt-0 pt-20">
-        <ScrollArea className="h-screen">
+        <ScrollArea className="h-screen" ref={scrollRef}>
           <div className="max-w-4xl mx-auto px-6 py-10">
             {activeSection === "bios-keys" && <BiosKeysSection />}
             {activeSection === "optiplex" && <OptiplexSection />}
