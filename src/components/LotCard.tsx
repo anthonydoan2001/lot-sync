@@ -25,7 +25,11 @@ export const LotCard = memo(function LotCard({ lot, onEdit, onRetire, onUnretire
       <span className="text-muted-foreground uppercase flex-1">{lot.contents}</span>
       
       <span className="text-xs text-muted-foreground whitespace-nowrap">
-        {isHistory && lot.retired_at ? formatDate(lot.retired_at) : formatDate(lot.created_at)}
+        {isHistory && lot.retired_at ? (
+          <>
+            {formatDate(lot.created_at)} - <span className="font-bold underline">{formatDate(lot.retired_at)}</span>
+          </>
+        ) : formatDate(lot.created_at)}
       </span>
       
       <div className="flex items-center gap-1">
