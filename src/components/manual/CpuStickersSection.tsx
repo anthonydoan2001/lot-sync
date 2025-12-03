@@ -107,6 +107,10 @@ const CpuStickersSection = () => (
       ))}
     </div>
 
+    <h2 className="text-xl font-semibold mt-8 mb-4">CPU Suffixes</h2>
+    <p className="text-muted-foreground">
+      <strong>K</strong> (unlocked), <strong>F</strong> (no integrated graphics), <strong>T</strong> (power-optimized)
+    </p>
   </article>
 );
 
