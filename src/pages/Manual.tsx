@@ -1,11 +1,12 @@
 import { useState, lazy, Suspense } from "react";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Keyboard, Monitor, Cpu, MemoryStick } from "lucide-react";
+import { ArrowLeft, Keyboard, Monitor, Cpu, MemoryStick, HardDrive } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import RamIdentificationSection from "@/components/manual/RamIdentificationSection";
+import StorageIdentificationSection from "@/components/manual/StorageIdentificationSection";
 
 // Lazy load the CPU stickers section (large SVG assets)
 const CpuStickersSection = lazy(() => import("@/components/manual/CpuStickersSection"));
@@ -27,13 +28,14 @@ const CpuStickersFallback = () => (
   </div>
 );
 
-type Section = "bios-keys" | "optiplex" | "cpu-stickers" | "ram";
+type Section = "bios-keys" | "optiplex" | "cpu-stickers" | "ram" | "storage";
 
 const sections = [
   { id: "bios-keys" as Section, title: "BIOS Keys", icon: Keyboard },
   { id: "optiplex" as Section, title: "Optiplex Form Factors", icon: Monitor },
   { id: "cpu-stickers" as Section, title: "Intel CPU Stickers", icon: Cpu },
   { id: "ram" as Section, title: "RAM Identification", icon: MemoryStick },
+  { id: "storage" as Section, title: "Storage Drives", icon: HardDrive },
 ];
 
 const Manual = () => {
@@ -108,6 +110,7 @@ const Manual = () => {
               </Suspense>
             )}
             {activeSection === "ram" && <RamIdentificationSection />}
+            {activeSection === "storage" && <StorageIdentificationSection />}
           </div>
         </ScrollArea>
       </main>
