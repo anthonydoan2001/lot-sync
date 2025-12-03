@@ -116,12 +116,11 @@ export const PalletListView = memo(function PalletListView({ pallets }: PalletLi
     <div className="space-y-12">
       {sortedCategories.map(({ category, pallets: sortedPallets }) => (
         <div key={category} className="space-y-6">
-          <div className="flex items-center gap-4 pb-4 border-b-2 border-primary/20 sticky top-0 bg-background/95 backdrop-blur-sm z-10 py-2">
-            <div className="h-1.5 w-16 bg-gradient-to-r from-primary to-secondary rounded-full" />
-            <h2 className="text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent tracking-tight">
+          <div className="flex items-center gap-3 pb-3 border-b border-border">
+            <h2 className="text-2xl font-semibold text-foreground tracking-tight">
               {category}
             </h2>
-            <span className="text-sm font-medium text-muted-foreground bg-muted px-3 py-1 rounded-full">
+            <span className="text-sm font-medium text-muted-foreground bg-muted px-2.5 py-0.5 rounded-full">
               {sortedPallets.length}
             </span>
           </div>
