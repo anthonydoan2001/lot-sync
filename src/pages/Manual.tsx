@@ -338,9 +338,6 @@ const stickerData = [
 const CpuStickersSection = () => (
   <article className="prose prose-slate dark:prose-invert max-w-none">
     <h1 className="text-3xl font-bold mb-2">Intel CPU Stickers by Generation</h1>
-    <p className="text-muted-foreground text-lg mb-8">
-      Visual identification guide for Intel processor generations based on sticker design (2009–Present).
-    </p>
 
     <hr className="my-8" />
 
@@ -358,10 +355,7 @@ const CpuStickersSection = () => (
               <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded">{item.logo}</span>
             </div>
             <p className="text-sm font-medium text-foreground mb-1">{item.generations}</p>
-            <p className="text-xs text-muted-foreground mb-1">Codename: {item.codename}</p>
-            {item.notes !== "—" && (
-              <p className="text-xs text-muted-foreground italic">{item.notes}</p>
-            )}
+            <p className="text-xs text-muted-foreground">{item.codename}</p>
           </div>
         </div>
       ))}
