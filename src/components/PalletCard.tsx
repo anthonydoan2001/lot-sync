@@ -2,6 +2,7 @@ import { memo } from "react";
 import { Pallet } from "@/types/database.types";
 import { Button } from "@/components/ui/button";
 import { Pencil, Archive, Trash2 } from "lucide-react";
+import { format } from "date-fns";
 
 interface PalletCardProps {
   pallet: Pallet;
@@ -11,6 +12,11 @@ interface PalletCardProps {
   onDelete: (id: string) => void;
   isHistory?: boolean;
 }
+
+const formatDate = (dateStr: string) => {
+  const date = new Date(dateStr);
+  return format(date, "M/d h:mma").toLowerCase();
+};
 
 export const PalletCard = memo(function PalletCard({ pallet, onEdit, onRetire, onUnretire, onDelete, isHistory = false }: PalletCardProps) {
   const getDisplayDescription = () => {
@@ -38,6 +44,10 @@ export const PalletCard = memo(function PalletCard({ pallet, onEdit, onRetire, o
       )}
       <span className="font-bold text-primary uppercase">{pallet.pallet_number}</span>
       <span className="text-muted-foreground uppercase flex-1">{getDisplayDescription()}</span>
+      
+      <span className="text-xs text-muted-foreground whitespace-nowrap">
+        {isHistory && pallet.retired_at ? formatDate(pallet.retired_at) : formatDate(pallet.created_at)}
+      </span>
       
       <div className="flex items-center gap-1">
         {!isHistory ? (
