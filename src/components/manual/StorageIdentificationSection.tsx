@@ -1,4 +1,5 @@
 import driveTypesImg from "@/assets/storage/different-type-of-drives.png";
+import m2SizesImg from "@/assets/storage/m2-sizes.png";
 
 const StorageIdentificationSection = () => {
   return (
@@ -141,6 +142,14 @@ const StorageIdentificationSection = () => {
             </tr>
           </tbody>
         </table>
+      </div>
+
+      <div className="my-6">
+        <img 
+          src={m2SizesImg} 
+          alt="M.2 SSD sizes comparison showing 2230, 2242, 2260, 2280, and 22110 form factors" 
+          className="rounded-lg border w-full"
+        />
       </div>
     </article>
   );
