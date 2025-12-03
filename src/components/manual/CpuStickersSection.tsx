@@ -12,7 +12,7 @@ const stickerData = [
   {
     era: "2009–2011",
     logo: "2009 Logo",
-    generations: "1st Gen (Nehalem)",
+    generations: "1st Gen",
     codename: "Nehalem",
     notes: "Also updated Core 2 branding",
     sticker: sticker1stGen,
@@ -88,12 +88,16 @@ const CpuStickersSection = () => (
     <h1 className="text-3xl font-bold mb-2">Intel CPU Stickers by Generation</h1>
 
     <hr className="my-8" />
-    
+
     <div className="grid gap-6">
       {stickerData.map((item, index) => (
         <div key={index} className="flex gap-4 p-4 rounded-lg border bg-card/50 items-center">
           <div className="flex-shrink-0 w-20 h-20 bg-white rounded-md flex items-center justify-center p-2 border">
-            <img src={item.sticker} alt={`${item.generations} sticker`} className="max-w-full max-h-full object-contain" />
+            <img
+              src={item.sticker}
+              alt={`${item.generations} sticker`}
+              className="max-w-full max-h-full object-contain"
+            />
           </div>
           <div className="flex-1 min-w-0">
             <p className="font-semibold text-foreground mb-1">{item.generations}</p>
@@ -106,17 +110,24 @@ const CpuStickersSection = () => (
     <hr className="my-8" />
 
     <h2 className="text-xl font-semibold mt-8 mb-4">How to Read Model Numbers</h2>
-    <p className="mb-4">
-      Intel processor model numbers follow a consistent pattern:
-    </p>
+    <p className="mb-4">Intel processor model numbers follow a consistent pattern:</p>
     <ul className="list-disc pl-6 space-y-2 mb-6">
-      <li><strong>Brand:</strong> i3, i5, i7, i9 (performance tier)</li>
-      <li><strong>Generation:</strong> First 1-2 digits after brand</li>
-      <li><strong>SKU:</strong> Remaining digits indicate performance within generation</li>
-      <li><strong>Suffix:</strong> K (unlocked), F (no integrated graphics), T (power-optimized)</li>
+      <li>
+        <strong>Brand:</strong> i3, i5, i7, i9 (performance tier)
+      </li>
+      <li>
+        <strong>Generation:</strong> First 1-2 digits after brand
+      </li>
+      <li>
+        <strong>SKU:</strong> Remaining digits indicate performance within generation
+      </li>
+      <li>
+        <strong>Suffix:</strong> K (unlocked), F (no integrated graphics), T (power-optimized)
+      </li>
     </ul>
     <p className="text-muted-foreground">
-      Example: <code className="bg-muted px-2 py-0.5 rounded text-xs">i5-12400</code> = Core i5, 12th generation, SKU 400
+      Example: <code className="bg-muted px-2 py-0.5 rounded text-xs">i5-12400</code> = Core i5, 12th generation, SKU
+      400
     </p>
   </article>
 );
