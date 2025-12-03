@@ -116,19 +116,9 @@ const StorageIdentificationSection = () => {
           </thead>
           <tbody>
             <tr className="border-t">
-              <td className="p-3 font-medium">2230</td>
-              <td className="p-3">22mm x 30mm</td>
-              <td className="p-3 text-muted-foreground">Compact, ultrabooks</td>
-            </tr>
-            <tr className="border-t">
-              <td className="p-3 font-medium">2242</td>
-              <td className="p-3">22mm x 42mm</td>
-              <td className="p-3 text-muted-foreground">Small laptops</td>
-            </tr>
-            <tr className="border-t">
-              <td className="p-3 font-medium">2260</td>
-              <td className="p-3">22mm x 60mm</td>
-              <td className="p-3 text-muted-foreground">Less common</td>
+              <td className="p-3 font-medium">22110</td>
+              <td className="p-3">22mm x 110mm</td>
+              <td className="p-3 text-muted-foreground">Enterprise/server</td>
             </tr>
             <tr className="border-t bg-primary/5">
               <td className="p-3 font-medium">2280</td>
@@ -136,9 +126,19 @@ const StorageIdentificationSection = () => {
               <td className="p-3 font-medium text-primary">Most common</td>
             </tr>
             <tr className="border-t">
-              <td className="p-3 font-medium">22110</td>
-              <td className="p-3">22mm x 110mm</td>
-              <td className="p-3 text-muted-foreground">Enterprise/server</td>
+              <td className="p-3 font-medium">2260</td>
+              <td className="p-3">22mm x 60mm</td>
+              <td className="p-3 text-muted-foreground">Less common</td>
+            </tr>
+            <tr className="border-t">
+              <td className="p-3 font-medium">2242</td>
+              <td className="p-3">22mm x 42mm</td>
+              <td className="p-3 text-muted-foreground">Small laptops</td>
+            </tr>
+            <tr className="border-t">
+              <td className="p-3 font-medium">2230</td>
+              <td className="p-3">22mm x 30mm</td>
+              <td className="p-3 text-muted-foreground">Compact, ultrabooks</td>
             </tr>
           </tbody>
         </table>
