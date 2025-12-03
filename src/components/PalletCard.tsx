@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { Pallet } from "@/types/database.types";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
@@ -13,7 +14,7 @@ interface PalletCardProps {
   isHistory?: boolean;
 }
 
-export function PalletCard({ pallet, onEdit, onRetire, onUnretire, onDelete, isHistory = false }: PalletCardProps) {
+export const PalletCard = memo(function PalletCard({ pallet, onEdit, onRetire, onUnretire, onDelete, isHistory = false }: PalletCardProps) {
   const getDisplayDescription = () => {
     let desc = pallet.description;
 
@@ -27,8 +28,8 @@ export function PalletCard({ pallet, onEdit, onRetire, onUnretire, onDelete, isH
   const isLowGrade = pallet.grade && ["D/F", "D", "F"].includes(pallet.grade.toUpperCase());
 
   return (
-    <Card className="group hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 hover:border-accent/50 border-2 overflow-hidden bg-gradient-to-br from-card to-card/80">
-      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-secondary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+    <Card className="group hover:shadow-xl transition-shadow duration-200 hover:border-accent/50 border-2 overflow-hidden bg-card">
+      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-secondary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
 
       <CardHeader className="space-y-3 p-6 relative">
         <div className="flex items-start justify-between gap-3">
@@ -112,4 +113,4 @@ export function PalletCard({ pallet, onEdit, onRetire, onUnretire, onDelete, isH
       </CardFooter>
     </Card>
   );
-}
+});
