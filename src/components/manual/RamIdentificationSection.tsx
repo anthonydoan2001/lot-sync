@@ -27,28 +27,34 @@ const RamIdentificationSection = () => (
           <tr>
             <th className="text-left p-3 font-semibold">Generation</th>
             <th className="text-left p-3 font-semibold">Speed Range</th>
+            <th className="text-left p-3 font-semibold">Max per Stick</th>
           </tr>
         </thead>
         <tbody>
           <tr className="border-t">
             <td className="p-3 font-medium">DDR</td>
             <td className="p-3 text-muted-foreground">200–400 MT/s</td>
+            <td className="p-3 text-muted-foreground">1GB</td>
           </tr>
           <tr className="border-t">
             <td className="p-3 font-medium">DDR2</td>
             <td className="p-3 text-muted-foreground">400–1066 MT/s</td>
+            <td className="p-3 text-muted-foreground">4GB</td>
           </tr>
           <tr className="border-t">
             <td className="p-3 font-medium">DDR3</td>
             <td className="p-3 text-muted-foreground">800–2133 MT/s</td>
+            <td className="p-3 text-muted-foreground">16GB</td>
           </tr>
           <tr className="border-t">
             <td className="p-3 font-medium">DDR4</td>
             <td className="p-3 text-muted-foreground">2133–3200+ MT/s</td>
+            <td className="p-3 text-muted-foreground">128GB</td>
           </tr>
           <tr className="border-t">
             <td className="p-3 font-medium">DDR5</td>
             <td className="p-3 text-muted-foreground">4800–8000+ MT/s</td>
+            <td className="p-3 text-muted-foreground">256GB</td>
           </tr>
         </tbody>
       </table>
