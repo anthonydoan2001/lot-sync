@@ -1,12 +1,12 @@
-import sticker1stGen from "@/assets/stickers/1st-gen.svg";
-import sticker2nd3rdGen from "@/assets/stickers/2nd-3rd-gen.svg";
-import sticker4thGen from "@/assets/stickers/4th-gen.svg";
-import sticker5thGen from "@/assets/stickers/5th-gen.svg";
-import sticker6th9thGen from "@/assets/stickers/6th-9th-gen.svg";
-import sticker10thGen from "@/assets/stickers/10th-gen.svg";
-import sticker11thGen from "@/assets/stickers/11th-gen.svg";
-import sticker11to13thGen from "@/assets/stickers/11-13th-gen.svg";
-import sticker14th15thGen from "@/assets/stickers/14th-15th-gen.svg";
+import sticker1stGen from "@/assets/stickers/1st-gen.png";
+import sticker2nd3rdGen from "@/assets/stickers/2nd-3rd-gen.png";
+import sticker4thGen from "@/assets/stickers/4th-gen.png";
+import sticker5thGen from "@/assets/stickers/5th-gen.png";
+import sticker6th9thGen from "@/assets/stickers/6th-9th-gen.png";
+import sticker10thGen from "@/assets/stickers/10th-gen.png";
+import sticker11thGen from "@/assets/stickers/11th-gen.png";
+import sticker11to13thGen from "@/assets/stickers/11-13th-gen.png";
+import sticker14th15thGen from "@/assets/stickers/14th-15th-gen.png";
 
 const stickerData = [
   {
