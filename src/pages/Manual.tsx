@@ -249,79 +249,144 @@ const OptiplexSection = () => (
   </article>
 );
 
+// Sticker imports
+import sticker1stGen from "@/assets/stickers/1st-gen.svg";
+import sticker2nd3rdGen from "@/assets/stickers/2nd-3rd-gen.svg";
+import sticker4thGen from "@/assets/stickers/4th-gen.svg";
+import sticker5thGen from "@/assets/stickers/5th-gen.svg";
+import sticker6th9thGen from "@/assets/stickers/6th-9th-gen.svg";
+import sticker10thGen from "@/assets/stickers/10th-gen.svg";
+import sticker11thGen from "@/assets/stickers/11th-gen.svg";
+import sticker11to13thGen from "@/assets/stickers/11-13th-gen.svg";
+import sticker14th15thGen from "@/assets/stickers/14th-15th-gen.svg";
+
+const stickerData = [
+  {
+    era: "2009–2011",
+    logo: "2009 Logo",
+    generations: "1st Gen (Nehalem)",
+    codename: "Nehalem",
+    notes: "Also updated Core 2 branding",
+    sticker: sticker1stGen,
+  },
+  {
+    era: "2011–2013",
+    logo: "2011 Logo",
+    generations: "2nd, 3rd Gen",
+    codename: "Sandy Bridge, Ivy Bridge",
+    notes: "Nehalem CPUs stayed with 2009 logos",
+    sticker: sticker2nd3rdGen,
+  },
+  {
+    era: "2013–2014",
+    logo: "Haswell Logo",
+    generations: "4th Gen",
+    codename: "Haswell",
+    notes: "Some Haswell PCs may have Broadwell stickers",
+    sticker: sticker4thGen,
+  },
+  {
+    era: "2014–2015",
+    logo: "Broadwell Logo",
+    generations: "5th Gen",
+    codename: "Broadwell",
+    notes: "—",
+    sticker: sticker5thGen,
+  },
+  {
+    era: "2015–2019",
+    logo: "2015 Logo",
+    generations: "6th, 7th, 8th, 9th Gen",
+    codename: "Skylake, Kaby Lake, Coffee Lake",
+    notes: "Gen number starts replacing 'Inside' on 7th Gen",
+    sticker: sticker6th9thGen,
+  },
+  {
+    era: "2019–2020",
+    logo: "2019 Logo",
+    generations: "10th Gen",
+    codename: "Ice Lake, Comet Lake",
+    notes: "Previous gens stayed with 2015 logos",
+    sticker: sticker10thGen,
+  },
+  {
+    era: "2020 (Prelaunch)",
+    logo: "Prelaunch 2020",
+    generations: "Early 11th Gen",
+    codename: "Tiger Lake previews",
+    notes: "Pre-release / marketing material only",
+    sticker: sticker11thGen,
+  },
+  {
+    era: "2020–2023",
+    logo: "2020 Logo",
+    generations: "11th, 12th, 13th Gen",
+    codename: "Tiger Lake, Alder Lake, Raptor Lake",
+    notes: "10th Gen still used 2019 logo",
+    sticker: sticker11to13thGen,
+  },
+  {
+    era: "2023–Present",
+    logo: "2024 Logo (Core Ultra)",
+    generations: "14th, 15th Gen",
+    codename: "Meteor Lake, Lunar Lake",
+    notes: "12th/13th Gen still use 2020 stickers",
+    sticker: sticker14th15thGen,
+  },
+];
+
 const CpuStickersSection = () => (
   <article className="prose prose-slate dark:prose-invert max-w-none">
     <h1 className="text-3xl font-bold mb-2">Intel CPU Stickers by Generation</h1>
     <p className="text-muted-foreground text-lg mb-8">
-      Visual identification guide for Intel processor generations based on sticker design.
+      Visual identification guide for Intel processor generations based on sticker design (2009–Present).
     </p>
 
     <hr className="my-8" />
 
-    <h2 className="text-xl font-semibold mt-8 mb-4">Generation Reference</h2>
-    <p className="text-muted-foreground mb-6">
-      Intel processors can be identified by model number. The first digit(s) after the i3/i5/i7/i9 indicate generation.
-    </p>
+    <h2 className="text-xl font-semibold mt-8 mb-4">Sticker Timeline</h2>
+    
+    <div className="grid gap-6">
+      {stickerData.map((item, index) => (
+        <div key={index} className="flex gap-4 p-4 rounded-lg border bg-card/50 items-start">
+          <div className="flex-shrink-0 w-20 h-20 bg-white rounded-md flex items-center justify-center p-2 border">
+            <img src={item.sticker} alt={`${item.logo} sticker`} className="max-w-full max-h-full object-contain" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 mb-1">
+              <span className="font-semibold text-foreground">{item.era}</span>
+              <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded">{item.logo}</span>
+            </div>
+            <p className="text-sm font-medium text-foreground mb-1">{item.generations}</p>
+            <p className="text-xs text-muted-foreground mb-1">Codename: {item.codename}</p>
+            {item.notes !== "—" && (
+              <p className="text-xs text-muted-foreground italic">{item.notes}</p>
+            )}
+          </div>
+        </div>
+      ))}
+    </div>
 
+    <hr className="my-8" />
+
+    <h2 className="text-xl font-semibold mt-8 mb-4">Summary Table</h2>
     <div className="overflow-x-auto rounded-lg border">
       <table className="w-full text-sm">
         <thead className="bg-muted/50">
           <tr>
-            <th className="text-left p-3 font-semibold">Generation</th>
             <th className="text-left p-3 font-semibold">Years</th>
-            <th className="text-left p-3 font-semibold">Example Models</th>
-            <th className="text-left p-3 font-semibold">Sticker Design</th>
+            <th className="text-left p-3 font-semibold">Sticker Used</th>
+            <th className="text-left p-3 font-semibold">CPU Generations</th>
           </tr>
         </thead>
         <tbody>
-          <tr className="border-t">
-            <td className="p-3 font-medium">4th Gen (Haswell)</td>
-            <td className="p-3">2013-2014</td>
-            <td className="p-3"><code className="bg-muted px-2 py-0.5 rounded text-xs">i5-4590</code></td>
-            <td className="p-3 text-muted-foreground">Blue gradient, curved design</td>
-          </tr>
-          <tr className="border-t">
-            <td className="p-3 font-medium">6th Gen (Skylake)</td>
-            <td className="p-3">2015-2016</td>
-            <td className="p-3"><code className="bg-muted px-2 py-0.5 rounded text-xs">i5-6500</code></td>
-            <td className="p-3 text-muted-foreground">Blue square, white text</td>
-          </tr>
-          <tr className="border-t">
-            <td className="p-3 font-medium">7th Gen (Kaby Lake)</td>
-            <td className="p-3">2016-2017</td>
-            <td className="p-3"><code className="bg-muted px-2 py-0.5 rounded text-xs">i5-7500</code></td>
-            <td className="p-3 text-muted-foreground">Blue square, "7th Gen" badge</td>
-          </tr>
-          <tr className="border-t">
-            <td className="p-3 font-medium">8th Gen (Coffee Lake)</td>
-            <td className="p-3">2017-2018</td>
-            <td className="p-3"><code className="bg-muted px-2 py-0.5 rounded text-xs">i5-8500</code></td>
-            <td className="p-3 text-muted-foreground">Blue hexagon design</td>
-          </tr>
-          <tr className="border-t">
-            <td className="p-3 font-medium">10th Gen (Comet Lake)</td>
-            <td className="p-3">2020</td>
-            <td className="p-3"><code className="bg-muted px-2 py-0.5 rounded text-xs">i5-10400</code></td>
-            <td className="p-3 text-muted-foreground">Blue badge, "10" prominent</td>
-          </tr>
-          <tr className="border-t">
-            <td className="p-3 font-medium">11th Gen (Tiger Lake)</td>
-            <td className="p-3">2020-2021</td>
-            <td className="p-3"><code className="bg-muted px-2 py-0.5 rounded text-xs">i5-11400</code></td>
-            <td className="p-3 text-muted-foreground">Blue gradient, modern look</td>
-          </tr>
-          <tr className="border-t">
-            <td className="p-3 font-medium">12th Gen (Alder Lake)</td>
-            <td className="p-3">2021-2022</td>
-            <td className="p-3"><code className="bg-muted px-2 py-0.5 rounded text-xs">i5-12400</code></td>
-            <td className="p-3 text-muted-foreground">Blue/black, "12th Gen Intel Core"</td>
-          </tr>
-          <tr className="border-t">
-            <td className="p-3 font-medium">13th Gen (Raptor Lake)</td>
-            <td className="p-3">2022-2023</td>
-            <td className="p-3"><code className="bg-muted px-2 py-0.5 rounded text-xs">i5-13400</code></td>
-            <td className="p-3 text-muted-foreground">Blue, "13th Gen Intel Core"</td>
-          </tr>
+          {stickerData.map((item, index) => (
+            <tr key={index} className="border-t">
+              <td className="p-3 font-medium">{item.era}</td>
+              <td className="p-3">{item.logo}</td>
+              <td className="p-3 text-muted-foreground">{item.generations}</td>
+            </tr>
+          ))}
         </tbody>
       </table>
     </div>
