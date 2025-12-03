@@ -1,4 +1,3 @@
-import commonDrivesImg from "@/assets/storage/common-types-of-hard-drives.png";
 import driveTypesImg from "@/assets/storage/different-type-of-drives.png";
 
 const StorageIdentificationSection = () => {
@@ -99,13 +98,6 @@ const StorageIdentificationSection = () => {
         </table>
       </div>
 
-      <div className="my-6">
-        <img 
-          src={commonDrivesImg} 
-          alt="Common types of hard drives showing 3.5-inch, 2.5-inch, and M.2 form factors" 
-          className="rounded-lg border w-full"
-        />
-      </div>
 
       <h3 className="text-lg font-semibold mt-8 mb-4">M.2 Sizes</h3>
       <p className="text-muted-foreground mb-4">
