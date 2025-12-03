@@ -107,28 +107,6 @@ const CpuStickersSection = () => (
       ))}
     </div>
 
-    <hr className="my-8" />
-
-    <h2 className="text-xl font-semibold mt-8 mb-4">How to Read Model Numbers</h2>
-    <p className="mb-4">Intel processor model numbers follow a consistent pattern:</p>
-    <ul className="list-disc pl-6 space-y-2 mb-6">
-      <li>
-        <strong>Brand:</strong> i3, i5, i7, i9 (performance tier)
-      </li>
-      <li>
-        <strong>Generation:</strong> First 1-2 digits after brand
-      </li>
-      <li>
-        <strong>SKU:</strong> Remaining digits indicate performance within generation
-      </li>
-      <li>
-        <strong>Suffix:</strong> K (unlocked), F (no integrated graphics), T (power-optimized)
-      </li>
-    </ul>
-    <p className="text-muted-foreground">
-      Example: <code className="bg-muted px-2 py-0.5 rounded text-xs">i5-12400</code> = Core i5, 12th generation, SKU
-      400
-    </p>
   </article>
 );
 
