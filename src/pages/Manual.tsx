@@ -175,6 +175,48 @@ const BiosKeysSection = () => (
             <td className="p-3"><code className="bg-muted px-2 py-0.5 rounded text-xs">F12</code></td>
             <td className="p-3 text-muted-foreground">—</td>
           </tr>
+          <tr className="border-t">
+            <td className="p-3 font-medium">Intel NUC</td>
+            <td className="p-3"><code className="bg-muted px-2 py-0.5 rounded text-xs">F2</code></td>
+            <td className="p-3"><code className="bg-muted px-2 py-0.5 rounded text-xs">F10</code></td>
+            <td className="p-3 text-muted-foreground">—</td>
+          </tr>
+          <tr className="border-t">
+            <td className="p-3 font-medium">Samsung</td>
+            <td className="p-3"><code className="bg-muted px-2 py-0.5 rounded text-xs">F2</code></td>
+            <td className="p-3"><code className="bg-muted px-2 py-0.5 rounded text-xs">F12</code> / <code className="bg-muted px-2 py-0.5 rounded text-xs">F2</code></td>
+            <td className="p-3 text-muted-foreground">Older models may use F10</td>
+          </tr>
+          <tr className="border-t">
+            <td className="p-3 font-medium">Toshiba</td>
+            <td className="p-3"><code className="bg-muted px-2 py-0.5 rounded text-xs">F2</code></td>
+            <td className="p-3"><code className="bg-muted px-2 py-0.5 rounded text-xs">F12</code></td>
+            <td className="p-3 text-muted-foreground">—</td>
+          </tr>
+          <tr className="border-t">
+            <td className="p-3 font-medium">Sony (VAIO)</td>
+            <td className="p-3"><code className="bg-muted px-2 py-0.5 rounded text-xs">F2</code> / <code className="bg-muted px-2 py-0.5 rounded text-xs">F3</code></td>
+            <td className="p-3"><code className="bg-muted px-2 py-0.5 rounded text-xs">F11</code></td>
+            <td className="p-3 text-muted-foreground">Assist button on some models</td>
+          </tr>
+          <tr className="border-t">
+            <td className="p-3 font-medium">Microsoft Surface</td>
+            <td className="p-3"><code className="bg-muted px-2 py-0.5 rounded text-xs">Vol Up + Power</code></td>
+            <td className="p-3"><code className="bg-muted px-2 py-0.5 rounded text-xs">Hold Vol Down + Power</code></td>
+            <td className="p-3 text-muted-foreground">Release when logo appears</td>
+          </tr>
+          <tr className="border-t">
+            <td className="p-3 font-medium">Apple (Intel Macs)</td>
+            <td className="p-3"><code className="bg-muted px-2 py-0.5 rounded text-xs">Cmd + R</code></td>
+            <td className="p-3"><code className="bg-muted px-2 py-0.5 rounded text-xs">Option</code></td>
+            <td className="p-3 text-muted-foreground">Recovery vs. Startup Manager</td>
+          </tr>
+          <tr className="border-t">
+            <td className="p-3 font-medium">Panasonic (Toughbook/Toughpad)</td>
+            <td className="p-3"><code className="bg-muted px-2 py-0.5 rounded text-xs">F2</code> / <code className="bg-muted px-2 py-0.5 rounded text-xs">Del</code></td>
+            <td className="p-3"><code className="bg-muted px-2 py-0.5 rounded text-xs">F2</code> / <code className="bg-muted px-2 py-0.5 rounded text-xs">F12</code></td>
+            <td className="p-3 text-muted-foreground">Older: Del; Newer: F2; Press early or hold longer</td>
+          </tr>
         </tbody>
       </table>
     </div>
