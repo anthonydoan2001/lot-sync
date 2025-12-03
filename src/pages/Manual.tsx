@@ -340,8 +340,6 @@ const CpuStickersSection = () => (
     <h1 className="text-3xl font-bold mb-2">Intel CPU Stickers by Generation</h1>
 
     <hr className="my-8" />
-
-    <h2 className="text-xl font-semibold mt-8 mb-4">Sticker Timeline</h2>
     
     <div className="grid gap-6">
       {stickerData.map((item, index) => (
