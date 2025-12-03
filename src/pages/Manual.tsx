@@ -89,17 +89,7 @@ const Manual = () => {
 
 const BiosKeysSection = () => (
   <article className="prose prose-slate dark:prose-invert max-w-none">
-    <h1 className="text-3xl font-bold mb-2">BIOS Keys by Manufacturer</h1>
-    <p className="text-muted-foreground text-lg mb-8">
-      Quick reference for accessing BIOS and boot menus on different PC brands.
-    </p>
-
-    <hr className="my-8" />
-
-    <h2 className="text-xl font-semibold mt-8 mb-4">Common Manufacturers</h2>
-    <p className="text-muted-foreground mb-6">
-      Press the key repeatedly during startup before the OS loads.
-    </p>
+    <h1 className="text-3xl font-bold mb-8">BIOS Keys by Manufacturer</h1>
 
     <div className="overflow-x-auto rounded-lg border">
       <table className="w-full text-sm">
