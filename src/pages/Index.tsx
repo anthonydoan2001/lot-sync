@@ -415,28 +415,23 @@ const Index = () => {
           <header className="border-b bg-card/95 backdrop-blur-sm shadow-lg sticky top-0 z-50">
             <div className="container mx-auto px-4 py-6">
               <div className="flex flex-col sm:flex-row gap-6 items-start sm:items-center justify-between">
-                <div className="flex items-center gap-4">
-                  <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent hidden sm:block">
-                    Inventory Manager
-                  </h1>
-                  <div className="flex gap-2">
-                    <Button
-                      variant={viewMode === "active" ? "default" : "outline"}
-                      onClick={() => setViewMode("active")}
-                      size="lg"
-                      className="font-semibold shadow-md hover:shadow-lg transition-shadow duration-150"
-                    >
-                      Active
-                    </Button>
-                    <Button
-                      variant={viewMode === "history" ? "default" : "outline"}
-                      onClick={() => setViewMode("history")}
-                      size="lg"
-                      className="font-semibold shadow-md hover:shadow-lg transition-shadow duration-150"
-                    >
-                      History
-                    </Button>
-                  </div>
+                <div className="flex gap-2">
+                  <Button
+                    variant={viewMode === "active" ? "default" : "outline"}
+                    onClick={() => setViewMode("active")}
+                    size="lg"
+                    className="font-semibold shadow-md hover:shadow-lg transition-shadow duration-150"
+                  >
+                    Active
+                  </Button>
+                  <Button
+                    variant={viewMode === "history" ? "default" : "outline"}
+                    onClick={() => setViewMode("history")}
+                    size="lg"
+                    className="font-semibold shadow-md hover:shadow-lg transition-shadow duration-150"
+                  >
+                    History
+                  </Button>
                 </div>
 
                 <div className="flex gap-3 items-center w-full sm:w-auto">
@@ -550,43 +545,37 @@ const Index = () => {
                       const categoryPallets = categorizedPallets[category];
                       if (!categoryPallets || categoryPallets.length === 0) return null;
 
-                      return (
+                        return (
                         <div
                           key={category}
-                          className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500"
+                          className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500"
                         >
-                          <div className="flex items-center gap-4 pb-4 border-b-2 border-primary/20">
-                            <div className="h-1.5 w-16 bg-gradient-to-r from-primary to-secondary rounded-full" />
-                            <h2 className="text-4xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent tracking-tight">
+                          <div className="flex items-center gap-3 pb-3 border-b border-border">
+                            <h2 className="text-2xl font-semibold text-foreground tracking-tight">
                               {category}
                             </h2>
-                            <span className="text-sm font-medium text-muted-foreground bg-muted px-3 py-1 rounded-full">
+                            <span className="text-sm font-medium text-muted-foreground bg-muted px-2.5 py-0.5 rounded-full">
                               {categoryPallets.length}
                             </span>
                           </div>
-                          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-4 gap-6">
-                            {categoryPallets.map((pallet, index) => (
-                              <div
+                          <div className="flex flex-col gap-2">
+                            {categoryPallets.map((pallet) => (
+                              <PalletCard
                                 key={pallet.id}
-                                className="animate-in fade-in slide-in-from-bottom-4"
-                                style={{ animationDelay: `${index * 50}ms` }}
-                              >
-                                <PalletCard
-                                  pallet={pallet}
-                                  onEdit={(p) => {
-                                    setEditingPallet(p);
-                                    setPalletModalOpen(true);
-                                  }}
-                                  onRetire={handleRetirePallet}
-                                  onUnretire={handleUnretirePallet}
-                                  onDelete={(id) => {
-                                    setDeletingId(id);
-                                    setDeletingType("pallet");
-                                    setDeleteDialogOpen(true);
-                                  }}
-                                  isHistory={viewMode === "history"}
-                                />
-                              </div>
+                                pallet={pallet}
+                                onEdit={(p) => {
+                                  setEditingPallet(p);
+                                  setPalletModalOpen(true);
+                                }}
+                                onRetire={handleRetirePallet}
+                                onUnretire={handleUnretirePallet}
+                                onDelete={(id) => {
+                                  setDeletingId(id);
+                                  setDeletingType("pallet");
+                                  setDeleteDialogOpen(true);
+                                }}
+                                isHistory={viewMode === "history"}
+                              />
                             ))}
                           </div>
                         </div>
@@ -606,29 +595,24 @@ const Index = () => {
                     <p className="text-xl text-muted-foreground">No lots found</p>
                   </div>
                 ) : (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-4 gap-6">
-                    {filteredLots.map((lot, index) => (
-                      <div
+                  <div className="flex flex-col gap-2">
+                    {filteredLots.map((lot) => (
+                      <LotCard
                         key={lot.id}
-                        className="animate-in fade-in slide-in-from-bottom-4"
-                        style={{ animationDelay: `${index * 50}ms` }}
-                      >
-                        <LotCard
-                          lot={lot}
-                          onEdit={(l) => {
-                            setEditingLot(l);
-                            setLotModalOpen(true);
-                          }}
-                          onRetire={handleRetireLot}
-                          onUnretire={handleUnretireLot}
-                          onDelete={(id) => {
-                            setDeletingId(id);
-                            setDeletingType("lot");
-                            setDeleteDialogOpen(true);
-                          }}
-                          isHistory={viewMode === "history"}
-                        />
-                      </div>
+                        lot={lot}
+                        onEdit={(l) => {
+                          setEditingLot(l);
+                          setLotModalOpen(true);
+                        }}
+                        onRetire={handleRetireLot}
+                        onUnretire={handleUnretireLot}
+                        onDelete={(id) => {
+                          setDeletingId(id);
+                          setDeletingType("lot");
+                          setDeleteDialogOpen(true);
+                        }}
+                        isHistory={viewMode === "history"}
+                      />
                     ))}
                   </div>
                 )}
