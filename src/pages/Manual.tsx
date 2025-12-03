@@ -1,10 +1,11 @@
 import { useState, lazy, Suspense } from "react";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Keyboard, Monitor, Cpu } from "lucide-react";
+import { ArrowLeft, Keyboard, Monitor, Cpu, MemoryStick } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import RamIdentificationSection from "@/components/manual/RamIdentificationSection";
 
 // Lazy load the CPU stickers section (large SVG assets)
 const CpuStickersSection = lazy(() => import("@/components/manual/CpuStickersSection"));
@@ -26,12 +27,13 @@ const CpuStickersFallback = () => (
   </div>
 );
 
-type Section = "bios-keys" | "optiplex" | "cpu-stickers";
+type Section = "bios-keys" | "optiplex" | "cpu-stickers" | "ram";
 
 const sections = [
   { id: "bios-keys" as Section, title: "BIOS Keys", icon: Keyboard },
   { id: "optiplex" as Section, title: "Optiplex Form Factors", icon: Monitor },
   { id: "cpu-stickers" as Section, title: "Intel CPU Stickers", icon: Cpu },
+  { id: "ram" as Section, title: "RAM Identification", icon: MemoryStick },
 ];
 
 const Manual = () => {
@@ -105,6 +107,7 @@ const Manual = () => {
                 <CpuStickersSection />
               </Suspense>
             )}
+            {activeSection === "ram" && <RamIdentificationSection />}
           </div>
         </ScrollArea>
       </main>
