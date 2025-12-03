@@ -61,11 +61,12 @@ const Index = () => {
 
   // Fetch pallets
   const fetchPallets = async () => {
+    const isHistory = viewMode === "history";
     const { data, error } = await supabase
       .from("pallets")
       .select("*")
-      .eq("is_retired", viewMode === "history")
-      .order("created_at", { ascending: false });
+      .eq("is_retired", isHistory)
+      .order(isHistory ? "retired_at" : "created_at", { ascending: false });
 
     if (error) {
       toast.error("Failed to fetch pallets");
@@ -77,11 +78,12 @@ const Index = () => {
 
   // Fetch lots
   const fetchLots = async () => {
+    const isHistory = viewMode === "history";
     const { data, error } = await supabase
       .from("lots")
       .select("*")
-      .eq("is_retired", viewMode === "history")
-      .order("created_at", { ascending: false });
+      .eq("is_retired", isHistory)
+      .order(isHistory ? "retired_at" : "created_at", { ascending: false });
 
     if (error) {
       toast.error("Failed to fetch lots");
@@ -539,6 +541,27 @@ const Index = () => {
                     </div>
                     <p className="text-xl text-muted-foreground">No pallets found</p>
                   </div>
+                ) : viewMode === "history" ? (
+                  <div className="flex flex-col gap-2">
+                    {filteredPallets.map((pallet) => (
+                      <PalletCard
+                        key={pallet.id}
+                        pallet={pallet}
+                        onEdit={(p) => {
+                          setEditingPallet(p);
+                          setPalletModalOpen(true);
+                        }}
+                        onRetire={handleRetirePallet}
+                        onUnretire={handleUnretirePallet}
+                        onDelete={(id) => {
+                          setDeletingId(id);
+                          setDeletingType("pallet");
+                          setDeleteDialogOpen(true);
+                        }}
+                        isHistory={true}
+                      />
+                    ))}
+                  </div>
                 ) : (
                   <div className="space-y-10">
                     {categoryOrder.map((category) => {
@@ -574,7 +597,7 @@ const Index = () => {
                                   setDeletingType("pallet");
                                   setDeleteDialogOpen(true);
                                 }}
-                                isHistory={viewMode === "history"}
+                                isHistory={false}
                               />
                             ))}
                           </div>
