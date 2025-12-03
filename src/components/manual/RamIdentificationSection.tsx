@@ -73,41 +73,41 @@ const RamIdentificationSection = () => (
         <tbody>
           <tr className="border-t bg-muted/20">
             <td className="p-3 font-medium" rowSpan={2}>DDR3</td>
-            <td className="p-3">1333</td>
+            <td className="p-3">1333 MHz</td>
             <td className="p-3 font-mono text-muted-foreground">PC3-10600</td>
           </tr>
           <tr className="border-t bg-muted/20">
-            <td className="p-3">1600</td>
+            <td className="p-3">1600 MHz</td>
             <td className="p-3 font-mono text-muted-foreground">PC3-12800</td>
           </tr>
           <tr className="border-t">
             <td className="p-3 font-medium" rowSpan={4}>DDR4</td>
-            <td className="p-3">2133</td>
+            <td className="p-3">2133 MHz</td>
             <td className="p-3 font-mono text-muted-foreground">PC4-17000</td>
           </tr>
           <tr className="border-t">
-            <td className="p-3">2400</td>
+            <td className="p-3">2400 MHz</td>
             <td className="p-3 font-mono text-muted-foreground">PC4-19200</td>
           </tr>
           <tr className="border-t">
-            <td className="p-3">2666</td>
+            <td className="p-3">2666 MHz</td>
             <td className="p-3 font-mono text-muted-foreground">PC4-21300</td>
           </tr>
           <tr className="border-t">
-            <td className="p-3">3200</td>
+            <td className="p-3">3200 MHz</td>
             <td className="p-3 font-mono text-muted-foreground">PC4-25600</td>
           </tr>
           <tr className="border-t bg-muted/20">
             <td className="p-3 font-medium" rowSpan={3}>DDR5</td>
-            <td className="p-3">4800</td>
+            <td className="p-3">4800 MHz</td>
             <td className="p-3 font-mono text-muted-foreground">PC5-38400</td>
           </tr>
           <tr className="border-t bg-muted/20">
-            <td className="p-3">5200</td>
+            <td className="p-3">5200 MHz</td>
             <td className="p-3 font-mono text-muted-foreground">PC5-41600</td>
           </tr>
           <tr className="border-t bg-muted/20">
-            <td className="p-3">5600</td>
+            <td className="p-3">5600 MHz</td>
             <td className="p-3 font-mono text-muted-foreground">PC5-44800</td>
           </tr>
         </tbody>
