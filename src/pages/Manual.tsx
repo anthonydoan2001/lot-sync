@@ -181,91 +181,39 @@ const BiosKeysSection = () => (
   </article>
 );
 
+import optiplexModern from "@/assets/optiplex/optiplex-modern.png";
+import optiplexLegacy from "@/assets/optiplex/optiplex-legacy.png";
+
 const OptiplexSection = () => (
   <article className="prose prose-slate dark:prose-invert max-w-none">
-    <h1 className="text-3xl font-bold mb-2">Dell Optiplex Form Factors</h1>
-    <p className="text-muted-foreground text-lg mb-8">
-      Understanding the different Optiplex chassis sizes and their specifications.
-    </p>
+    <h1 className="text-3xl font-bold mb-8">Dell Optiplex Form Factors</h1>
 
-    <hr className="my-8" />
+    <div className="space-y-8">
+      <div className="rounded-lg border bg-card overflow-hidden">
+        <div className="p-3 border-b bg-muted/50">
+          <h2 className="text-lg font-semibold m-0">Modern Optiplex (7000+ Series)</h2>
+        </div>
+        <div className="p-4 flex justify-center bg-white">
+          <img 
+            src={optiplexModern} 
+            alt="Modern Dell Optiplex form factors: Tower, SFF, and Micro" 
+            className="max-w-full h-auto"
+          />
+        </div>
+      </div>
 
-    <h2 className="text-xl font-semibold mt-8 mb-4">SFF (Small Form Factor)</h2>
-    <p className="mb-6">
-      Compact desktop size. Accepts low-profile expansion cards only. 
-      Common dimensions: approximately 11.4" x 3.65" x 12.3".
-    </p>
-
-    <h2 className="text-xl font-semibold mt-8 mb-4">USFF (Ultra Small Form Factor)</h2>
-    <p className="mb-6">
-      Smallest desktop option with no expansion slots. Can be VESA mounted behind monitors. 
-      Dimensions: approximately 9.3" x 2.6" x 9.3".
-    </p>
-
-    <h2 className="text-xl font-semibold mt-8 mb-4">Tower (MT/Mini Tower)</h2>
-    <p className="mb-6">
-      Full-size tower format. Supports full-height expansion cards. 
-      More drive bays and better cooling capacity for demanding workloads.
-    </p>
-
-    <h2 className="text-xl font-semibold mt-8 mb-4">Desktop (DT)</h2>
-    <p className="mb-6">
-      Lies flat with monitor sitting on top. Less common in newer models. 
-      Similar internal specifications to SFF.
-    </p>
-
-    <h2 className="text-xl font-semibold mt-8 mb-4">Micro</h2>
-    <p className="mb-6">
-      Smallest option available in newer Optiplex models. VESA mountable. 
-      Dimensions: approximately 7.2" x 1.4" x 7.2". Uses external power brick.
-    </p>
-
-    <hr className="my-8" />
-
-    <h2 className="text-xl font-semibold mt-8 mb-4">Quick Comparison</h2>
-    <div className="overflow-x-auto rounded-lg border">
-      <table className="w-full text-sm">
-        <thead className="bg-muted/50">
-          <tr>
-            <th className="text-left p-3 font-semibold">Form Factor</th>
-            <th className="text-left p-3 font-semibold">Expansion</th>
-            <th className="text-left p-3 font-semibold">VESA Mount</th>
-            <th className="text-left p-3 font-semibold">Best For</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr className="border-t">
-            <td className="p-3 font-medium">SFF</td>
-            <td className="p-3">Low-profile only</td>
-            <td className="p-3">No</td>
-            <td className="p-3 text-muted-foreground">General office use</td>
-          </tr>
-          <tr className="border-t">
-            <td className="p-3 font-medium">USFF</td>
-            <td className="p-3">None</td>
-            <td className="p-3">Yes</td>
-            <td className="p-3 text-muted-foreground">Space-constrained setups</td>
-          </tr>
-          <tr className="border-t">
-            <td className="p-3 font-medium">Tower</td>
-            <td className="p-3">Full-height</td>
-            <td className="p-3">No</td>
-            <td className="p-3 text-muted-foreground">Power users, GPU needs</td>
-          </tr>
-          <tr className="border-t">
-            <td className="p-3 font-medium">Desktop</td>
-            <td className="p-3">Low-profile</td>
-            <td className="p-3">No</td>
-            <td className="p-3 text-muted-foreground">Under-monitor placement</td>
-          </tr>
-          <tr className="border-t">
-            <td className="p-3 font-medium">Micro</td>
-            <td className="p-3">None</td>
-            <td className="p-3">Yes</td>
-            <td className="p-3 text-muted-foreground">Minimal footprint</td>
-          </tr>
-        </tbody>
-      </table>
+      <div className="rounded-lg border bg-card overflow-hidden">
+        <div className="p-3 border-b bg-muted/50">
+          <h2 className="text-lg font-semibold m-0">Legacy Optiplex</h2>
+        </div>
+        <div className="p-4 flex justify-center bg-white">
+          <img 
+            src={optiplexLegacy} 
+            alt="Legacy Dell Optiplex form factors: Tower, Desktop, SFF, and USFF" 
+            className="max-w-full h-auto"
+          />
+        </div>
+      </div>
     </div>
   </article>
 );
