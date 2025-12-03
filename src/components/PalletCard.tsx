@@ -46,7 +46,11 @@ export const PalletCard = memo(function PalletCard({ pallet, onEdit, onRetire, o
       <span className="text-muted-foreground uppercase flex-1">{getDisplayDescription()}</span>
       
       <span className="text-xs text-muted-foreground whitespace-nowrap">
-        {isHistory && pallet.retired_at ? formatDate(pallet.retired_at) : formatDate(pallet.created_at)}
+        {isHistory && pallet.retired_at ? (
+          <>
+            {formatDate(pallet.created_at)} - <span className="font-bold underline">{formatDate(pallet.retired_at)}</span>
+          </>
+        ) : formatDate(pallet.created_at)}
       </span>
       
       <div className="flex items-center gap-1">
