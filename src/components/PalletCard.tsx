@@ -1,9 +1,7 @@
 import { memo } from "react";
 import { Pallet } from "@/types/database.types";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Pencil, Archive, Trash2 } from "lucide-react";
-import { format } from "date-fns";
 
 interface PalletCardProps {
   pallet: Pallet;
@@ -17,100 +15,49 @@ interface PalletCardProps {
 export const PalletCard = memo(function PalletCard({ pallet, onEdit, onRetire, onUnretire, onDelete, isHistory = false }: PalletCardProps) {
   const getDisplayDescription = () => {
     let desc = pallet.description;
-
     if (pallet.grade && desc.startsWith(pallet.grade)) {
       desc = desc.substring(pallet.grade.length).trim();
     }
-
     return `${desc} ${pallet.type || ""}`.trim();
   };
 
   const isLowGrade = pallet.grade && ["D/F", "D", "F"].includes(pallet.grade.toUpperCase());
 
   return (
-    <Card className="group hover:shadow-xl transition-shadow duration-200 hover:border-accent/50 border-2 overflow-hidden bg-card">
-      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-secondary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
-
-      <CardHeader className="space-y-3 p-6 relative">
-        <div className="flex items-start justify-between gap-3">
-          <div className="flex-1 space-y-3">
-            <div className="flex items-center gap-3 flex-wrap">
-              {pallet.grade && (
-                <span
-                  className={`text-lg font-bold uppercase px-4 py-2 rounded-lg shadow-md transition-all duration-300 group-hover:shadow-lg ${
-                    isLowGrade
-                      ? "bg-gradient-to-br from-destructive to-destructive/80 text-destructive-foreground"
-                      : "bg-gradient-to-br from-secondary to-secondary/80 text-secondary-foreground"
-                  }`}
-                >
-                  {pallet.grade}
-                </span>
-              )}
-              <p className="text-xl font-semibold text-foreground uppercase flex-1">{getDisplayDescription()}</p>
-            </div>
-            <h3 className="text-4xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent uppercase tracking-wide">
-              {pallet.pallet_number}
-            </h3>
-          </div>
-          {!isHistory && (
-            <div className="flex gap-2 pt-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-              <Button
-                size="icon"
-                variant="ghost"
-                onClick={() => onEdit(pallet)}
-                className="h-9 w-9 hover:bg-primary/10 hover:text-primary transition-all duration-300 hover:scale-110 shadow-sm"
-              >
-                <Pencil className="h-4 w-4" />
-              </Button>
-              <Button
-                size="icon"
-                variant="ghost"
-                onClick={() => onDelete(pallet.id)}
-                className="h-9 w-9 hover:bg-destructive/10 hover:text-destructive transition-all duration-300 hover:scale-110 shadow-sm"
-              >
-                <Trash2 className="h-4 w-4" />
-              </Button>
-            </div>
-          )}
-        </div>
-      </CardHeader>
-
-      <CardContent className="space-y-2 px-6 pb-4 relative">
-        <div className="inline-block px-3 py-1 rounded-full bg-muted/50 backdrop-blur-sm">
-          <p className="text-sm text-muted-foreground font-medium">
-            Created: {format(new Date(pallet.created_at), "PPpp")}
-          </p>
-        </div>
-        {isHistory && pallet.retired_at && (
-          <div className="inline-block px-3 py-1 rounded-full bg-muted/50 backdrop-blur-sm">
-            <p className="text-sm text-muted-foreground font-medium">
-              Retired: {format(new Date(pallet.retired_at), "PPpp")}
-            </p>
-          </div>
-        )}
-      </CardContent>
-
-      <CardFooter className="flex gap-2 px-6 pb-6 relative">
+    <div className="flex items-center gap-3 px-4 py-2 rounded-lg border bg-card hover:bg-muted/50 transition-colors">
+      {pallet.grade && (
+        <span
+          className={`text-sm font-bold uppercase px-2 py-1 rounded ${
+            isLowGrade
+              ? "bg-destructive/10 text-destructive"
+              : "bg-secondary text-secondary-foreground"
+          }`}
+        >
+          {pallet.grade}
+        </span>
+      )}
+      <span className="font-bold text-primary uppercase">{pallet.pallet_number}</span>
+      <span className="text-muted-foreground uppercase flex-1">{getDisplayDescription()}</span>
+      
+      <div className="flex items-center gap-1">
         {!isHistory ? (
-          <Button
-            variant="outline"
-            onClick={() => onRetire(pallet.id)}
-            className="h-10 px-5 font-semibold text-accent border-2 border-accent hover:bg-accent hover:text-accent-foreground transition-all duration-300 hover:scale-105 shadow-md hover:shadow-lg"
-          >
-            <Archive className="h-4 w-4 mr-2" />
-            Retire
-          </Button>
+          <>
+            <Button size="icon" variant="ghost" onClick={() => onEdit(pallet)} className="h-8 w-8">
+              <Pencil className="h-4 w-4" />
+            </Button>
+            <Button size="icon" variant="ghost" onClick={() => onRetire(pallet.id)} className="h-8 w-8 text-accent">
+              <Archive className="h-4 w-4" />
+            </Button>
+            <Button size="icon" variant="ghost" onClick={() => onDelete(pallet.id)} className="h-8 w-8 text-destructive">
+              <Trash2 className="h-4 w-4" />
+            </Button>
+          </>
         ) : (
-          <Button
-            variant="default"
-            onClick={() => onUnretire(pallet.id)}
-            className="h-10 px-5 font-semibold transition-all duration-300 hover:scale-105 shadow-md hover:shadow-lg"
-          >
-            <Archive className="h-4 w-4 mr-2" />
+          <Button size="sm" variant="outline" onClick={() => onUnretire(pallet.id)}>
             Unretire
           </Button>
         )}
-      </CardFooter>
-    </Card>
+      </div>
+    </div>
   );
 });
