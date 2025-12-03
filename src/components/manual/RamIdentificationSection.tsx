@@ -152,6 +152,44 @@ const RamIdentificationSection = () => (
       </table>
     </div>
 
+    <h2 className="text-xl font-semibold mt-8 mb-4">Rank Compatibility</h2>
+    <div className="overflow-x-auto rounded-lg border">
+      <table className="w-full text-sm">
+        <thead className="bg-muted/50">
+          <tr>
+            <th className="text-left p-3 font-semibold">Code</th>
+            <th className="text-left p-3 font-semibold">Meaning</th>
+            <th className="text-left p-3 font-semibold">Typical Use</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr className="border-t">
+            <td className="p-3 font-medium font-mono">1Rx8</td>
+            <td className="p-3 text-muted-foreground">Single rank, 8 chips</td>
+            <td className="p-3 text-muted-foreground">Consumer desktops</td>
+          </tr>
+          <tr className="border-t">
+            <td className="p-3 font-medium font-mono">2Rx8</td>
+            <td className="p-3 text-muted-foreground">Dual rank, 8 chips per rank</td>
+            <td className="p-3 text-muted-foreground">Higher capacity consumer</td>
+          </tr>
+          <tr className="border-t">
+            <td className="p-3 font-medium font-mono">1Rx4</td>
+            <td className="p-3 text-muted-foreground">Single rank, 4 chips (high density)</td>
+            <td className="p-3 text-muted-foreground">Servers</td>
+          </tr>
+          <tr className="border-t">
+            <td className="p-3 font-medium font-mono">2Rx4</td>
+            <td className="p-3 text-muted-foreground">Dual rank, 4 chips per rank</td>
+            <td className="p-3 text-muted-foreground">Server memory</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p className="text-sm text-muted-foreground mt-3">
+      <strong>Note:</strong> Mixing ranks can work but may reduce performance. Some systems have rank limits per channel.
+    </p>
+
     <h2 className="text-xl font-semibold mt-8 mb-4">ECC vs Non-ECC</h2>
     <div className="grid md:grid-cols-2 gap-4 not-prose">
       <div className="p-4 rounded-lg border bg-card">
@@ -170,6 +208,74 @@ const RamIdentificationSection = () => (
           <li>• Requires compatible motherboard</li>
         </ul>
       </div>
+    </div>
+
+    <h2 className="text-xl font-semibold mt-8 mb-4">RDIMM vs UDIMM</h2>
+    <div className="grid md:grid-cols-2 gap-4 not-prose">
+      <div className="p-4 rounded-lg border bg-card">
+        <h3 className="font-semibold mb-2">UDIMM (Unbuffered)</h3>
+        <ul className="text-sm text-muted-foreground space-y-1">
+          <li>• Direct memory controller connection</li>
+          <li>• Lower latency</li>
+          <li>• Max 2 DIMMs per channel</li>
+          <li>• Consumer desktops</li>
+        </ul>
+      </div>
+      <div className="p-4 rounded-lg border bg-card">
+        <h3 className="font-semibold mb-2">RDIMM (Registered)</h3>
+        <ul className="text-sm text-muted-foreground space-y-1">
+          <li>• Buffered signals for stability</li>
+          <li>• Supports more DIMMs per channel</li>
+          <li>• Requires server motherboard</li>
+          <li>• Servers, workstations</li>
+        </ul>
+      </div>
+    </div>
+
+    <h2 className="text-xl font-semibold mt-8 mb-4">Common Manufacturer Codes</h2>
+    <div className="overflow-x-auto rounded-lg border">
+      <table className="w-full text-sm">
+        <thead className="bg-muted/50">
+          <tr>
+            <th className="text-left p-3 font-semibold">Prefix</th>
+            <th className="text-left p-3 font-semibold">Manufacturer</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr className="border-t">
+            <td className="p-3 font-medium font-mono">KVR</td>
+            <td className="p-3 text-muted-foreground">Kingston ValueRAM</td>
+          </tr>
+          <tr className="border-t">
+            <td className="p-3 font-medium font-mono">CT</td>
+            <td className="p-3 text-muted-foreground">Crucial</td>
+          </tr>
+          <tr className="border-t">
+            <td className="p-3 font-medium font-mono">HX</td>
+            <td className="p-3 text-muted-foreground">HyperX (Kingston)</td>
+          </tr>
+          <tr className="border-t">
+            <td className="p-3 font-medium font-mono">CMK</td>
+            <td className="p-3 text-muted-foreground">Corsair Vengeance</td>
+          </tr>
+          <tr className="border-t">
+            <td className="p-3 font-medium font-mono">M378</td>
+            <td className="p-3 text-muted-foreground">Samsung (desktop unbuffered)</td>
+          </tr>
+          <tr className="border-t">
+            <td className="p-3 font-medium font-mono">M393</td>
+            <td className="p-3 text-muted-foreground">Samsung (server registered)</td>
+          </tr>
+          <tr className="border-t">
+            <td className="p-3 font-medium font-mono">HMA</td>
+            <td className="p-3 text-muted-foreground">SK Hynix</td>
+          </tr>
+          <tr className="border-t">
+            <td className="p-3 font-medium font-mono">MTA</td>
+            <td className="p-3 text-muted-foreground">Micron</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </article>
 );
