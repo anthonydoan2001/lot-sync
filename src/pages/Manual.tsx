@@ -183,6 +183,7 @@ const BiosKeysSection = () => (
 
 import optiplexModern from "@/assets/optiplex/optiplex-modern.png";
 import optiplexLegacy from "@/assets/optiplex/optiplex-legacy.png";
+import optiplexUsff from "@/assets/optiplex/optiplex-usff.png";
 
 const OptiplexSection = () => (
   <article className="prose prose-slate dark:prose-invert max-w-none">
@@ -193,11 +194,16 @@ const OptiplexSection = () => (
         <div className="p-3 border-b bg-muted/50">
           <h2 className="text-lg font-semibold m-0">Modern Optiplex (7000+ Series)</h2>
         </div>
-        <div className="p-4 flex justify-center bg-white">
+        <div className="p-4 flex flex-col items-center gap-6 bg-white">
           <img 
             src={optiplexModern} 
             alt="Modern Dell Optiplex form factors: Tower, SFF, and Micro" 
             className="max-w-full h-auto"
+          />
+          <img 
+            src={optiplexUsff} 
+            alt="Dell Optiplex 7090 Ultra - USFF form factor" 
+            className="max-w-xs h-auto"
           />
         </div>
       </div>
