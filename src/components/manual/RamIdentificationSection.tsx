@@ -2,6 +2,24 @@ const RamIdentificationSection = () => (
   <article className="prose prose-slate dark:prose-invert max-w-none">
     <h1 className="text-3xl font-bold mb-8">RAM Identification Guide</h1>
 
+    <h2 className="text-xl font-semibold mt-8 mb-4">DIMM vs SODIMM</h2>
+    <div className="grid md:grid-cols-2 gap-4 not-prose">
+      <div className="p-4 rounded-lg border bg-card">
+        <h3 className="font-semibold mb-2">DIMM (Desktop)</h3>
+        <ul className="text-sm text-muted-foreground space-y-1">
+          <li>• Full-size desktop memory</li>
+          <li>• Used in: Desktops, servers</li>
+        </ul>
+      </div>
+      <div className="p-4 rounded-lg border bg-card">
+        <h3 className="font-semibold mb-2">SODIMM (Laptop)</h3>
+        <ul className="text-sm text-muted-foreground space-y-1">
+          <li>• Compact laptop memory</li>
+          <li>• Used in: Laptops, mini PCs, NUCs</li>
+        </ul>
+      </div>
+    </div>
+
     <h2 className="text-xl font-semibold mt-8 mb-4">DDR Generations</h2>
     <div className="overflow-x-auto rounded-lg border">
       <table className="w-full text-sm">
@@ -88,26 +106,6 @@ const RamIdentificationSection = () => (
           </tr>
         </tbody>
       </table>
-    </div>
-
-    <h2 className="text-xl font-semibold mt-8 mb-4">DIMM vs SODIMM</h2>
-    <div className="grid md:grid-cols-2 gap-4 not-prose">
-      <div className="p-4 rounded-lg border bg-card">
-        <h3 className="font-semibold mb-2">DIMM (Desktop)</h3>
-        <ul className="text-sm text-muted-foreground space-y-1">
-          <li>• Full-size desktop memory</li>
-          <li>• Length: ~133mm (5.25")</li>
-          <li>• Used in: Desktops, servers</li>
-        </ul>
-      </div>
-      <div className="p-4 rounded-lg border bg-card">
-        <h3 className="font-semibold mb-2">SODIMM (Laptop)</h3>
-        <ul className="text-sm text-muted-foreground space-y-1">
-          <li>• Compact laptop memory</li>
-          <li>• Length: ~67mm (2.6")</li>
-          <li>• Used in: Laptops, mini PCs, NUCs</li>
-        </ul>
-      </div>
     </div>
 
     <h2 className="text-xl font-semibold mt-8 mb-4">Reading RAM Labels</h2>
