@@ -91,17 +91,13 @@ const CpuStickersSection = () => (
     
     <div className="grid gap-6">
       {stickerData.map((item, index) => (
-        <div key={index} className="flex gap-4 p-4 rounded-lg border bg-card/50 items-start">
+        <div key={index} className="flex gap-4 p-4 rounded-lg border bg-card/50 items-center">
           <div className="flex-shrink-0 w-20 h-20 bg-white rounded-md flex items-center justify-center p-2 border">
-            <img src={item.sticker} alt={`${item.logo} sticker`} className="max-w-full max-h-full object-contain" />
+            <img src={item.sticker} alt={`${item.generations} sticker`} className="max-w-full max-h-full object-contain" />
           </div>
           <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 mb-1">
-              <span className="font-semibold text-foreground">{item.era}</span>
-              <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded">{item.logo}</span>
-            </div>
-            <p className="text-sm font-medium text-foreground mb-1">{item.generations}</p>
-            <p className="text-xs text-muted-foreground">{item.codename}</p>
+            <p className="font-semibold text-foreground mb-1">{item.generations}</p>
+            <p className="text-sm text-muted-foreground">{item.codename}</p>
           </div>
         </div>
       ))}
