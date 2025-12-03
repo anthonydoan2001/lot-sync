@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Pallet, Lot } from "@/types/database.types";
@@ -139,21 +139,26 @@ const Index = () => {
     };
   }, [viewMode, user]);
 
-  // Filter data based on search
-  const filteredPallets = pallets.filter((pallet) =>
-    pallet.pallet_number.toLowerCase().includes(searchQuery.toLowerCase()),
-  );
-
-  const filteredLots = lots.filter((lot) => lot.lot_number.toLowerCase().includes(searchQuery.toLowerCase()));
-
-  // Define sort orders for each category
+  // Define sort orders for each category (outside component to prevent recreation)
   const DESKTOP_SORT_ORDER = ["B/C 1-2ND GEN", "B/C 3RD GEN", "B/C 4TH GEN", "B/C 5-7TH GEN", "B/C ↑ 8TH GEN", "OTHER", "D/F"];
   const LAPTOP_SORT_ORDER = ["B/C ↓ 4TH GEN", "B/C ↑ 5TH GEN", "OTHER", "D/F"];
   const DISPLAY_SORT_ORDER = ["B LCD", "CLCD", "OTHER"];
   const CHROMEBOOK_SORT_ORDER = ["B/C MANAGED", "B/C NON-MANAGED", "D", "F", "OTHER"];
+  const categoryOrder: PalletCategory[] = ["DESKTOPS", "LAPTOPS", "DISPLAYS", "WORKSTATIONS", "CHROMEBOOKS", "OTHER"];
+
+  // Filter and sort data with memoization
+  const filteredPallets = useMemo(() => 
+    pallets.filter((pallet) => pallet.pallet_number.toLowerCase().includes(searchQuery.toLowerCase())),
+    [pallets, searchQuery]
+  );
+
+  const filteredLots = useMemo(() => 
+    lots.filter((lot) => lot.lot_number.toLowerCase().includes(searchQuery.toLowerCase())),
+    [lots, searchQuery]
+  );
 
   // Function to sort pallets within a category
-  const sortPalletsByDescription = (pallets: Pallet[], category: PalletCategory): Pallet[] => {
+  const sortPalletsByDescription = useCallback((pallets: Pallet[], category: PalletCategory): Pallet[] => {
     let sortOrder: string[] = [];
 
     switch (category) {
@@ -187,8 +192,8 @@ const Index = () => {
       const aIsDF = aDesc === "D/F";
       const bIsDF = bDesc === "D/F";
 
-      if (aIsDF && !bIsDF) return 1; // D/F comes after everything
-      if (!aIsDF && bIsDF) return -1; // Everything comes before D/F
+      if (aIsDF && !bIsDF) return 1;
+      if (!aIsDF && bIsDF) return -1;
 
       if (aIndex !== -1 && bIndex !== -1) {
         return aIndex - bIndex;
@@ -199,31 +204,32 @@ const Index = () => {
 
       return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
     });
-  };
+  }, []);
 
-  // Group pallets by category
-  const categorizedPallets = filteredPallets.reduce(
-    (acc, pallet) => {
-      const category = categorizePallet(pallet);
-      if (!acc[category]) {
-        acc[category] = [];
-      }
-      acc[category].push(pallet);
-      return acc;
-    },
-    {} as Record<PalletCategory, Pallet[]>,
-  );
-
-  // Sort pallets within each category
-  Object.keys(categorizedPallets).forEach((category) => {
-    categorizedPallets[category as PalletCategory] = sortPalletsByDescription(
-      categorizedPallets[category as PalletCategory],
-      category as PalletCategory,
+  // Memoized categorized pallets
+  const categorizedPallets = useMemo(() => {
+    const grouped = filteredPallets.reduce(
+      (acc, pallet) => {
+        const category = categorizePallet(pallet);
+        if (!acc[category]) {
+          acc[category] = [];
+        }
+        acc[category].push(pallet);
+        return acc;
+      },
+      {} as Record<PalletCategory, Pallet[]>,
     );
-  });
 
-  // Define category order
-  const categoryOrder: PalletCategory[] = ["DESKTOPS", "LAPTOPS", "DISPLAYS", "WORKSTATIONS", "CHROMEBOOKS", "OTHER"];
+    // Sort pallets within each category
+    Object.keys(grouped).forEach((category) => {
+      grouped[category as PalletCategory] = sortPalletsByDescription(
+        grouped[category as PalletCategory],
+        category as PalletCategory,
+      );
+    });
+
+    return grouped;
+  }, [filteredPallets, sortPalletsByDescription]);
 
   // Pallet operations
   const handleAddPallet = async (data: Partial<Pallet>) => {
@@ -395,7 +401,7 @@ const Index = () => {
               onClick={() => setPalletViewMode("card")}
               variant="outline"
               size="lg"
-              className="shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+              className="shadow-lg hover:shadow-xl transition-shadow duration-150"
             >
               <Edit className="h-4 w-4 mr-2" />
               Edit Mode
@@ -418,7 +424,7 @@ const Index = () => {
                       variant={viewMode === "active" ? "default" : "outline"}
                       onClick={() => setViewMode("active")}
                       size="lg"
-                      className="font-semibold shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105"
+                      className="font-semibold shadow-md hover:shadow-lg transition-shadow duration-150"
                     >
                       Active
                     </Button>
@@ -426,7 +432,7 @@ const Index = () => {
                       variant={viewMode === "history" ? "default" : "outline"}
                       onClick={() => setViewMode("history")}
                       size="lg"
-                      className="font-semibold shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105"
+                      className="font-semibold shadow-md hover:shadow-lg transition-shadow duration-150"
                     >
                       History
                     </Button>
@@ -440,14 +446,14 @@ const Index = () => {
                       placeholder="Search by number..."
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      className="pl-12 h-12 text-base shadow-md focus:shadow-lg transition-all duration-300"
+                      className="pl-12 h-12 text-base shadow-md focus:shadow-lg transition-shadow duration-150"
                     />
                   </div>
                   <Button
                     onClick={() => navigate("/manual")}
                     variant="outline"
                     size="lg"
-                    className="flex-shrink-0 shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105"
+                    className="flex-shrink-0 shadow-md hover:shadow-lg transition-shadow duration-150"
                   >
                     <BookOpen className="h-4 w-4 sm:mr-2" />
                     <span className="hidden sm:inline">Manual</span>
@@ -456,7 +462,7 @@ const Index = () => {
                     onClick={handleLogout}
                     variant="outline"
                     size="lg"
-                    className="flex-shrink-0 shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105"
+                    className="flex-shrink-0 shadow-md hover:shadow-lg transition-shadow duration-150"
                   >
                     <LogOut className="h-4 w-4 sm:mr-2" />
                     <span className="hidden sm:inline">Logout</span>
@@ -486,7 +492,7 @@ const Index = () => {
                     <Button
                       onClick={() => setPalletViewMode(palletViewMode === "card" ? "list" : "card")}
                       variant="outline"
-                      className="flex-shrink-0 shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105"
+                      className="flex-shrink-0 shadow-md hover:shadow-lg transition-shadow duration-150"
                     >
                       {palletViewMode === "card" ? (
                         <>
