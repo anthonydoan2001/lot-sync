@@ -363,30 +363,6 @@ const CpuStickersSection = () => (
 
     <hr className="my-8" />
 
-    <h2 className="text-xl font-semibold mt-8 mb-4">Summary Table</h2>
-    <div className="overflow-x-auto rounded-lg border">
-      <table className="w-full text-sm">
-        <thead className="bg-muted/50">
-          <tr>
-            <th className="text-left p-3 font-semibold">Years</th>
-            <th className="text-left p-3 font-semibold">Sticker Used</th>
-            <th className="text-left p-3 font-semibold">CPU Generations</th>
-          </tr>
-        </thead>
-        <tbody>
-          {stickerData.map((item, index) => (
-            <tr key={index} className="border-t">
-              <td className="p-3 font-medium">{item.era}</td>
-              <td className="p-3">{item.logo}</td>
-              <td className="p-3 text-muted-foreground">{item.generations}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-
-    <hr className="my-8" />
-
     <h2 className="text-xl font-semibold mt-8 mb-4">How to Read Model Numbers</h2>
     <p className="mb-4">
       Intel processor model numbers follow a consistent pattern:
