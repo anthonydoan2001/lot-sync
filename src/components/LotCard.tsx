@@ -2,6 +2,7 @@ import { memo } from "react";
 import { Lot } from "@/types/database.types";
 import { Button } from "@/components/ui/button";
 import { Pencil, Archive, Trash2 } from "lucide-react";
+import { format } from "date-fns";
 
 interface LotCardProps {
   lot: Lot;
@@ -12,11 +13,20 @@ interface LotCardProps {
   isHistory?: boolean;
 }
 
+const formatDate = (dateStr: string) => {
+  const date = new Date(dateStr);
+  return format(date, "M/d h:mma").toLowerCase();
+};
+
 export const LotCard = memo(function LotCard({ lot, onEdit, onRetire, onUnretire, onDelete, isHistory = false }: LotCardProps) {
   return (
     <div className="flex items-center gap-3 px-4 py-2 rounded-lg border bg-card hover:bg-muted/50 transition-colors">
       <span className="font-bold text-secondary uppercase">{lot.lot_number}</span>
       <span className="text-muted-foreground uppercase flex-1">{lot.contents}</span>
+      
+      <span className="text-xs text-muted-foreground whitespace-nowrap">
+        {isHistory && lot.retired_at ? formatDate(lot.retired_at) : formatDate(lot.created_at)}
+      </span>
       
       <div className="flex items-center gap-1">
         {!isHistory ? (
