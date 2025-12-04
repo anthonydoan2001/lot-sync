@@ -67,6 +67,7 @@ export function PalletModal({ open, onClose, onSubmit, pallet }: PalletModalProp
   const [description, setDescription] = useState("");
   const [selectedDescription, setSelectedDescription] = useState("");
   const [customDescription, setCustomDescription] = useState("");
+  const [notes, setNotes] = useState("");
 
   useEffect(() => {
     if (pallet) {
@@ -76,6 +77,7 @@ export function PalletModal({ open, onClose, onSubmit, pallet }: PalletModalProp
       setType((pallet.type as PalletType) || "");
       setGrade(pallet.grade || "");
       setDescription(pallet.description);
+      setNotes(pallet.notes || "");
       
       // Check if description matches a predefined option
       if (pallet.type) {
@@ -95,6 +97,7 @@ export function PalletModal({ open, onClose, onSubmit, pallet }: PalletModalProp
       setDescription("");
       setSelectedDescription("");
       setCustomDescription("");
+      setNotes("");
     }
   }, [pallet, open]);
 
@@ -208,6 +211,7 @@ export function PalletModal({ open, onClose, onSubmit, pallet }: PalletModalProp
       type: type,
       grade: finalGrade,
       description: finalDescription,
+      notes: notes.trim() || null,
     });
   };
 
@@ -314,6 +318,17 @@ export function PalletModal({ open, onClose, onSubmit, pallet }: PalletModalProp
                 />
               </div>
             )}
+
+            <div className="space-y-2.5">
+              <Label htmlFor="notes" className="text-[15px] font-semibold">Notes (optional)</Label>
+              <Input
+                id="notes"
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                placeholder="e.g., remove hard drive and ram"
+                className="h-[50px] text-[15px] font-medium border-2 rounded-[10px]"
+              />
+            </div>
           </div>
           <DialogFooter className="px-8 pb-6 pt-6 -mx-6 -mb-6 bg-muted border-t-2 rounded-b-[16px] gap-3">
             <Button type="button" variant="outline" onClick={onClose} className="h-[48px] px-7 text-base font-semibold border-2 rounded-[10px]">

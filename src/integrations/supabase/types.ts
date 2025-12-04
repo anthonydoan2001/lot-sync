@@ -49,6 +49,7 @@ export type Database = {
           grade: string | null
           id: string
           is_retired: boolean
+          notes: string | null
           pallet_number: string
           retired_at: string | null
           type: string | null
@@ -60,6 +61,7 @@ export type Database = {
           grade?: string | null
           id?: string
           is_retired?: boolean
+          notes?: string | null
           pallet_number: string
           retired_at?: string | null
           type?: string | null
@@ -71,6 +73,7 @@ export type Database = {
           grade?: string | null
           id?: string
           is_retired?: boolean
+          notes?: string | null
           pallet_number?: string
           retired_at?: string | null
           type?: string | null
