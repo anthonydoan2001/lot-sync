@@ -8,6 +8,7 @@ export interface Pallet {
   is_retired: boolean;
   created_at: string;
   retired_at: string | null;
+  notes: string | null;
 }
 
 export interface Lot {

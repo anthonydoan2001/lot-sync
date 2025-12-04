@@ -43,7 +43,12 @@ export const PalletCard = memo(function PalletCard({ pallet, onEdit, onRetire, o
         </span>
       )}
       <span className="font-bold text-primary uppercase">{pallet.pallet_number}</span>
-      <span className="text-muted-foreground uppercase flex-1">{getDisplayDescription()}</span>
+      <span className="text-muted-foreground uppercase flex-1">
+        {getDisplayDescription()}
+        {!isHistory && pallet.notes && (
+          <span className="text-xs lowercase normal-case"> - {pallet.notes}</span>
+        )}
+      </span>
       
       <span className="text-xs text-muted-foreground whitespace-nowrap">
         {isHistory && pallet.retired_at ? (
