@@ -193,12 +193,6 @@ const BiosKeysSection = () => (
             <td className="p-3"><code className="bg-muted px-2 py-0.5 rounded text-xs">Hold Vol Down + Power</code></td>
             <td className="p-3 text-muted-foreground">Release when logo appears</td>
           </tr>
-          <tr className="border-t">
-            <td className="p-3 font-medium">Apple (Intel Macs)</td>
-            <td className="p-3"><code className="bg-muted px-2 py-0.5 rounded text-xs">Cmd + R</code></td>
-            <td className="p-3"><code className="bg-muted px-2 py-0.5 rounded text-xs">Option</code></td>
-            <td className="p-3 text-muted-foreground">Recovery vs. Startup Manager</td>
-          </tr>
         </tbody>
       </table>
     </div>
