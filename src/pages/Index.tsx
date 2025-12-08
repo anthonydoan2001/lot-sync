@@ -579,7 +579,7 @@ const Index = () => {
                         >
                           <div className="flex items-center gap-3 pb-3 border-b border-border">
                             <h2 className="text-2xl font-semibold text-foreground tracking-tight">
-                              {category}
+                              {category === "AIO" ? "ALL-IN-ONE" : category}
                             </h2>
                             <span className="text-sm font-medium text-muted-foreground bg-muted px-2.5 py-0.5 rounded-full">
                               {categoryPallets.length}
