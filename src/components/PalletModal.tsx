@@ -27,7 +27,7 @@ interface PalletModalProps {
   pallet?: Pallet | null;
 }
 
-type PalletType = "DESKTOPS" | "LAPTOPS" | "DISPLAYS" | "WORKSTATIONS" | "CHROMEBOOKS" | "OTHER";
+type PalletType = "DESKTOPS" | "LAPTOPS" | "AIO" | "DISPLAYS" | "WORKSTATIONS" | "CHROMEBOOKS" | "OTHER";
 
 const DESKTOP_DESCRIPTIONS = [
   "B/C 1-2ND GEN",
@@ -42,6 +42,13 @@ const DESKTOP_DESCRIPTIONS = [
 const LAPTOP_DESCRIPTIONS = [
   "B/C ↓ 4TH GEN",
   "B/C ↑ 5TH GEN",
+  "D/F",
+  "OTHER"
+];
+
+const AIO_DESCRIPTIONS = [
+  "5-7TH GEN AIO",
+  "↑ 8TH GEN AIO",
   "D/F",
   "OTHER"
 ];
@@ -107,6 +114,8 @@ export function PalletModal({ open, onClose, onSubmit, pallet }: PalletModalProp
         return DESKTOP_DESCRIPTIONS;
       case "LAPTOPS":
         return LAPTOP_DESCRIPTIONS;
+      case "AIO":
+        return AIO_DESCRIPTIONS;
       case "DISPLAYS":
         return DISPLAY_DESCRIPTIONS;
       case "CHROMEBOOKS":
@@ -122,6 +131,10 @@ export function PalletModal({ open, onClose, onSubmit, pallet }: PalletModalProp
       if (desc !== "OTHER") return "B/C";
     }
     if (palletType === "LAPTOPS") {
+      if (desc === "D/F") return "D/F";
+      if (desc !== "OTHER") return "B/C";
+    }
+    if (palletType === "AIO") {
       if (desc === "D/F") return "D/F";
       if (desc !== "OTHER") return "B/C";
     }
@@ -152,7 +165,7 @@ export function PalletModal({ open, onClose, onSubmit, pallet }: PalletModalProp
 
   const shouldShowDescriptionDropdown = (): boolean => {
     if (!type) return false;
-    return ["DESKTOPS", "LAPTOPS", "DISPLAYS", "CHROMEBOOKS"].includes(type);
+    return ["DESKTOPS", "LAPTOPS", "AIO", "DISPLAYS", "CHROMEBOOKS"].includes(type);
   };
 
   const shouldShowCustomDescription = (): boolean => {
@@ -261,6 +274,7 @@ export function PalletModal({ open, onClose, onSubmit, pallet }: PalletModalProp
                 <SelectContent className="bg-background">
                   <SelectItem value="DESKTOPS">DESKTOPS</SelectItem>
                   <SelectItem value="LAPTOPS">LAPTOPS</SelectItem>
+                  <SelectItem value="AIO">AIO</SelectItem>
                   <SelectItem value="DISPLAYS">DISPLAYS</SelectItem>
                   <SelectItem value="WORKSTATIONS">WORKSTATIONS</SelectItem>
                   <SelectItem value="CHROMEBOOKS">CHROMEBOOKS</SelectItem>
