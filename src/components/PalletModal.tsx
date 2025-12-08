@@ -47,8 +47,8 @@ const LAPTOP_DESCRIPTIONS = [
 ];
 
 const AIO_DESCRIPTIONS = [
-  "5-7TH GEN AIO",
-  "↑ 8TH GEN AIO",
+  "5-7TH GEN",
+  "↑ 8TH GEN",
   "D/F",
   "OTHER"
 ];
@@ -136,7 +136,7 @@ export function PalletModal({ open, onClose, onSubmit, pallet }: PalletModalProp
     }
     if (palletType === "AIO") {
       if (desc === "D/F") return "D/F";
-      if (desc !== "OTHER") return "B/C";
+      if (["5-7TH GEN", "↑ 8TH GEN"].includes(desc)) return "B/C";
     }
     if (palletType === "DISPLAYS") {
       if (desc === "B LCD") return "B";
