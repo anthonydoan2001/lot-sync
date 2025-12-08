@@ -133,10 +133,13 @@ export const PalletListView = memo(function PalletListView({ pallets }: PalletLi
           </div>
           <div className="space-y-3">
             {sortedPallets.map((pallet) => {
-              let description = cleanDescription(pallet.description, category);
+              let description = pallet.description;
+              // Remove grade prefix if present
               if (pallet.grade && description.startsWith(pallet.grade)) {
                 description = description.substring(pallet.grade.length).trim();
               }
+              // Clean category-specific keywords from description
+              description = cleanDescription(description, category);
 
               const isLowGrade = pallet.grade && ["D/F", "D", "F"].includes(pallet.grade.toUpperCase());
 
