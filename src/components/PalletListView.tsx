@@ -5,7 +5,7 @@ interface PalletListViewProps {
   pallets: Pallet[];
 }
 
-type Category = "DESKTOPS" | "LAPTOPS" | "DISPLAYS" | "WORKSTATIONS" | "CHROMEBOOKS" | "OTHER";
+type Category = "DESKTOPS" | "LAPTOPS" | "AIO" | "DISPLAYS" | "WORKSTATIONS" | "CHROMEBOOKS" | "OTHER";
 
 const categorizePallet = (pallet: Pallet): Category => {
   if (!pallet.type) return "OTHER";
@@ -21,6 +21,9 @@ const cleanDescription = (description: string, category: Category): string => {
       break;
     case "LAPTOPS":
       cleaned = cleaned.replace(/\blaptops?\b/gi, "");
+      break;
+    case "AIO":
+      cleaned = cleaned.replace(/\bAIO\b/gi, "");
       break;
     case "DISPLAYS":
       cleaned = cleaned.replace(/\b(displays?|monitors?)\b/gi, "");
@@ -38,9 +41,10 @@ const cleanDescription = (description: string, category: Category): string => {
 
 const DESKTOP_SORT_ORDER = ["B/C 1-2ND GEN", "B/C 3RD GEN", "B/C 4TH GEN", "B/C 5-7TH GEN", "B/C ↑ 8TH GEN", "OTHER", "D/F"];
 const LAPTOP_SORT_ORDER = ["B/C ↓ 4TH GEN", "B/C ↑ 5TH GEN", "OTHER", "D/F"];
+const AIO_SORT_ORDER = ["5-7TH GEN AIO", "↑ 8TH GEN AIO", "OTHER", "D/F"];
 const DISPLAY_SORT_ORDER = ["B LCD", "CLCD", "OTHER"];
 const CHROMEBOOK_SORT_ORDER = ["B/C MANAGED", "B/C NON-MANAGED", "D", "F", "OTHER"];
-const categoryOrder: Category[] = ["DESKTOPS", "LAPTOPS", "DISPLAYS", "WORKSTATIONS", "CHROMEBOOKS", "OTHER"];
+const categoryOrder: Category[] = ["DESKTOPS", "LAPTOPS", "AIO", "DISPLAYS", "WORKSTATIONS", "CHROMEBOOKS", "OTHER"];
 
 const sortPalletsByDescription = (pallets: Pallet[], category: Category): Pallet[] => {
   let sortOrder: string[] = [];
@@ -51,6 +55,9 @@ const sortPalletsByDescription = (pallets: Pallet[], category: Category): Pallet
       break;
     case "LAPTOPS":
       sortOrder = LAPTOP_SORT_ORDER;
+      break;
+    case "AIO":
+      sortOrder = AIO_SORT_ORDER;
       break;
     case "DISPLAYS":
       sortOrder = DISPLAY_SORT_ORDER;
@@ -118,7 +125,7 @@ export const PalletListView = memo(function PalletListView({ pallets }: PalletLi
         <div key={category} className="space-y-6">
           <div className="flex items-center gap-3 pb-3 border-b border-border">
             <h2 className="text-2xl font-semibold text-foreground tracking-tight">
-              {category}
+              {category === "AIO" ? "ALL IN ONE" : category}
             </h2>
             <span className="text-sm font-medium text-muted-foreground bg-muted px-2.5 py-0.5 rounded-full">
               {sortedPallets.length}
