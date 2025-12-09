@@ -24,7 +24,9 @@ export const PalletCard = memo(function PalletCard({ pallet, onEdit, onRetire, o
     if (pallet.grade && desc.startsWith(pallet.grade)) {
       desc = desc.substring(pallet.grade.length).trim();
     }
-    return `${desc} ${pallet.type || ""}`.trim();
+    // Don't append "OTHER" type to description
+    const displayType = pallet.type && pallet.type.toUpperCase() !== "OTHER" ? pallet.type : "";
+    return `${desc} ${displayType}`.trim();
   };
 
   const isLowGrade = pallet.grade && ["D/F", "D", "F"].includes(pallet.grade.toUpperCase());
