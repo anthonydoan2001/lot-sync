@@ -24,7 +24,7 @@ import { Plus, Search, List, Edit, LogOut, Package, Box, BookOpen } from "lucide
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
 
-type PalletCategory = "DESKTOPS" | "LAPTOPS" | "AIO" | "DISPLAYS" | "WORKSTATIONS" | "CHROMEBOOKS" | "OTHER";
+type PalletCategory = "MISC" | "DESKTOPS" | "LAPTOPS" | "AIO" | "DISPLAYS" | "WORKSTATIONS" | "CHROMEBOOKS" | "OTHER";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -147,7 +147,7 @@ const Index = () => {
   const AIO_SORT_ORDER = ["5-7TH GEN", "↑ 8TH GEN", "OTHER", "D/F"];
   const DISPLAY_SORT_ORDER = ["B LCD", "CLCD", "OTHER"];
   const CHROMEBOOK_SORT_ORDER = ["B/C MANAGED", "B/C NON-MANAGED", "D", "F", "OTHER"];
-  const categoryOrder: PalletCategory[] = ["DESKTOPS", "LAPTOPS", "AIO", "DISPLAYS", "WORKSTATIONS", "CHROMEBOOKS", "OTHER"];
+  const categoryOrder: PalletCategory[] = ["MISC", "DESKTOPS", "LAPTOPS", "AIO", "DISPLAYS", "WORKSTATIONS", "CHROMEBOOKS", "OTHER"];
 
   // Filter and sort data with memoization
   const filteredPallets = useMemo(() => 
@@ -180,6 +180,7 @@ const Index = () => {
       case "CHROMEBOOKS":
         sortOrder = CHROMEBOOK_SORT_ORDER;
         break;
+      case "MISC":
       case "WORKSTATIONS":
       case "OTHER":
         return [...pallets].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
@@ -577,14 +578,16 @@ const Index = () => {
                           key={category}
                           className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500"
                         >
-                          <div className="flex items-center gap-3 pb-3 border-b border-border">
-                            <h2 className="text-2xl font-semibold text-foreground tracking-tight">
-                              {category === "AIO" ? "ALL-IN-ONE" : category}
-                            </h2>
-                            <span className="text-sm font-medium text-muted-foreground bg-muted px-2.5 py-0.5 rounded-full">
-                              {categoryPallets.length}
-                            </span>
-                          </div>
+                          {category !== "MISC" && (
+                            <div className="flex items-center gap-3 pb-3 border-b border-border">
+                              <h2 className="text-2xl font-semibold text-foreground tracking-tight">
+                                {category === "AIO" ? "ALL-IN-ONE" : category}
+                              </h2>
+                              <span className="text-sm font-medium text-muted-foreground bg-muted px-2.5 py-0.5 rounded-full">
+                                {categoryPallets.length}
+                              </span>
+                            </div>
+                          )}
                           <div className="flex flex-col gap-2">
                             {categoryPallets.map((pallet) => (
                               <PalletCard
