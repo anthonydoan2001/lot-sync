@@ -24,8 +24,9 @@ export const PalletCard = memo(function PalletCard({ pallet, onEdit, onRetire, o
     if (pallet.grade && desc.startsWith(pallet.grade)) {
       desc = desc.substring(pallet.grade.length).trim();
     }
-    // Don't append "OTHER" type to description
-    const displayType = pallet.type && pallet.type.toUpperCase() !== "OTHER" ? pallet.type : "";
+    // Don't append "OTHER" or "MISC" type to description
+    const typeUpper = pallet.type?.toUpperCase();
+    const displayType = pallet.type && typeUpper !== "OTHER" && typeUpper !== "MISC" ? pallet.type : "";
     return `${desc} ${displayType}`.trim();
   };
 
