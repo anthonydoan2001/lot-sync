@@ -31,6 +31,7 @@ export const PalletCard = memo(function PalletCard({ pallet, onEdit, onRetire, o
   };
 
   const isLowGrade = pallet.grade && ["D/F", "D", "F"].includes(pallet.grade.toUpperCase());
+  const isMisc = pallet.type?.toUpperCase() === "MISC";
 
   return (
     <div className="flex items-center gap-3 px-4 py-2 rounded-lg border bg-card hover:bg-muted/50 transition-colors">
@@ -53,13 +54,15 @@ export const PalletCard = memo(function PalletCard({ pallet, onEdit, onRetire, o
         )}
       </span>
       
-      <span className="text-xs text-muted-foreground whitespace-nowrap">
-        {isHistory && pallet.retired_at ? (
-          <>
-            {formatDate(pallet.created_at)} - <span className="font-bold underline">{formatDate(pallet.retired_at)}</span>
-          </>
-        ) : formatDate(pallet.created_at)}
-      </span>
+      {!isMisc && (
+        <span className="text-xs text-muted-foreground whitespace-nowrap">
+          {isHistory && pallet.retired_at ? (
+            <>
+              {formatDate(pallet.created_at)} - <span className="font-bold underline">{formatDate(pallet.retired_at)}</span>
+            </>
+          ) : formatDate(pallet.created_at)}
+        </span>
+      )}
       
       <div className="flex items-center gap-1">
         {!isHistory ? (
@@ -67,12 +70,16 @@ export const PalletCard = memo(function PalletCard({ pallet, onEdit, onRetire, o
             <Button size="icon" variant="ghost" onClick={() => onEdit(pallet)} className="h-8 w-8">
               <Pencil className="h-4 w-4" />
             </Button>
-            <Button size="icon" variant="ghost" onClick={() => onRetire(pallet.id)} className="h-8 w-8 text-accent">
-              <Archive className="h-4 w-4" />
-            </Button>
-            <Button size="icon" variant="ghost" onClick={() => onDelete(pallet.id)} className="h-8 w-8 text-destructive">
-              <Trash2 className="h-4 w-4" />
-            </Button>
+            {!isMisc && (
+              <>
+                <Button size="icon" variant="ghost" onClick={() => onRetire(pallet.id)} className="h-8 w-8 text-accent">
+                  <Archive className="h-4 w-4" />
+                </Button>
+                <Button size="icon" variant="ghost" onClick={() => onDelete(pallet.id)} className="h-8 w-8 text-destructive">
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              </>
+            )}
           </>
         ) : (
           <Button size="sm" variant="outline" onClick={() => onUnretire(pallet.id)}>
