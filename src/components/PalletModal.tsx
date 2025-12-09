@@ -27,7 +27,7 @@ interface PalletModalProps {
   pallet?: Pallet | null;
 }
 
-type PalletType = "DESKTOPS" | "LAPTOPS" | "AIO" | "DISPLAYS" | "WORKSTATIONS" | "CHROMEBOOKS" | "OTHER";
+type PalletType = "MISC" | "DESKTOPS" | "LAPTOPS" | "AIO" | "DISPLAYS" | "WORKSTATIONS" | "CHROMEBOOKS" | "OTHER";
 
 const DESKTOP_DESCRIPTIONS = [
   "B/C 1-2ND GEN",
@@ -154,7 +154,7 @@ export function PalletModal({ open, onClose, onSubmit, pallet }: PalletModalProp
 
   const shouldShowGradeInput = (): boolean => {
     if (!type) return false;
-    if (type === "WORKSTATIONS" || type === "OTHER") return true;
+    if (type === "MISC" || type === "WORKSTATIONS" || type === "OTHER") return true;
     if (selectedDescription === "OTHER") {
       // For DISPLAYS with OTHER, don't show grade
       if (type === "DISPLAYS") return false;
@@ -170,7 +170,7 @@ export function PalletModal({ open, onClose, onSubmit, pallet }: PalletModalProp
 
   const shouldShowCustomDescription = (): boolean => {
     if (!type) return false;
-    if (type === "WORKSTATIONS" || type === "OTHER") return true;
+    if (type === "MISC" || type === "WORKSTATIONS" || type === "OTHER") return true;
     return selectedDescription === "OTHER";
   };
 
@@ -272,6 +272,7 @@ export function PalletModal({ open, onClose, onSubmit, pallet }: PalletModalProp
                   <SelectValue placeholder="Select type..." />
                 </SelectTrigger>
                 <SelectContent className="bg-background">
+                  <SelectItem value="MISC">MISC</SelectItem>
                   <SelectItem value="DESKTOPS">DESKTOPS</SelectItem>
                   <SelectItem value="LAPTOPS">LAPTOPS</SelectItem>
                   <SelectItem value="AIO">AIO</SelectItem>
