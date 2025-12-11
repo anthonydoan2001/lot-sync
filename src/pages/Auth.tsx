@@ -7,8 +7,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { toast } from "sonner";
 import { Lock, LogIn } from "lucide-react";
 
-const SHARED_PASSWORD = "676767";
-
 export default function Auth() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -19,39 +17,45 @@ export default function Auth() {
     setLoading(true);
 
     try {
-      if (password !== SHARED_PASSWORD) {
-        toast.error("Incorrect password");
+      // Call the secure edge function to validate password
+      const { data, error } = await supabase.functions.invoke('validate-access', {
+        body: { password }
+      });
+
+      if (error) {
+        console.error('Function error:', error);
+        toast.error("Authentication failed");
         setLoading(false);
         return;
       }
 
-      const email = `itadsecure@gmail.com`;
-
-      const { error: signInError } = await supabase.auth.signInWithPassword({
-        email,
-        password: SHARED_PASSWORD,
-      });
-
-      if (signInError) {
-        if (signInError.message.includes("Invalid login credentials")) {
-          const { error: signUpError } = await supabase.auth.signUp({
-            email,
-            password: SHARED_PASSWORD,
-            options: {
-              emailRedirectTo: `${window.location.origin}/`,
-            },
-          });
-          if (signUpError) throw signUpError;
-          toast.success("Logged in successfully");
-        } else {
-          throw signInError;
-        }
-      } else {
-        toast.success("Logged in successfully");
+      if (data.error) {
+        toast.error(data.error);
+        setLoading(false);
+        return;
       }
 
-      navigate("/");
+      // Set the session from the response
+      if (data.session) {
+        const { error: sessionError } = await supabase.auth.setSession({
+          access_token: data.session.access_token,
+          refresh_token: data.session.refresh_token,
+        });
+
+        if (sessionError) {
+          console.error('Session error:', sessionError);
+          toast.error("Failed to establish session");
+          setLoading(false);
+          return;
+        }
+
+        toast.success("Logged in successfully");
+        navigate("/");
+      } else {
+        toast.error("No session returned");
+      }
     } catch (error: any) {
+      console.error('Auth error:', error);
       toast.error(error.message || "An error occurred");
     } finally {
       setLoading(false);
