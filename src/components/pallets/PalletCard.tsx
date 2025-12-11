@@ -2,7 +2,7 @@ import { memo } from "react";
 import { Pallet } from "@/types/database.types";
 import { Button } from "@/components/ui/button";
 import { Pencil, Archive, Trash2 } from "lucide-react";
-import { format } from "date-fns";
+import { formatDate } from "@/utils/formatting";
 
 interface PalletCardProps {
   pallet: Pallet;
@@ -13,18 +13,12 @@ interface PalletCardProps {
   isHistory?: boolean;
 }
 
-const formatDate = (dateStr: string) => {
-  const date = new Date(dateStr);
-  return format(date, "M/d h:mma").toLowerCase();
-};
-
 export const PalletCard = memo(function PalletCard({ pallet, onEdit, onRetire, onUnretire, onDelete, isHistory = false }: PalletCardProps) {
   const getDisplayDescription = () => {
     let desc = pallet.description;
     if (pallet.grade && desc.startsWith(pallet.grade)) {
       desc = desc.substring(pallet.grade.length).trim();
     }
-    // Don't append "OTHER" or "MISC" type to description
     const typeUpper = pallet.type?.toUpperCase();
     const displayType = pallet.type && typeUpper !== "OTHER" && typeUpper !== "MISC" ? pallet.type : "";
     return `${desc} ${displayType}`.trim();
