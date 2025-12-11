@@ -1,102 +1,11 @@
 import { memo, useMemo } from "react";
 import { Pallet } from "@/types/database.types";
+import { PalletCategory, CATEGORY_ORDER } from "@/constants/categories";
+import { categorizePallet, sortPalletsByDescription, cleanDescription } from "@/utils/sorting";
 
 interface PalletListViewProps {
   pallets: Pallet[];
 }
-
-type Category = "MISC" | "DESKTOPS" | "LAPTOPS" | "AIO" | "DISPLAYS" | "WORKSTATIONS" | "CHROMEBOOKS" | "OTHER";
-
-const categorizePallet = (pallet: Pallet): Category => {
-  if (!pallet.type) return "OTHER";
-  return pallet.type as Category;
-};
-
-const cleanDescription = (description: string, category: Category): string => {
-  let cleaned = description;
-
-  switch (category) {
-    case "DESKTOPS":
-      cleaned = cleaned.replace(/\bdesktops?\b/gi, "");
-      break;
-    case "LAPTOPS":
-      cleaned = cleaned.replace(/\blaptops?\b/gi, "");
-      break;
-    case "AIO":
-      cleaned = cleaned.replace(/\bAIO\b/gi, "");
-      break;
-    case "DISPLAYS":
-      cleaned = cleaned.replace(/\b(displays?|monitors?)\b/gi, "");
-      break;
-    case "WORKSTATIONS":
-      cleaned = cleaned.replace(/\bworkstations?\b/gi, "");
-      break;
-    case "CHROMEBOOKS":
-      cleaned = cleaned.replace(/\bchromebooks?\b/gi, "");
-      break;
-  }
-
-  return cleaned.replace(/\s+/g, " ").trim();
-};
-
-const DESKTOP_SORT_ORDER = ["B/C 1-2ND GEN", "B/C 3RD GEN", "B/C 4TH GEN", "B/C 5-7TH GEN", "B/C ↑ 8TH GEN", "OTHER", "D/F"];
-const LAPTOP_SORT_ORDER = ["B/C ↓ 4TH GEN", "B/C ↑ 5TH GEN", "OTHER", "D/F"];
-const AIO_SORT_ORDER = ["5-7TH GEN", "↑ 8TH GEN", "OTHER", "D/F"];
-const DISPLAY_SORT_ORDER = ["B LCD", "CLCD", "OTHER"];
-const CHROMEBOOK_SORT_ORDER = ["B/C MANAGED", "B/C NON-MANAGED", "D", "F", "OTHER"];
-const categoryOrder: Category[] = ["MISC", "DESKTOPS", "LAPTOPS", "AIO", "DISPLAYS", "WORKSTATIONS", "CHROMEBOOKS", "OTHER"];
-
-const sortPalletsByDescription = (pallets: Pallet[], category: Category): Pallet[] => {
-  let sortOrder: string[] = [];
-
-  switch (category) {
-    case "DESKTOPS":
-      sortOrder = DESKTOP_SORT_ORDER;
-      break;
-    case "LAPTOPS":
-      sortOrder = LAPTOP_SORT_ORDER;
-      break;
-    case "AIO":
-      sortOrder = AIO_SORT_ORDER;
-      break;
-    case "DISPLAYS":
-      sortOrder = DISPLAY_SORT_ORDER;
-      break;
-    case "CHROMEBOOKS":
-      sortOrder = CHROMEBOOK_SORT_ORDER;
-      break;
-    case "MISC":
-    case "WORKSTATIONS":
-    case "OTHER":
-      return [...pallets].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
-    default:
-      return pallets;
-  }
-
-  return [...pallets].sort((a, b) => {
-    const aDesc = a.description?.toUpperCase() || "OTHER";
-    const bDesc = b.description?.toUpperCase() || "OTHER";
-
-    const aIndex = sortOrder.indexOf(aDesc);
-    const bIndex = sortOrder.indexOf(bDesc);
-
-    // Special handling for D/F - always comes last
-    const aIsDF = aDesc === "D/F";
-    const bIsDF = bDesc === "D/F";
-
-    if (aIsDF && !bIsDF) return 1; // D/F comes after everything
-    if (!aIsDF && bIsDF) return -1; // Everything comes before D/F
-
-    if (aIndex !== -1 && bIndex !== -1) {
-      return aIndex - bIndex;
-    }
-
-    if (aIndex !== -1) return -1;
-    if (bIndex !== -1) return 1;
-
-    return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
-  });
-};
 
 export const PalletListView = memo(function PalletListView({ pallets }: PalletListViewProps) {
   const sortedCategories = useMemo(() => {
@@ -109,10 +18,10 @@ export const PalletListView = memo(function PalletListView({ pallets }: PalletLi
         acc[category].push(pallet);
         return acc;
       },
-      {} as Record<Category, Pallet[]>,
+      {} as Record<PalletCategory, Pallet[]>,
     );
 
-    return categoryOrder.map((category) => ({
+    return CATEGORY_ORDER.map((category) => ({
       category,
       pallets: categorizedPallets[category] 
         ? sortPalletsByDescription(categorizedPallets[category], category)
@@ -137,11 +46,9 @@ export const PalletListView = memo(function PalletListView({ pallets }: PalletLi
           <div className="space-y-3">
             {sortedPallets.map((pallet) => {
               let description = pallet.description;
-              // Remove grade prefix if present
               if (pallet.grade && description.startsWith(pallet.grade)) {
                 description = description.substring(pallet.grade.length).trim();
               }
-              // Clean category-specific keywords from description
               description = cleanDescription(description, category);
 
               const isLowGrade = pallet.grade && ["D/F", "D", "F"].includes(pallet.grade.toUpperCase());

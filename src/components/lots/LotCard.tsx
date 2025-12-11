@@ -2,7 +2,7 @@ import { memo } from "react";
 import { Lot } from "@/types/database.types";
 import { Button } from "@/components/ui/button";
 import { Pencil, Archive, Trash2 } from "lucide-react";
-import { format } from "date-fns";
+import { formatDate } from "@/utils/formatting";
 
 interface LotCardProps {
   lot: Lot;
@@ -12,11 +12,6 @@ interface LotCardProps {
   onDelete: (id: string) => void;
   isHistory?: boolean;
 }
-
-const formatDate = (dateStr: string) => {
-  const date = new Date(dateStr);
-  return format(date, "M/d h:mma").toLowerCase();
-};
 
 export const LotCard = memo(function LotCard({ lot, onEdit, onRetire, onUnretire, onDelete, isHistory = false }: LotCardProps) {
   return (

@@ -1,14 +1,7 @@
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
 import { Pallet, Lot } from "@/types/database.types";
-import { PalletCard } from "@/components/PalletCard";
-import { LotCard } from "@/components/LotCard";
-import { PalletModal } from "@/components/PalletModal";
-import { LotModal } from "@/components/LotModal";
-import { PalletListView } from "@/components/PalletListView";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   AlertDialog,
@@ -20,233 +13,74 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Plus, Search, List, Edit, LogOut, Package, Box, BookOpen } from "lucide-react";
-import { toast } from "sonner";
+import { Plus, List, Edit, Package, Box } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
-
-type PalletCategory = "MISC" | "DESKTOPS" | "LAPTOPS" | "AIO" | "DISPLAYS" | "WORKSTATIONS" | "CHROMEBOOKS" | "OTHER";
+import { usePallets } from "@/hooks/usePallets";
+import { useLots } from "@/hooks/useLots";
+import { CATEGORY_ORDER } from "@/constants/categories";
+import { Header } from "@/components/layout/Header";
+import { PalletCard, PalletListView, PalletModal } from "@/components/pallets";
+import { LotCard, LotModal } from "@/components/lots";
 
 const Index = () => {
   const navigate = useNavigate();
   const { user, loading, signOut } = useAuth();
 
-  const [pallets, setPallets] = useState<Pallet[]>([]);
-  const [lots, setLots] = useState<Lot[]>([]);
-  const [searchQuery, setSearchQuery] = useState("");
+  // View state
   const [viewMode, setViewMode] = useState<"active" | "history">("active");
   const [activeTab, setActiveTab] = useState<"pallets" | "lots">("pallets");
   const [palletViewMode, setPalletViewMode] = useState<"card" | "list">("card");
 
+  // Modal state
   const [palletModalOpen, setPalletModalOpen] = useState(false);
   const [lotModalOpen, setLotModalOpen] = useState(false);
   const [editingPallet, setEditingPallet] = useState<Pallet | null>(null);
   const [editingLot, setEditingLot] = useState<Lot | null>(null);
 
+  // Delete dialog state
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [deletingType, setDeletingType] = useState<"pallet" | "lot">("pallet");
 
-  // Check authentication
+  // Data hooks
+  const {
+    filteredPallets,
+    categorizedPallets,
+    searchQuery: palletSearchQuery,
+    setSearchQuery: setPalletSearchQuery,
+    addPallet,
+    updatePallet,
+    retirePallet,
+    unretirePallet,
+    deletePallet,
+  } = usePallets(viewMode, !!user);
+
+  const {
+    filteredLots,
+    searchQuery: lotSearchQuery,
+    setSearchQuery: setLotSearchQuery,
+    addLot,
+    updateLot,
+    retireLot,
+    unretireLot,
+    deleteLot,
+  } = useLots(viewMode, !!user);
+
+  // Combined search query
+  const searchQuery = activeTab === "pallets" ? palletSearchQuery : lotSearchQuery;
+  const setSearchQuery = activeTab === "pallets" ? setPalletSearchQuery : setLotSearchQuery;
+
+  // Redirect if not authenticated
   useEffect(() => {
     if (!loading && !user) {
       navigate("/auth");
     }
   }, [user, loading, navigate]);
 
-  // Helper function to categorize pallets
-  const categorizePallet = (pallet: Pallet): PalletCategory => {
-    if (!pallet.type) return "OTHER";
-    return pallet.type as PalletCategory;
-  };
-
-  // Fetch pallets
-  const fetchPallets = async () => {
-    const isHistory = viewMode === "history";
-    const { data, error } = await supabase
-      .from("pallets")
-      .select("*")
-      .eq("is_retired", isHistory)
-      .order(isHistory ? "retired_at" : "created_at", { ascending: false });
-
-    if (error) {
-      toast.error("Failed to fetch pallets");
-      console.error(error);
-    } else {
-      setPallets(data || []);
-    }
-  };
-
-  // Fetch lots
-  const fetchLots = async () => {
-    const isHistory = viewMode === "history";
-    const { data, error } = await supabase
-      .from("lots")
-      .select("*")
-      .eq("is_retired", isHistory)
-      .order(isHistory ? "retired_at" : "created_at", { ascending: false });
-
-    if (error) {
-      toast.error("Failed to fetch lots");
-      console.error(error);
-    } else {
-      setLots(data || []);
-    }
-  };
-
-  // Initial fetch
-  useEffect(() => {
-    if (user) {
-      fetchPallets();
-      fetchLots();
-    }
-  }, [viewMode, user]);
-
-  // Real-time subscriptions
-  useEffect(() => {
-    if (!user) return;
-
-    const palletChannel = supabase
-      .channel("pallets-changes")
-      .on(
-        "postgres_changes",
-        {
-          event: "*",
-          schema: "public",
-          table: "pallets",
-        },
-        () => {
-          fetchPallets();
-        },
-      )
-      .subscribe();
-
-    const lotChannel = supabase
-      .channel("lots-changes")
-      .on(
-        "postgres_changes",
-        {
-          event: "*",
-          schema: "public",
-          table: "lots",
-        },
-        () => {
-          fetchLots();
-        },
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(palletChannel);
-      supabase.removeChannel(lotChannel);
-    };
-  }, [viewMode, user]);
-
-  // Define sort orders for each category (outside component to prevent recreation)
-  const DESKTOP_SORT_ORDER = ["B/C 1-2ND GEN", "B/C 3RD GEN", "B/C 4TH GEN", "B/C 5-7TH GEN", "B/C ↑ 8TH GEN", "OTHER", "D/F"];
-  const LAPTOP_SORT_ORDER = ["B/C ↓ 4TH GEN", "B/C ↑ 5TH GEN", "OTHER", "D/F"];
-  const AIO_SORT_ORDER = ["5-7TH GEN", "↑ 8TH GEN", "OTHER", "D/F"];
-  const DISPLAY_SORT_ORDER = ["B LCD", "CLCD", "OTHER"];
-  const CHROMEBOOK_SORT_ORDER = ["B/C MANAGED", "B/C NON-MANAGED", "D", "F", "OTHER"];
-  const categoryOrder: PalletCategory[] = ["MISC", "DESKTOPS", "LAPTOPS", "AIO", "DISPLAYS", "WORKSTATIONS", "CHROMEBOOKS", "OTHER"];
-
-  // Filter and sort data with memoization
-  const filteredPallets = useMemo(() => 
-    pallets.filter((pallet) => pallet.pallet_number.toLowerCase().includes(searchQuery.toLowerCase())),
-    [pallets, searchQuery]
-  );
-
-  const filteredLots = useMemo(() => 
-    lots.filter((lot) => lot.lot_number.toLowerCase().includes(searchQuery.toLowerCase())),
-    [lots, searchQuery]
-  );
-
-  // Function to sort pallets within a category
-  const sortPalletsByDescription = useCallback((pallets: Pallet[], category: PalletCategory): Pallet[] => {
-    let sortOrder: string[] = [];
-
-    switch (category) {
-      case "DESKTOPS":
-        sortOrder = DESKTOP_SORT_ORDER;
-        break;
-      case "LAPTOPS":
-        sortOrder = LAPTOP_SORT_ORDER;
-        break;
-      case "AIO":
-        sortOrder = AIO_SORT_ORDER;
-        break;
-      case "DISPLAYS":
-        sortOrder = DISPLAY_SORT_ORDER;
-        break;
-      case "CHROMEBOOKS":
-        sortOrder = CHROMEBOOK_SORT_ORDER;
-        break;
-      case "MISC":
-      case "WORKSTATIONS":
-      case "OTHER":
-        return [...pallets].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
-      default:
-        return pallets;
-    }
-
-    return [...pallets].sort((a, b) => {
-      const aDesc = a.description?.toUpperCase() || "OTHER";
-      const bDesc = b.description?.toUpperCase() || "OTHER";
-
-      const aIndex = sortOrder.indexOf(aDesc);
-      const bIndex = sortOrder.indexOf(bDesc);
-
-      // Special handling for D/F - always comes last
-      const aIsDF = aDesc === "D/F";
-      const bIsDF = bDesc === "D/F";
-
-      if (aIsDF && !bIsDF) return 1;
-      if (!aIsDF && bIsDF) return -1;
-
-      if (aIndex !== -1 && bIndex !== -1) {
-        return aIndex - bIndex;
-      }
-
-      if (aIndex !== -1) return -1;
-      if (bIndex !== -1) return 1;
-
-      return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
-    });
-  }, []);
-
-  // Memoized categorized pallets
-  const categorizedPallets = useMemo(() => {
-    const grouped = filteredPallets.reduce(
-      (acc, pallet) => {
-        const category = categorizePallet(pallet);
-        if (!acc[category]) {
-          acc[category] = [];
-        }
-        acc[category].push(pallet);
-        return acc;
-      },
-      {} as Record<PalletCategory, Pallet[]>,
-    );
-
-    // Sort pallets within each category
-    Object.keys(grouped).forEach((category) => {
-      grouped[category as PalletCategory] = sortPalletsByDescription(
-        grouped[category as PalletCategory],
-        category as PalletCategory,
-      );
-    });
-
-    return grouped;
-  }, [filteredPallets, sortPalletsByDescription]);
-
-  // Pallet operations
+  // Handlers
   const handleAddPallet = async (data: Partial<Pallet>) => {
-    const { error } = await supabase.from("pallets").insert([data as any]);
-
-    if (error) {
-      toast.error("Failed to add pallet");
-      console.error(error);
-    } else {
-      toast.success("Pallet added successfully");
+    const success = await addPallet(data);
+    if (success) {
       setPalletModalOpen(false);
       setActiveTab("pallets");
     }
@@ -254,69 +88,23 @@ const Index = () => {
 
   const handleEditPallet = async (data: Partial<Pallet>) => {
     if (!editingPallet) return;
-
-    const { error } = await supabase.from("pallets").update(data).eq("id", editingPallet.id);
-
-    if (error) {
-      toast.error("Failed to update pallet");
-      console.error(error);
-    } else {
-      toast.success("Pallet updated successfully");
+    const success = await updatePallet(editingPallet.id, data);
+    if (success) {
       setPalletModalOpen(false);
       setEditingPallet(null);
     }
   };
 
-  const handleRetirePallet = async (id: string) => {
-    const { error } = await supabase
-      .from("pallets")
-      .update({ is_retired: true, retired_at: new Date().toISOString() })
-      .eq("id", id);
-
-    if (error) {
-      toast.error("Failed to retire pallet");
-      console.error(error);
-    } else {
-      toast.success("Pallet retired successfully");
-    }
-  };
-
-  const handleUnretirePallet = async (id: string) => {
-    const { error } = await supabase.from("pallets").update({ is_retired: false, retired_at: null }).eq("id", id);
-
-    if (error) {
-      toast.error("Failed to unretire pallet");
-      console.error(error);
-    } else {
-      toast.success("Pallet unretired successfully");
-    }
-  };
-
   const handleDeletePallet = async () => {
     if (!deletingId) return;
-
-    const { error } = await supabase.from("pallets").delete().eq("id", deletingId);
-
-    if (error) {
-      toast.error("Failed to delete pallet");
-      console.error(error);
-    } else {
-      toast.success("Pallet deleted successfully");
-    }
-
+    await deletePallet(deletingId);
     setDeleteDialogOpen(false);
     setDeletingId(null);
   };
 
-  // Lot operations
   const handleAddLot = async (data: Partial<Lot>) => {
-    const { error } = await supabase.from("lots").insert([data as any]);
-
-    if (error) {
-      toast.error("Failed to add lot");
-      console.error(error);
-    } else {
-      toast.success("Lot added successfully");
+    const success = await addLot(data);
+    if (success) {
       setLotModalOpen(false);
       setActiveTab("lots");
     }
@@ -324,56 +112,16 @@ const Index = () => {
 
   const handleEditLot = async (data: Partial<Lot>) => {
     if (!editingLot) return;
-
-    const { error } = await supabase.from("lots").update(data).eq("id", editingLot.id);
-
-    if (error) {
-      toast.error("Failed to update lot");
-      console.error(error);
-    } else {
-      toast.success("Lot updated successfully");
+    const success = await updateLot(editingLot.id, data);
+    if (success) {
       setLotModalOpen(false);
       setEditingLot(null);
     }
   };
 
-  const handleRetireLot = async (id: string) => {
-    const { error } = await supabase
-      .from("lots")
-      .update({ is_retired: true, retired_at: new Date().toISOString() })
-      .eq("id", id);
-
-    if (error) {
-      toast.error("Failed to retire lot");
-      console.error(error);
-    } else {
-      toast.success("Lot retired successfully");
-    }
-  };
-
-  const handleUnretireLot = async (id: string) => {
-    const { error } = await supabase.from("lots").update({ is_retired: false, retired_at: null }).eq("id", id);
-
-    if (error) {
-      toast.error("Failed to unretire lot");
-      console.error(error);
-    } else {
-      toast.success("Lot unretired successfully");
-    }
-  };
-
   const handleDeleteLot = async () => {
     if (!deletingId) return;
-
-    const { error } = await supabase.from("lots").delete().eq("id", deletingId);
-
-    if (error) {
-      toast.error("Failed to delete lot");
-      console.error(error);
-    } else {
-      toast.success("Lot deleted successfully");
-    }
-
+    await deleteLot(deletingId);
     setDeleteDialogOpen(false);
     setDeletingId(null);
   };
@@ -383,6 +131,7 @@ const Index = () => {
     navigate("/auth");
   };
 
+  // Loading state
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-accent/5 to-secondary/5">
@@ -394,14 +143,11 @@ const Index = () => {
     );
   }
 
-  if (!user) {
-    return null;
-  }
+  if (!user) return null;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-accent/5">
       {palletViewMode === "list" && activeTab === "pallets" ? (
-        /* List View - Minimal UI */
         <div className="container mx-auto px-4 py-8">
           <div className="mb-6">
             <Button
@@ -418,63 +164,14 @@ const Index = () => {
         </div>
       ) : (
         <>
-          {/* Header */}
-          <header className="border-b bg-card/95 backdrop-blur-sm shadow-lg sticky top-0 z-50">
-            <div className="container mx-auto px-4 py-6">
-              <div className="flex flex-col sm:flex-row gap-6 items-start sm:items-center justify-between">
-                <div className="flex gap-2">
-                  <Button
-                    variant={viewMode === "active" ? "default" : "outline"}
-                    onClick={() => setViewMode("active")}
-                    size="lg"
-                    className="font-semibold shadow-md hover:shadow-lg transition-shadow duration-150"
-                  >
-                    Active
-                  </Button>
-                  <Button
-                    variant={viewMode === "history" ? "default" : "outline"}
-                    onClick={() => setViewMode("history")}
-                    size="lg"
-                    className="font-semibold shadow-md hover:shadow-lg transition-shadow duration-150"
-                  >
-                    History
-                  </Button>
-                </div>
+          <Header
+            viewMode={viewMode}
+            setViewMode={setViewMode}
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+            onLogout={handleLogout}
+          />
 
-                <div className="flex gap-3 items-center w-full sm:w-auto">
-                  <div className="relative flex-1 sm:w-80">
-                    <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                    <Input
-                      placeholder="Search by number..."
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      className="pl-12 h-12 text-base shadow-md focus:shadow-lg transition-shadow duration-150"
-                    />
-                  </div>
-                  <Button
-                    onClick={() => navigate("/manual")}
-                    variant="outline"
-                    size="lg"
-                    className="flex-shrink-0 shadow-md hover:shadow-lg transition-shadow duration-150"
-                  >
-                    <BookOpen className="h-4 w-4 sm:mr-2" />
-                    <span className="hidden sm:inline">Manual</span>
-                  </Button>
-                  <Button
-                    onClick={handleLogout}
-                    variant="outline"
-                    size="lg"
-                    className="flex-shrink-0 shadow-md hover:shadow-lg transition-shadow duration-150"
-                  >
-                    <LogOut className="h-4 w-4 sm:mr-2" />
-                    <span className="hidden sm:inline">Logout</span>
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </header>
-
-          {/* Main Content */}
           <main className="container mx-auto px-4 py-8">
             <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as "pallets" | "lots")}>
               <div className="mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
@@ -537,7 +234,6 @@ const Index = () => {
                 </div>
               </div>
 
-              {/* Pallets Tab */}
               <TabsContent value="pallets" className="mt-6">
                 {filteredPallets.length === 0 ? (
                   <div className="text-center py-20">
@@ -556,8 +252,8 @@ const Index = () => {
                           setEditingPallet(p);
                           setPalletModalOpen(true);
                         }}
-                        onRetire={handleRetirePallet}
-                        onUnretire={handleUnretirePallet}
+                        onRetire={retirePallet}
+                        onUnretire={unretirePallet}
                         onDelete={(id) => {
                           setDeletingId(id);
                           setDeletingType("pallet");
@@ -569,11 +265,11 @@ const Index = () => {
                   </div>
                 ) : (
                   <div className="space-y-10">
-                    {categoryOrder.map((category) => {
+                    {CATEGORY_ORDER.map((category) => {
                       const categoryPallets = categorizedPallets[category];
                       if (!categoryPallets || categoryPallets.length === 0) return null;
 
-                        return (
+                      return (
                         <div
                           key={category}
                           className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500"
@@ -597,8 +293,8 @@ const Index = () => {
                                   setEditingPallet(p);
                                   setPalletModalOpen(true);
                                 }}
-                                onRetire={handleRetirePallet}
-                                onUnretire={handleUnretirePallet}
+                                onRetire={retirePallet}
+                                onUnretire={unretirePallet}
                                 onDelete={(id) => {
                                   setDeletingId(id);
                                   setDeletingType("pallet");
@@ -615,7 +311,6 @@ const Index = () => {
                 )}
               </TabsContent>
 
-              {/* Lots Tab */}
               <TabsContent value="lots" className="mt-6">
                 {filteredLots.length === 0 ? (
                   <div className="text-center py-20">
@@ -634,8 +329,8 @@ const Index = () => {
                           setEditingLot(l);
                           setLotModalOpen(true);
                         }}
-                        onRetire={handleRetireLot}
-                        onUnretire={handleUnretireLot}
+                        onRetire={retireLot}
+                        onUnretire={unretireLot}
                         onDelete={(id) => {
                           setDeletingId(id);
                           setDeletingType("lot");
@@ -652,7 +347,6 @@ const Index = () => {
         </>
       )}
 
-      {/* Modals */}
       <PalletModal
         open={palletModalOpen}
         onClose={() => {
@@ -673,7 +367,6 @@ const Index = () => {
         lot={editingLot}
       />
 
-      {/* Delete Confirmation Dialog */}
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <AlertDialogContent className="shadow-2xl">
           <AlertDialogHeader>

@@ -19,6 +19,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Package } from "lucide-react";
+import { PalletType, getDescriptionsForType, getAutoGrade } from "@/constants/categories";
 
 interface PalletModalProps {
   open: boolean;
@@ -27,66 +28,22 @@ interface PalletModalProps {
   pallet?: Pallet | null;
 }
 
-type PalletType = "MISC" | "DESKTOPS" | "LAPTOPS" | "AIO" | "DISPLAYS" | "WORKSTATIONS" | "CHROMEBOOKS" | "OTHER";
-
-const DESKTOP_DESCRIPTIONS = [
-  "B/C 1-2ND GEN",
-  "B/C 3RD GEN",
-  "B/C 4TH GEN",
-  "B/C 5-7TH GEN",
-  "B/C ↑ 8TH GEN",
-  "D/F",
-  "OTHER"
-];
-
-const LAPTOP_DESCRIPTIONS = [
-  "B/C ↓ 4TH GEN",
-  "B/C ↑ 5TH GEN",
-  "D/F",
-  "OTHER"
-];
-
-const AIO_DESCRIPTIONS = [
-  "5-7TH GEN",
-  "↑ 8TH GEN",
-  "D/F",
-  "OTHER"
-];
-
-const DISPLAY_DESCRIPTIONS = [
-  "B LCD",
-  "C LCD",
-  "OTHER"
-];
-
-const CHROMEBOOK_DESCRIPTIONS = [
-  "B/C MANAGED",
-  "B/C NON-MANAGED",
-  "D",
-  "F",
-  "OTHER"
-];
-
 export function PalletModal({ open, onClose, onSubmit, pallet }: PalletModalProps) {
   const [palletNumber, setPalletNumber] = useState("");
   const [type, setType] = useState<PalletType | "">("");
   const [grade, setGrade] = useState("");
-  const [description, setDescription] = useState("");
   const [selectedDescription, setSelectedDescription] = useState("");
   const [customDescription, setCustomDescription] = useState("");
   const [notes, setNotes] = useState("");
 
   useEffect(() => {
     if (pallet) {
-      // Parse the pallet number to remove PL- prefix for editing
       const numericPart = pallet.pallet_number.replace(/^PL-/, "");
       setPalletNumber(numericPart);
       setType((pallet.type as PalletType) || "");
       setGrade(pallet.grade || "");
-      setDescription(pallet.description);
       setNotes(pallet.notes || "");
       
-      // Check if description matches a predefined option
       if (pallet.type) {
         const descriptions = getDescriptionsForType(pallet.type as PalletType);
         if (descriptions.includes(pallet.description)) {
@@ -101,62 +58,16 @@ export function PalletModal({ open, onClose, onSubmit, pallet }: PalletModalProp
       setPalletNumber("");
       setType("");
       setGrade("");
-      setDescription("");
       setSelectedDescription("");
       setCustomDescription("");
       setNotes("");
     }
   }, [pallet, open]);
 
-  const getDescriptionsForType = (palletType: PalletType): string[] => {
-    switch (palletType) {
-      case "DESKTOPS":
-        return DESKTOP_DESCRIPTIONS;
-      case "LAPTOPS":
-        return LAPTOP_DESCRIPTIONS;
-      case "AIO":
-        return AIO_DESCRIPTIONS;
-      case "DISPLAYS":
-        return DISPLAY_DESCRIPTIONS;
-      case "CHROMEBOOKS":
-        return CHROMEBOOK_DESCRIPTIONS;
-      default:
-        return [];
-    }
-  };
-
-  const getAutoGrade = (palletType: PalletType, desc: string): string | null => {
-    if (palletType === "DESKTOPS") {
-      if (desc === "D/F") return "D/F";
-      if (desc !== "OTHER") return "B/C";
-    }
-    if (palletType === "LAPTOPS") {
-      if (desc === "D/F") return "D/F";
-      if (desc !== "OTHER") return "B/C";
-    }
-    if (palletType === "AIO") {
-      if (desc === "D/F") return "D/F";
-      if (["5-7TH GEN", "↑ 8TH GEN"].includes(desc)) return "B/C";
-    }
-    if (palletType === "DISPLAYS") {
-      if (desc === "B LCD") return "B";
-      if (desc === "C LCD") return "C";
-      return null;
-    }
-    if (palletType === "CHROMEBOOKS") {
-      if (desc === "B/C MANAGED" || desc === "B/C NON-MANAGED") return "B/C";
-      if (desc === "D") return "D";
-      if (desc === "F") return "F";
-      return null;
-    }
-    return null;
-  };
-
   const shouldShowGradeInput = (): boolean => {
     if (!type) return false;
     if (type === "MISC" || type === "WORKSTATIONS" || type === "OTHER") return true;
     if (selectedDescription === "OTHER") {
-      // For DISPLAYS with OTHER, don't show grade
       if (type === "DISPLAYS") return false;
       return true;
     }
@@ -185,7 +96,6 @@ export function PalletModal({ open, onClose, onSubmit, pallet }: PalletModalProp
     setSelectedDescription(value);
     setCustomDescription("");
     
-    // Auto-set grade if applicable
     if (type && value !== "OTHER") {
       const autoGrade = getAutoGrade(type as PalletType, value);
       if (autoGrade) {
@@ -198,7 +108,6 @@ export function PalletModal({ open, onClose, onSubmit, pallet }: PalletModalProp
     e.preventDefault();
     if (!palletNumber.trim() || !type) return;
 
-    // Determine final description
     let finalDescription = "";
     if (shouldShowCustomDescription()) {
       if (!customDescription.trim()) return;
@@ -208,12 +117,10 @@ export function PalletModal({ open, onClose, onSubmit, pallet }: PalletModalProp
       finalDescription = selectedDescription;
     }
 
-    // Determine final grade
     let finalGrade: string | null = null;
     if (shouldShowGradeInput()) {
       finalGrade = grade.trim() || null;
     } else {
-      // Auto-set grade
       if (type && selectedDescription) {
         finalGrade = getAutoGrade(type as PalletType, selectedDescription);
       }
