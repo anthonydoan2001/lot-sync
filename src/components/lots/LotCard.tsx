@@ -17,6 +17,7 @@ export const LotCard = memo(function LotCard({ lot, onEdit, onRetire, onUnretire
   return (
     <div className="flex items-center gap-3 px-4 py-2 rounded-lg border bg-card hover:bg-muted/50 transition-colors">
       <span className="font-bold text-secondary uppercase">{lot.lot_number}</span>
+      {lot.io && <span className="text-primary font-medium">IO-{lot.io}</span>}
       <span className="text-muted-foreground uppercase flex-1">{lot.contents}</span>
       
       <span className="text-xs text-muted-foreground whitespace-nowrap">
