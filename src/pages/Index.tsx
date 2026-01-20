@@ -21,6 +21,7 @@ import { CATEGORY_ORDER } from "@/constants/categories";
 import { Header } from "@/components/layout/Header";
 import { PalletCard, PalletListView, PalletModal } from "@/components/pallets";
 import { LotCard, LotModal } from "@/components/lots";
+import { AnnouncementBanner } from "@/components/announcements";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -173,6 +174,7 @@ const Index = () => {
           />
 
           <main className="container mx-auto px-4 py-8">
+            <AnnouncementBanner />
             <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as "pallets" | "lots")}>
               <div className="mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <TabsList className="shadow-md">
