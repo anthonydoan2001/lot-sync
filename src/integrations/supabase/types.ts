@@ -37,6 +37,7 @@ export type Database = {
           contents: string
           created_at: string
           id: string
+          io: string | null
           is_retired: boolean
           lot_number: string
           retired_at: string | null
@@ -45,6 +46,7 @@ export type Database = {
           contents: string
           created_at?: string
           id?: string
+          io?: string | null
           is_retired?: boolean
           lot_number: string
           retired_at?: string | null
@@ -53,6 +55,7 @@ export type Database = {
           contents?: string
           created_at?: string
           id?: string
+          io?: string | null
           is_retired?: boolean
           lot_number?: string
           retired_at?: string | null
