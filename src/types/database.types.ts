@@ -15,6 +15,7 @@ export interface Lot {
   id: string;
   lot_number: string;
   contents: string;
+  io: string | null;
   is_retired: boolean;
   created_at: string;
   retired_at: string | null;
