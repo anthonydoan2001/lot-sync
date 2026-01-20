@@ -23,14 +23,17 @@ interface LotModalProps {
 export function LotModal({ open, onClose, onSubmit, lot }: LotModalProps) {
   const [lotNumber, setLotNumber] = useState("");
   const [contents, setContents] = useState("");
+  const [io, setIo] = useState("");
 
   useEffect(() => {
     if (lot) {
       setLotNumber(lot.lot_number);
       setContents(lot.contents);
+      setIo(lot.io || "");
     } else {
       setLotNumber("");
       setContents("");
+      setIo("");
     }
   }, [lot, open]);
 
@@ -41,6 +44,7 @@ export function LotModal({ open, onClose, onSubmit, lot }: LotModalProps) {
     onSubmit({
       lot_number: lotNumber.trim(),
       contents: contents.trim(),
+      io: io.trim() || null,
     });
   };
 
@@ -69,6 +73,21 @@ export function LotModal({ open, onClose, onSubmit, lot }: LotModalProps) {
                 required
                 className="h-[50px] text-[17px] font-medium border-2 rounded-[10px]"
               />
+            </div>
+            <div className="space-y-2.5">
+              <Label htmlFor="io" className="text-[15px] font-semibold">
+                IO
+              </Label>
+              <div className="relative">
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[17px] font-semibold text-muted-foreground">IO-</span>
+                <Input
+                  id="io"
+                  value={io}
+                  onChange={(e) => setIo(e.target.value.replace(/\D/g, ""))}
+                  placeholder="e.g., 10437"
+                  className="h-[50px] text-[17px] font-medium border-2 rounded-[10px] pl-12"
+                />
+              </div>
             </div>
             <div className="space-y-2.5">
               <Label htmlFor="contents" className="text-[15px] font-semibold">
