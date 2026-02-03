@@ -1,6 +1,7 @@
 import { memo } from "react";
 import { Pallet } from "@/types/database.types";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { Pencil, Archive, Trash2 } from "lucide-react";
 import { formatDate } from "@/utils/formatting";
 
@@ -28,26 +29,20 @@ export const PalletCard = memo(function PalletCard({ pallet, onEdit, onRetire, o
   const isMisc = pallet.type?.toUpperCase() === "MISC";
 
   return (
-    <div className="flex items-center gap-3 px-4 py-2 rounded-lg border bg-card hover:bg-muted/50 transition-colors">
+    <div className="group flex items-center gap-3 px-4 py-3 rounded-lg border border-l-2 border-l-transparent hover:border-l-primary bg-card hover:bg-muted/50 transition-colors duration-150">
       {pallet.grade && (
-        <span
-          className={`text-sm font-bold uppercase px-2 py-1 rounded ${
-            isLowGrade
-              ? "bg-destructive/10 text-destructive"
-              : "bg-secondary text-secondary-foreground"
-          }`}
-        >
+        <Badge variant={isLowGrade ? "destructive" : "secondary"} className="uppercase">
           {pallet.grade}
-        </span>
+        </Badge>
       )}
-      <span className="font-bold text-primary uppercase">{pallet.pallet_number}</span>
-      <span className="text-muted-foreground uppercase flex-1">
+      <span className="font-mono font-bold text-foreground uppercase">{pallet.pallet_number}</span>
+      <span className="text-sm text-muted-foreground uppercase flex-1 truncate">
         {getDisplayDescription()}
         {!isHistory && pallet.notes && (
-          <span className="text-xs lowercase normal-case"> - {pallet.notes}</span>
+          <span className="text-xs italic normal-case"> - {pallet.notes}</span>
         )}
       </span>
-      
+
       {!isMisc && (
         <span className="text-xs text-muted-foreground whitespace-nowrap">
           {isHistory && pallet.retired_at ? (
@@ -57,19 +52,19 @@ export const PalletCard = memo(function PalletCard({ pallet, onEdit, onRetire, o
           ) : formatDate(pallet.created_at)}
         </span>
       )}
-      
-      <div className="flex items-center gap-1">
+
+      <div className="flex items-center gap-1 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
         {!isHistory ? (
           <>
-            <Button size="icon" variant="ghost" onClick={() => onEdit(pallet)} className="h-8 w-8">
+            <Button size="icon" variant="ghost" onClick={() => onEdit(pallet)} className="h-8 w-8 hover:bg-muted">
               <Pencil className="h-4 w-4" />
             </Button>
             {!isMisc && (
               <>
-                <Button size="icon" variant="ghost" onClick={() => onRetire(pallet.id)} className="h-8 w-8 text-accent">
+                <Button size="icon" variant="ghost" onClick={() => onRetire(pallet.id)} className="h-8 w-8 text-accent hover:bg-accent/10">
                   <Archive className="h-4 w-4" />
                 </Button>
-                <Button size="icon" variant="ghost" onClick={() => onDelete(pallet.id)} className="h-8 w-8 text-destructive">
+                <Button size="icon" variant="ghost" onClick={() => onDelete(pallet.id)} className="h-8 w-8 text-destructive hover:bg-destructive/10">
                   <Trash2 className="h-4 w-4" />
                 </Button>
               </>

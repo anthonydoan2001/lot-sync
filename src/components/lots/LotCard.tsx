@@ -1,6 +1,7 @@
 import { memo } from "react";
 import { Lot } from "@/types/database.types";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { Pencil, Archive, Trash2 } from "lucide-react";
 import { formatDate } from "@/utils/formatting";
 
@@ -15,11 +16,15 @@ interface LotCardProps {
 
 export const LotCard = memo(function LotCard({ lot, onEdit, onRetire, onUnretire, onDelete, isHistory = false }: LotCardProps) {
   return (
-    <div className="flex items-center gap-3 px-4 py-2 rounded-lg border bg-card hover:bg-muted/50 transition-colors">
-      <span className="font-bold text-secondary uppercase">{lot.lot_number}</span>
-      {lot.io && <span className="text-primary font-medium">IO-{lot.io}</span>}
-      <span className="text-muted-foreground uppercase flex-1">{lot.contents}</span>
-      
+    <div className="group flex items-center gap-3 px-4 py-3 rounded-lg border border-l-2 border-l-transparent hover:border-l-primary bg-card hover:bg-muted/50 transition-colors duration-150">
+      <span className="font-mono font-bold text-foreground uppercase">{lot.lot_number}</span>
+      {lot.io && (
+        <Badge variant="outline" className="text-xs font-medium">
+          IO-{lot.io}
+        </Badge>
+      )}
+      <span className="text-sm text-muted-foreground uppercase flex-1 truncate">{lot.contents}</span>
+
       <span className="text-xs text-muted-foreground whitespace-nowrap">
         {isHistory && lot.retired_at ? (
           <>
@@ -27,17 +32,17 @@ export const LotCard = memo(function LotCard({ lot, onEdit, onRetire, onUnretire
           </>
         ) : formatDate(lot.created_at)}
       </span>
-      
-      <div className="flex items-center gap-1">
+
+      <div className="flex items-center gap-1 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
         {!isHistory ? (
           <>
-            <Button size="icon" variant="ghost" onClick={() => onEdit(lot)} className="h-8 w-8">
+            <Button size="icon" variant="ghost" onClick={() => onEdit(lot)} className="h-8 w-8 hover:bg-muted">
               <Pencil className="h-4 w-4" />
             </Button>
-            <Button size="icon" variant="ghost" onClick={() => onRetire(lot.id)} className="h-8 w-8 text-accent">
+            <Button size="icon" variant="ghost" onClick={() => onRetire(lot.id)} className="h-8 w-8 text-accent hover:bg-accent/10">
               <Archive className="h-4 w-4" />
             </Button>
-            <Button size="icon" variant="ghost" onClick={() => onDelete(lot.id)} className="h-8 w-8 text-destructive">
+            <Button size="icon" variant="ghost" onClick={() => onDelete(lot.id)} className="h-8 w-8 text-destructive hover:bg-destructive/10">
               <Trash2 className="h-4 w-4" />
             </Button>
           </>

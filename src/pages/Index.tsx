@@ -13,7 +13,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Plus, List, Edit, Package, Box } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Plus, List, Edit, Package, Box, AlertTriangle } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { usePallets } from "@/hooks/usePallets";
 import { useLots } from "@/hooks/useLots";
@@ -132,13 +133,39 @@ const Index = () => {
     navigate("/auth");
   };
 
-  // Loading state
+  // Loading state - skeleton
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-accent/5 to-secondary/5">
-        <div className="text-center space-y-4">
-          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-primary mx-auto"></div>
-          <p className="text-muted-foreground text-lg">Loading...</p>
+      <div className="min-h-screen bg-background">
+        <div className="border-b bg-card/95 sticky top-0 z-50">
+          <div className="container mx-auto px-4 py-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <Skeleton className="h-8 w-8 rounded-lg" />
+                <Skeleton className="h-6 w-24" />
+                <Skeleton className="h-9 w-40 rounded-lg" />
+              </div>
+              <div className="flex items-center gap-2">
+                <Skeleton className="h-9 w-72 rounded-md" />
+                <Skeleton className="h-9 w-9 rounded-md" />
+                <Skeleton className="h-9 w-9 rounded-md" />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="container mx-auto px-4 py-8">
+          <div className="flex items-center justify-between mb-6">
+            <Skeleton className="h-10 w-48 rounded-lg" />
+            <div className="flex gap-2">
+              <Skeleton className="h-9 w-24 rounded-md" />
+              <Skeleton className="h-9 w-28 rounded-md" />
+            </div>
+          </div>
+          <div className="space-y-2">
+            {[...Array(6)].map((_, i) => (
+              <Skeleton key={i} className="h-12 w-full rounded-lg" />
+            ))}
+          </div>
         </div>
       </div>
     );
@@ -147,7 +174,7 @@ const Index = () => {
   if (!user) return null;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-accent/5">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/30">
       {palletViewMode === "list" && activeTab === "pallets" ? (
         <div className="container mx-auto px-4 py-8">
           <div className="mb-6">
@@ -155,7 +182,7 @@ const Index = () => {
               onClick={() => setPalletViewMode("card")}
               variant="outline"
               size="lg"
-              className="shadow-lg hover:shadow-xl transition-shadow duration-150"
+              className="transition-colors"
             >
               <Edit className="h-4 w-4 mr-2" />
               Edit Mode
@@ -177,7 +204,7 @@ const Index = () => {
             <AnnouncementBanner />
             <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as "pallets" | "lots")}>
               <div className="mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                <TabsList className="shadow-md">
+                <TabsList>
                   <TabsTrigger value="pallets" className="gap-2">
                     <Package className="h-4 w-4" />
                     Pallets ({filteredPallets.length})
@@ -193,16 +220,17 @@ const Index = () => {
                     <Button
                       onClick={() => setPalletViewMode(palletViewMode === "card" ? "list" : "card")}
                       variant="outline"
-                      className="flex-shrink-0 shadow-md hover:shadow-lg transition-shadow duration-150"
+                      size="sm"
+                      className="flex-shrink-0"
                     >
                       {palletViewMode === "card" ? (
                         <>
-                          <List className="h-4 w-4 sm:mr-2" />
+                          <List className="h-4 w-4 sm:mr-1.5" />
                           <span className="hidden sm:inline">List View</span>
                         </>
                       ) : (
                         <>
-                          <Edit className="h-4 w-4 sm:mr-2" />
+                          <Edit className="h-4 w-4 sm:mr-1.5" />
                           <span className="hidden sm:inline">Edit Mode</span>
                         </>
                       )}
@@ -216,9 +244,10 @@ const Index = () => {
                           setEditingPallet(null);
                           setPalletModalOpen(true);
                         }}
-                        className="bg-secondary hover:bg-secondary/90 flex-shrink-0 shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105"
+                        size="sm"
+                        className="bg-secondary hover:bg-secondary/90 flex-shrink-0"
                       >
-                        <Plus className="h-4 w-4 sm:mr-2" />
+                        <Plus className="h-4 w-4 sm:mr-1.5" />
                         <span className="hidden sm:inline">Add Pallet</span>
                       </Button>
                       <Button
@@ -226,9 +255,10 @@ const Index = () => {
                           setEditingLot(null);
                           setLotModalOpen(true);
                         }}
-                        className="bg-secondary hover:bg-secondary/90 flex-shrink-0 shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105"
+                        size="sm"
+                        className="bg-secondary hover:bg-secondary/90 flex-shrink-0"
                       >
-                        <Plus className="h-4 w-4 sm:mr-2" />
+                        <Plus className="h-4 w-4 sm:mr-1.5" />
                         <span className="hidden sm:inline">Add Lot</span>
                       </Button>
                     </>
@@ -239,10 +269,26 @@ const Index = () => {
               <TabsContent value="pallets" className="mt-6">
                 {filteredPallets.length === 0 ? (
                   <div className="text-center py-20">
-                    <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-muted mb-4">
+                    <div className="inline-flex items-center justify-center w-24 h-24 rounded-full bg-muted/70 mb-4">
                       <Package className="h-10 w-10 text-muted-foreground" />
                     </div>
                     <p className="text-xl text-muted-foreground">No pallets found</p>
+                    <p className="text-base text-muted-foreground/70 mt-1">
+                      {viewMode === "active" ? "Add your first pallet to get started" : "No archived pallets yet"}
+                    </p>
+                    {viewMode === "active" && (
+                      <Button
+                        variant="ghost"
+                        className="mt-4 text-muted-foreground"
+                        onClick={() => {
+                          setEditingPallet(null);
+                          setPalletModalOpen(true);
+                        }}
+                      >
+                        <Plus className="h-4 w-4 mr-1.5" />
+                        Add Pallet
+                      </Button>
+                    )}
                   </div>
                 ) : viewMode === "history" ? (
                   <div className="flex flex-col gap-2">
@@ -277,11 +323,11 @@ const Index = () => {
                           className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500"
                         >
                           {category !== "MISC" && (
-                            <div className="flex items-center gap-3 pb-3 border-b border-border">
+                            <div className="flex items-center gap-3 border-l-4 border-l-primary pl-4 pb-2">
                               <h2 className="text-2xl font-semibold text-foreground tracking-tight">
                                 {category === "AIO" ? "ALL-IN-ONE" : category}
                               </h2>
-                              <span className="text-sm font-medium text-muted-foreground bg-muted px-2.5 py-0.5 rounded-full">
+                              <span className="text-sm font-semibold bg-primary/10 text-primary px-2.5 py-0.5 rounded-full">
                                 {categoryPallets.length}
                               </span>
                             </div>
@@ -316,10 +362,26 @@ const Index = () => {
               <TabsContent value="lots" className="mt-6">
                 {filteredLots.length === 0 ? (
                   <div className="text-center py-20">
-                    <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-muted mb-4">
+                    <div className="inline-flex items-center justify-center w-24 h-24 rounded-full bg-muted/70 mb-4">
                       <Box className="h-10 w-10 text-muted-foreground" />
                     </div>
                     <p className="text-xl text-muted-foreground">No lots found</p>
+                    <p className="text-base text-muted-foreground/70 mt-1">
+                      {viewMode === "active" ? "Add your first lot to get started" : "No archived lots yet"}
+                    </p>
+                    {viewMode === "active" && (
+                      <Button
+                        variant="ghost"
+                        className="mt-4 text-muted-foreground"
+                        onClick={() => {
+                          setEditingLot(null);
+                          setLotModalOpen(true);
+                        }}
+                      >
+                        <Plus className="h-4 w-4 mr-1.5" />
+                        Add Lot
+                      </Button>
+                    )}
                   </div>
                 ) : (
                   <div className="flex flex-col gap-2">
@@ -370,14 +432,17 @@ const Index = () => {
       />
 
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <AlertDialogContent className="shadow-2xl">
+        <AlertDialogContent className="border-destructive/20">
           <AlertDialogHeader>
-            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-            <AlertDialogDescription>
+            <div className="mx-auto mb-3 w-12 h-12 rounded-full bg-destructive/10 flex items-center justify-center">
+              <AlertTriangle className="h-6 w-6 text-destructive" />
+            </div>
+            <AlertDialogTitle className="text-center">Are you sure?</AlertDialogTitle>
+            <AlertDialogDescription className="text-center">
               This action cannot be undone. This will permanently delete the {deletingType}.
             </AlertDialogDescription>
           </AlertDialogHeader>
-          <AlertDialogFooter>
+          <AlertDialogFooter className="sm:justify-center">
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction
               onClick={deletingType === "pallet" ? handleDeletePallet : handleDeleteLot}

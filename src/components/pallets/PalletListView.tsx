@@ -23,7 +23,7 @@ export const PalletListView = memo(function PalletListView({ pallets }: PalletLi
 
     return CATEGORY_ORDER.map((category) => ({
       category,
-      pallets: categorizedPallets[category] 
+      pallets: categorizedPallets[category]
         ? sortPalletsByDescription(categorizedPallets[category], category)
         : [],
     })).filter(({ pallets }) => pallets.length > 0);
@@ -34,11 +34,11 @@ export const PalletListView = memo(function PalletListView({ pallets }: PalletLi
       {sortedCategories.map(({ category, pallets: sortedPallets }) => (
         <div key={category} className="space-y-6">
           {category !== "MISC" && (
-            <div className="flex items-center gap-3 pb-3 border-b border-border">
+            <div className="flex items-center gap-3 border-l-4 border-l-primary pl-4 pb-2">
               <h2 className="text-2xl font-semibold text-foreground tracking-tight">
                 {category === "AIO" ? "ALL IN ONE" : category}
               </h2>
-              <span className="text-sm font-medium text-muted-foreground bg-muted px-2.5 py-0.5 rounded-full">
+              <span className="text-sm font-semibold bg-primary/10 text-primary px-2.5 py-0.5 rounded-full">
                 {sortedPallets.length}
               </span>
             </div>
@@ -56,17 +56,17 @@ export const PalletListView = memo(function PalletListView({ pallets }: PalletLi
               return (
                 <div
                   key={pallet.id}
-                  className="flex items-center gap-4 px-6 py-4 rounded-xl border-2 border-border bg-background hover:border-primary hover:shadow-md transition-all duration-150"
+                  className="flex items-center gap-4 px-6 py-4 rounded-xl border bg-background hover:bg-muted/50 transition-colors duration-150"
                 >
-                  <div className="font-sans text-2xl font-bold text-blue-700 min-w-[140px] px-4 py-2 bg-background border-[3px] border-blue-500 rounded-lg text-center tracking-wider shadow-sm">
+                  <div className="font-mono text-2xl font-bold text-primary min-w-[140px] px-4 py-2 bg-primary/5 border-2 border-primary/30 rounded-lg text-center tracking-wider">
                     {pallet.pallet_number}
                   </div>
                   {pallet.grade && (
                     <div
-                      className={`text-xl font-bold px-5 py-1.5 rounded-lg uppercase tracking-wider min-w-[70px] text-center shadow-md ${
+                      className={`text-xl font-bold px-5 py-1.5 rounded-lg uppercase tracking-wider min-w-[70px] text-center ${
                         isLowGrade
-                          ? "bg-gradient-to-br from-red-500 to-red-600 text-white"
-                          : "bg-gradient-to-br from-green-500 to-green-600 text-white"
+                          ? "bg-destructive text-destructive-foreground"
+                          : "bg-secondary text-secondary-foreground"
                       }`}
                     >
                       {pallet.grade}
