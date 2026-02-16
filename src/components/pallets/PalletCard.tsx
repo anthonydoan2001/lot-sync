@@ -66,7 +66,7 @@ export const PalletCard = memo(function PalletCard({
               size="icon"
               variant="ghost"
               onClick={() => onEdit(pallet)}
-              className="h-8 w-8 hover:bg-muted"
+              className="h-8 w-8 hover:bg-primary/15 hover:text-primary"
             >
               <Pencil className="h-4 w-4" />
             </Button>
@@ -76,7 +76,7 @@ export const PalletCard = memo(function PalletCard({
                   size="icon"
                   variant="ghost"
                   onClick={() => onRetire(pallet.id)}
-                  className="h-8 w-8 text-accent hover:bg-accent/10"
+                  className="h-8 w-8 text-accent hover:bg-accent/20"
                 >
                   <Archive className="h-4 w-4" />
                 </Button>
@@ -84,7 +84,7 @@ export const PalletCard = memo(function PalletCard({
                   size="icon"
                   variant="ghost"
                   onClick={() => onDelete(pallet.id)}
-                  className="h-8 w-8 text-destructive hover:bg-destructive/10"
+                  className="h-8 w-8 text-destructive hover:bg-destructive/20"
                 >
                   <Trash2 className="h-4 w-4" />
                 </Button>

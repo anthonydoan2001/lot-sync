@@ -58,15 +58,6 @@ export const Header = memo(function Header({
           </div>
 
           <div className="flex gap-2 items-center w-full sm:w-auto">
-            <div className="relative flex-1 sm:w-80">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Search by number..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-9 h-10"
-              />
-            </div>
             <Button
               onClick={() => router.push("/manual")}
               variant="ghost"
@@ -76,6 +67,15 @@ export const Header = memo(function Header({
             >
               <BookOpen className="h-5 w-5" />
             </Button>
+            <div className="relative flex-1 sm:w-80">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Search by number..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-9 h-10"
+              />
+            </div>
             {displayName && (
               <span className="text-base font-medium text-foreground">
                 {displayName}

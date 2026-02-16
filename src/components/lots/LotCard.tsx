@@ -69,7 +69,7 @@ export const LotCard = memo(function LotCard({
               size="icon"
               variant="ghost"
               onClick={() => onLeave?.(lot.id)}
-              className="h-8 w-8 text-orange-500 hover:bg-orange-500/10"
+              className="h-8 w-8 text-orange-500 hover:bg-orange-500/20"
               title="Leave lot"
             >
               <UserMinus className="h-4 w-4" />
@@ -79,7 +79,7 @@ export const LotCard = memo(function LotCard({
               size="icon"
               variant="ghost"
               onClick={() => onJoin?.(lot.id)}
-              className="h-8 w-8 text-green-600 hover:bg-green-600/10"
+              className="h-8 w-8 text-green-600 hover:bg-green-600/20"
               title="Join lot"
             >
               <UserPlus className="h-4 w-4" />
@@ -91,7 +91,7 @@ export const LotCard = memo(function LotCard({
               size="icon"
               variant="ghost"
               onClick={() => onEdit(lot)}
-              className="h-8 w-8 hover:bg-muted"
+              className="h-8 w-8 hover:bg-primary/15 hover:text-primary"
             >
               <Pencil className="h-4 w-4" />
             </Button>
@@ -99,7 +99,7 @@ export const LotCard = memo(function LotCard({
               size="icon"
               variant="ghost"
               onClick={() => onRetire(lot.id)}
-              className="h-8 w-8 text-accent hover:bg-accent/10"
+              className="h-8 w-8 text-accent hover:bg-accent/20"
             >
               <Archive className="h-4 w-4" />
             </Button>
@@ -107,7 +107,7 @@ export const LotCard = memo(function LotCard({
               size="icon"
               variant="ghost"
               onClick={() => onDelete(lot.id)}
-              className="h-8 w-8 text-destructive hover:bg-destructive/10"
+              className="h-8 w-8 text-destructive hover:bg-destructive/20"
             >
               <Trash2 className="h-4 w-4" />
             </Button>
