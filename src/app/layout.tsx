@@ -1,14 +1,12 @@
 import type { Metadata } from "next";
-import { Inter, Cinzel, Metal_Mania } from "next/font/google";
+import { Inter, JetBrains_Mono } from "next/font/google";
 import { Providers } from "./providers";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
-const cinzel = Cinzel({ subsets: ["latin"], variable: "--font-cinzel" });
-const metalMania = Metal_Mania({
-  weight: "400",
+const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
-  variable: "--font-metal-mania",
+  variable: "--font-jetbrains-mono",
 });
 
 export const metadata: Metadata = {
@@ -24,7 +22,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${inter.variable} ${cinzel.variable} ${metalMania.variable} font-sans`}>
+      <body className={`${inter.variable} ${jetbrainsMono.variable} font-sans`}>
         <Providers>{children}</Providers>
       </body>
     </html>
