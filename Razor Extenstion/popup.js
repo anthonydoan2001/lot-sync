@@ -765,7 +765,7 @@ async function handleLogin() {
     return;
   }
 
-  const email = `${username.toLowerCase()}@lotsync.local`;
+  const email = `${username.toLowerCase()}@lotsync.app`;
 
   const { supabaseUrl, anonKey } = await getSettings();
   if (!supabaseUrl || !anonKey) {
