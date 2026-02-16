@@ -10,6 +10,7 @@ interface HeaderProps {
   searchQuery: string;
   setSearchQuery: (query: string) => void;
   onLogout: () => void;
+  displayName?: string;
 }
 
 export const Header = memo(function Header({
@@ -18,6 +19,7 @@ export const Header = memo(function Header({
   searchQuery,
   setSearchQuery,
   onLogout,
+  displayName,
 }: HeaderProps) {
   const router = useRouter();
 
@@ -30,7 +32,6 @@ export const Header = memo(function Header({
               <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
                 <Package className="h-4 w-4 text-primary-foreground" />
               </div>
-              <span className="text-xl font-bold tracking-tight text-foreground">LotSync</span>
             </div>
             <div className="flex rounded-lg border bg-muted p-0.5">
               <button
@@ -69,20 +70,25 @@ export const Header = memo(function Header({
             <Button
               onClick={() => router.push("/manual")}
               variant="ghost"
-              size="sm"
-              className="flex-shrink-0"
+              size="icon"
+              className="flex-shrink-0 h-9 w-9"
+              title="Manual"
             >
-              <BookOpen className="h-4 w-4 sm:mr-1.5" />
-              <span className="hidden sm:inline">Manual</span>
+              <BookOpen className="h-4 w-4" />
             </Button>
+            {displayName && (
+              <span className="text-sm font-medium text-foreground">
+                {displayName}
+              </span>
+            )}
             <Button
               onClick={onLogout}
               variant="ghost"
-              size="sm"
-              className="flex-shrink-0"
+              size="icon"
+              className="flex-shrink-0 h-9 w-9"
+              title="Logout"
             >
-              <LogOut className="h-4 w-4 sm:mr-1.5" />
-              <span className="hidden sm:inline">Logout</span>
+              <LogOut className="h-4 w-4" />
             </Button>
           </div>
         </div>

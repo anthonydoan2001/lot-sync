@@ -234,6 +234,7 @@ const Index = () => {
             searchQuery={searchQuery}
             setSearchQuery={setSearchQuery}
             onLogout={handleLogout}
+            displayName={profile?.display_name}
           />
 
           <main className="container mx-auto px-4 py-8">
