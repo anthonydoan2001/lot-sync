@@ -923,6 +923,16 @@ function setupCreateLotListeners() {
   if (btn) btn.addEventListener("click", handleCreateLot);
 }
 
+function showCreateLotStatus(message, isError = false) {
+  const el = document.getElementById("createLotStatus");
+  if (!el) return;
+  el.textContent = message;
+  el.style.background = isError ? "#ffebee" : "#e8f5e9";
+  el.style.color = isError ? "#c62828" : "#2e7d32";
+  el.classList.add("show");
+  setTimeout(() => el.classList.remove("show"), 5000);
+}
+
 async function handleCreateLot() {
   const btn = document.getElementById("createLotBtn");
   const originalText = btn ? btn.textContent : "";
@@ -935,13 +945,13 @@ async function handleCreateLot() {
 
     const token = await getValidToken();
     if (!token) {
-      showStatus("Not authenticated. Please log in.", true);
+      showCreateLotStatus("Not authenticated. Please log in.", true);
       return;
     }
 
     const { supabaseUrl, anonKey } = await getSettings();
     if (!supabaseUrl || !anonKey) {
-      showStatus("Configure Supabase settings first", true);
+      showCreateLotStatus("Configure Supabase settings first", true);
       return;
     }
 
@@ -950,14 +960,14 @@ async function handleCreateLot() {
       currentWindow: true,
     });
     if (!tab || !tab.url) {
-      showStatus("No active tab found", true);
+      showCreateLotStatus("No active tab found", true);
       return;
     }
 
     const lotPagePattern =
       /^https:\/\/secureitad\.razorerp\.com\/recycling\?.*lotId=/;
     if (!lotPagePattern.test(tab.url)) {
-      showStatus("Navigate to a Razor ERP lot page first", true);
+      showCreateLotStatus("Navigate to a Razor ERP lot page first", true);
       return;
     }
 
@@ -998,13 +1008,13 @@ async function handleCreateLot() {
     });
 
     if (!results || !results[0] || !results[0].result) {
-      showStatus("Failed to scrape page data", true);
+      showCreateLotStatus("Failed to scrape page data", true);
       return;
     }
 
     const { lotNumber, contents, io } = results[0].result;
     if (!lotNumber || !/^\d+$/.test(lotNumber)) {
-      showStatus("Could not find a valid lot number on page", true);
+      showCreateLotStatus("Could not find a valid lot number on page", true);
       return;
     }
 
@@ -1065,14 +1075,14 @@ async function handleCreateLot() {
 
       if (!insertRes.ok) {
         if (insertRes.status === 409) {
-          showStatus(
+          showCreateLotStatus(
             `Lot ${lotNumber} already exists but could not be fetched`,
             true,
           );
           return;
         }
         if (insertRes.status === 403) {
-          showStatus("Permission denied", true);
+          showCreateLotStatus("Permission denied", true);
           return;
         }
         throw new Error("Failed to create lot");
@@ -1107,12 +1117,12 @@ async function handleCreateLot() {
     }
 
     if (isNewLot) {
-      showStatus(`Lot ${lotNumber} created & joined!`);
+      showCreateLotStatus(`Lot ${lotNumber} created & joined!`);
     } else {
-      showStatus(`Joined lot ${lotNumber}!`);
+      showCreateLotStatus(`Joined lot ${lotNumber}!`);
     }
   } catch (err) {
-    showStatus("Error: " + err.message, true);
+    showCreateLotStatus("Error: " + err.message, true);
   } finally {
     if (btn) {
       btn.disabled = false;
