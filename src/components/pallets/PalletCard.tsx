@@ -8,6 +8,7 @@ import {
   TooltipContent,
 } from "@/components/ui/tooltip";
 import { Pencil, Archive, Trash2 } from "lucide-react";
+import { Spinner } from "@/components/ui/spinner";
 import { formatDate } from "@/utils/formatting";
 
 interface PalletCardProps {
@@ -17,6 +18,8 @@ interface PalletCardProps {
   onUnretire: (id: string) => void;
   onDelete: (id: string) => void;
   isHistory?: boolean;
+  isMutating?: boolean;
+  mutatingAction?: string | null;
 }
 
 export const PalletCard = memo(function PalletCard({
@@ -26,6 +29,8 @@ export const PalletCard = memo(function PalletCard({
   onUnretire,
   onDelete,
   isHistory = false,
+  isMutating = false,
+  mutatingAction,
 }: PalletCardProps) {
   const getDisplayDescription = () => {
     let desc = pallet.description;
@@ -73,6 +78,7 @@ export const PalletCard = memo(function PalletCard({
                   size="icon"
                   variant="ghost"
                   onClick={() => onEdit(pallet)}
+                  disabled={isMutating}
                   className="h-8 w-8 hover:bg-primary/15 hover:text-primary"
                 >
                   <Pencil className="h-4 w-4" />
@@ -88,9 +94,14 @@ export const PalletCard = memo(function PalletCard({
                       size="icon"
                       variant="ghost"
                       onClick={() => onRetire(pallet.id)}
+                      disabled={isMutating}
                       className="h-8 w-8 text-accent hover:bg-accent/20"
                     >
-                      <Archive className="h-4 w-4" />
+                      {isMutating && mutatingAction === "retire" ? (
+                        <Spinner size="sm" />
+                      ) : (
+                        <Archive className="h-4 w-4" />
+                      )}
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent>Retire</TooltipContent>
@@ -101,6 +112,7 @@ export const PalletCard = memo(function PalletCard({
                       size="icon"
                       variant="ghost"
                       onClick={() => onDelete(pallet.id)}
+                      disabled={isMutating}
                       className="h-8 w-8 text-destructive hover:bg-destructive/20"
                     >
                       <Trash2 className="h-4 w-4" />
@@ -118,8 +130,16 @@ export const PalletCard = memo(function PalletCard({
                 size="sm"
                 variant="outline"
                 onClick={() => onUnretire(pallet.id)}
+                disabled={isMutating}
               >
-                Unretire
+                {isMutating && mutatingAction === "unretire" ? (
+                  <>
+                    <Spinner size="sm" className="mr-1.5" />
+                    Restoring...
+                  </>
+                ) : (
+                  "Unretire"
+                )}
               </Button>
             </TooltipTrigger>
             <TooltipContent>Restore pallet</TooltipContent>

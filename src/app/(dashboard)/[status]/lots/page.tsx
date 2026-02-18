@@ -8,6 +8,8 @@ import { LotWithWorkers } from "@/hooks/useLots";
 import { groupByRetiredMonth, groupByIO } from "@/utils/formatting";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Spinner } from "@/components/ui/spinner";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -46,9 +48,13 @@ function LotsContent({ viewMode }: { viewMode: "active" | "history" }) {
   const [editingLot, setEditingLot] = useState<LotWithWorkers | null>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
   const {
     filteredLots,
+    loading,
+    mutatingId,
+    mutatingAction,
     searchQuery,
     setSearchQuery,
     addLot,
@@ -59,6 +65,8 @@ function LotsContent({ viewMode }: { viewMode: "active" | "history" }) {
     joinLot,
     leaveLot,
   } = useLots(viewMode, !!user);
+
+  const isSubmitting = mutatingAction === "add" || mutatingAction === "update";
 
   const lotMonthGroups = useMemo(
     () =>
@@ -100,10 +108,38 @@ function LotsContent({ viewMode }: { viewMode: "active" | "history" }) {
 
   const handleDeleteLot = async () => {
     if (!deletingId) return;
-    await deleteLot(deletingId);
-    setDeleteDialogOpen(false);
-    setDeletingId(null);
+    setDeleting(true);
+    try {
+      await deleteLot(deletingId);
+      setDeleteDialogOpen(false);
+      setDeletingId(null);
+    } finally {
+      setDeleting(false);
+    }
   };
+
+  const renderLotCard = (lot: LotWithWorkers, isHistory: boolean) => (
+    <LotCard
+      key={lot.id}
+      lot={lot}
+      onEdit={(l) => {
+        setEditingLot(l);
+        setLotModalOpen(true);
+      }}
+      onRetire={retireLot}
+      onUnretire={unretireLot}
+      onDelete={(id) => {
+        setDeletingId(id);
+        setDeleteDialogOpen(true);
+      }}
+      isHistory={isHistory}
+      currentUserId={user?.id}
+      onJoin={handleJoinLot}
+      onLeave={handleLeaveLot}
+      isMutating={mutatingId === lot.id}
+      mutatingAction={mutatingId === lot.id ? mutatingAction : null}
+    />
+  );
 
   return (
     <>
@@ -137,7 +173,13 @@ function LotsContent({ viewMode }: { viewMode: "active" | "history" }) {
         </div>
       </div>
 
-      {filteredLots.length === 0 ? (
+      {loading ? (
+        <div className="space-y-3">
+          {[...Array(6)].map((_, i) => (
+            <Skeleton key={i} className="h-[60px] w-full rounded-lg" />
+          ))}
+        </div>
+      ) : filteredLots.length === 0 ? (
         <div className="text-center py-20">
           <div className="inline-flex items-center justify-center w-24 h-24 rounded-full bg-muted/70 mb-4">
             <Box className="h-10 w-10 text-muted-foreground" />
@@ -190,26 +232,7 @@ function LotsContent({ viewMode }: { viewMode: "active" | "history" }) {
                       </span>
                     </div>
                     <div className="flex flex-col gap-3">
-                      {ioGroup.items.map((lot) => (
-                        <LotCard
-                          key={lot.id}
-                          lot={lot}
-                          onEdit={(l) => {
-                            setEditingLot(l);
-                            setLotModalOpen(true);
-                          }}
-                          onRetire={retireLot}
-                          onUnretire={unretireLot}
-                          onDelete={(id) => {
-                            setDeletingId(id);
-                            setDeleteDialogOpen(true);
-                          }}
-                          isHistory={true}
-                          currentUserId={user?.id}
-                          onJoin={handleJoinLot}
-                          onLeave={handleLeaveLot}
-                        />
-                      ))}
+                      {ioGroup.items.map((lot) => renderLotCard(lot, true))}
                     </div>
                   </div>
                 ))}
@@ -232,26 +255,7 @@ function LotsContent({ viewMode }: { viewMode: "active" | "history" }) {
                 </span>
               </div>
               <div className="flex flex-col gap-3">
-                {ioGroup.items.map((lot) => (
-                  <LotCard
-                    key={lot.id}
-                    lot={lot}
-                    onEdit={(l) => {
-                      setEditingLot(l);
-                      setLotModalOpen(true);
-                    }}
-                    onRetire={retireLot}
-                    onUnretire={unretireLot}
-                    onDelete={(id) => {
-                      setDeletingId(id);
-                      setDeleteDialogOpen(true);
-                    }}
-                    isHistory={false}
-                    currentUserId={user?.id}
-                    onJoin={handleJoinLot}
-                    onLeave={handleLeaveLot}
-                  />
-                ))}
+                {ioGroup.items.map((lot) => renderLotCard(lot, false))}
               </div>
             </div>
           ))}
@@ -266,9 +270,10 @@ function LotsContent({ viewMode }: { viewMode: "active" | "history" }) {
         }}
         onSubmit={editingLot ? handleEditLot : handleAddLot}
         lot={editingLot}
+        submitting={isSubmitting}
       />
 
-      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+      <AlertDialog open={deleteDialogOpen} onOpenChange={(open) => { if (!deleting) setDeleteDialogOpen(open); }}>
         <AlertDialogContent className="border-destructive/20">
           <AlertDialogHeader>
             <div className="mx-auto mb-3 w-12 h-12 rounded-full bg-destructive/10 flex items-center justify-center">
@@ -282,12 +287,23 @@ function LotsContent({ viewMode }: { viewMode: "active" | "history" }) {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="sm:justify-center">
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel disabled={deleting}>Cancel</AlertDialogCancel>
             <AlertDialogAction
-              onClick={handleDeleteLot}
+              onClick={(e) => {
+                e.preventDefault();
+                handleDeleteLot();
+              }}
+              disabled={deleting}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
-              Delete
+              {deleting ? (
+                <>
+                  <Spinner size="sm" className="mr-2" />
+                  Deleting...
+                </>
+              ) : (
+                "Delete"
+              )}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

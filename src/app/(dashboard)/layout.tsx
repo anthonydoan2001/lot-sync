@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAuth } from "@/hooks/useAuth";
@@ -13,6 +13,7 @@ export default function DashboardLayout({
 }) {
   const router = useRouter();
   const { user, profile, loading, signOut } = useAuth();
+  const [loggingOut, setLoggingOut] = useState(false);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -21,8 +22,13 @@ export default function DashboardLayout({
   }, [user, loading, router]);
 
   const handleLogout = async () => {
-    await signOut();
-    router.push("/auth");
+    setLoggingOut(true);
+    try {
+      await signOut();
+      router.push("/auth");
+    } finally {
+      setLoggingOut(false);
+    }
   };
 
   if (loading) {
@@ -58,7 +64,7 @@ export default function DashboardLayout({
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/30">
-      <Header onLogout={handleLogout} displayName={profile?.display_name} />
+      <Header onLogout={handleLogout} displayName={profile?.display_name} loggingOut={loggingOut} />
       <main className="container mx-auto px-4 py-8">{children}</main>
     </div>
   );

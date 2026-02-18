@@ -3,16 +3,19 @@
 import { memo } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
 import { BookOpen, LogOut, Package, Box } from "lucide-react";
 
 interface HeaderProps {
   onLogout: () => void;
   displayName?: string;
+  loggingOut?: boolean;
 }
 
 export const Header = memo(function Header({
   onLogout,
   displayName,
+  loggingOut = false,
 }: HeaderProps) {
   const router = useRouter();
   const pathname = usePathname();
@@ -102,10 +105,15 @@ export const Header = memo(function Header({
               onClick={onLogout}
               variant="ghost"
               size="icon"
+              disabled={loggingOut}
               className="flex-shrink-0 h-10 w-10"
               title="Logout"
             >
-              <LogOut className="h-5 w-5" />
+              {loggingOut ? (
+                <Spinner size="md" />
+              ) : (
+                <LogOut className="h-5 w-5" />
+              )}
             </Button>
           </div>
         </div>

@@ -8,6 +8,7 @@ import {
   TooltipContent,
 } from "@/components/ui/tooltip";
 import { Pencil, Archive, Trash2, UserPlus, UserMinus } from "lucide-react";
+import { Spinner } from "@/components/ui/spinner";
 import { formatDate } from "@/utils/formatting";
 
 interface LotCardProps {
@@ -20,6 +21,8 @@ interface LotCardProps {
   currentUserId?: string;
   onJoin?: (lotId: string) => void;
   onLeave?: (lotId: string) => void;
+  isMutating?: boolean;
+  mutatingAction?: string | null;
 }
 
 export const LotCard = memo(function LotCard({
@@ -32,6 +35,8 @@ export const LotCard = memo(function LotCard({
   currentUserId,
   onJoin,
   onLeave,
+  isMutating = false,
+  mutatingAction,
 }: LotCardProps) {
   const workers = lot.workers || [];
   const isWorker = currentUserId
@@ -76,9 +81,14 @@ export const LotCard = memo(function LotCard({
                   size="icon"
                   variant="ghost"
                   onClick={() => onLeave?.(lot.id)}
+                  disabled={isMutating}
                   className="h-8 w-8 text-orange-500 hover:bg-orange-500/20"
                 >
-                  <UserMinus className="h-4 w-4" />
+                  {isMutating && mutatingAction === "leave" ? (
+                    <Spinner size="sm" />
+                  ) : (
+                    <UserMinus className="h-4 w-4" />
+                  )}
                 </Button>
               </TooltipTrigger>
               <TooltipContent>Leave lot</TooltipContent>
@@ -90,9 +100,14 @@ export const LotCard = memo(function LotCard({
                   size="icon"
                   variant="ghost"
                   onClick={() => onJoin?.(lot.id)}
+                  disabled={isMutating}
                   className="h-8 w-8 text-green-600 hover:bg-green-600/20"
                 >
-                  <UserPlus className="h-4 w-4" />
+                  {isMutating && mutatingAction === "join" ? (
+                    <Spinner size="sm" />
+                  ) : (
+                    <UserPlus className="h-4 w-4" />
+                  )}
                 </Button>
               </TooltipTrigger>
               <TooltipContent>Join lot</TooltipContent>
@@ -106,6 +121,7 @@ export const LotCard = memo(function LotCard({
                   size="icon"
                   variant="ghost"
                   onClick={() => onEdit(lot)}
+                  disabled={isMutating}
                   className="h-8 w-8 hover:bg-primary/15 hover:text-primary"
                 >
                   <Pencil className="h-4 w-4" />
@@ -119,9 +135,14 @@ export const LotCard = memo(function LotCard({
                   size="icon"
                   variant="ghost"
                   onClick={() => onRetire(lot.id)}
+                  disabled={isMutating}
                   className="h-8 w-8 text-accent hover:bg-accent/20"
                 >
-                  <Archive className="h-4 w-4" />
+                  {isMutating && mutatingAction === "retire" ? (
+                    <Spinner size="sm" />
+                  ) : (
+                    <Archive className="h-4 w-4" />
+                  )}
                 </Button>
               </TooltipTrigger>
               <TooltipContent>Retire</TooltipContent>
@@ -132,6 +153,7 @@ export const LotCard = memo(function LotCard({
                   size="icon"
                   variant="ghost"
                   onClick={() => onDelete(lot.id)}
+                  disabled={isMutating}
                   className="h-8 w-8 text-destructive hover:bg-destructive/20"
                 >
                   <Trash2 className="h-4 w-4" />
@@ -147,8 +169,16 @@ export const LotCard = memo(function LotCard({
                 size="sm"
                 variant="outline"
                 onClick={() => onUnretire(lot.id)}
+                disabled={isMutating}
               >
-                Unretire
+                {isMutating && mutatingAction === "unretire" ? (
+                  <>
+                    <Spinner size="sm" className="mr-1.5" />
+                    Restoring...
+                  </>
+                ) : (
+                  "Unretire"
+                )}
               </Button>
             </TooltipTrigger>
             <TooltipContent>Restore lot</TooltipContent>

@@ -12,15 +12,17 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { PackageSearch } from "lucide-react";
+import { Spinner } from "@/components/ui/spinner";
 
 interface LotModalProps {
   open: boolean;
   onClose: () => void;
   onSubmit: (data: Partial<Lot>) => void;
   lot?: Lot | null;
+  submitting?: boolean;
 }
 
-export function LotModal({ open, onClose, onSubmit, lot }: LotModalProps) {
+export function LotModal({ open, onClose, onSubmit, lot, submitting = false }: LotModalProps) {
   const [lotNumber, setLotNumber] = useState("");
   const [contents, setContents] = useState("");
   const [io, setIo] = useState("");
@@ -39,7 +41,7 @@ export function LotModal({ open, onClose, onSubmit, lot }: LotModalProps) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!lotNumber.trim() || !contents.trim()) return;
+    if (!lotNumber.trim() || !contents.trim() || submitting) return;
 
     onSubmit({
       lot_number: lotNumber.trim(),
@@ -48,9 +50,13 @@ export function LotModal({ open, onClose, onSubmit, lot }: LotModalProps) {
     });
   };
 
+  const handleOpenChange = (isOpen: boolean) => {
+    if (!isOpen && !submitting) onClose();
+  };
+
   return (
-    <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-[520px]">
+    <Dialog open={open} onOpenChange={handleOpenChange}>
+      <DialogContent className="max-w-[520px]" onPointerDownOutside={(e) => { if (submitting) e.preventDefault(); }} onEscapeKeyDown={(e) => { if (submitting) e.preventDefault(); }}>
         <DialogHeader className="px-8 pt-7 pb-5 -mx-6 -mt-6 bg-gradient-to-br from-[hsl(var(--modal-header-from))] to-[hsl(var(--modal-header-to))] border-b-2">
           <DialogTitle className="text-3xl font-bold flex items-center gap-3">
             <div className="w-9 h-9 bg-gradient-to-br from-[hsl(var(--modal-icon-from))] to-[hsl(var(--modal-icon-to))] rounded-[10px] flex items-center justify-center text-white">
@@ -60,7 +66,7 @@ export function LotModal({ open, onClose, onSubmit, lot }: LotModalProps) {
           </DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit}>
-          <div className="space-y-7 py-8">
+          <fieldset disabled={submitting} className="space-y-7 py-8">
             <div className="space-y-2.5">
               <Label htmlFor="lot-number" className="text-[15px] font-semibold">
                 Lot Number <span className="text-destructive">*</span>
@@ -103,13 +109,20 @@ export function LotModal({ open, onClose, onSubmit, lot }: LotModalProps) {
                 className="text-[17px] font-medium border-2 rounded-[10px]"
               />
             </div>
-          </div>
+          </fieldset>
           <DialogFooter className="px-8 pb-6 pt-6 -mx-6 -mb-6 bg-muted border-t-2 rounded-b-[16px] gap-3">
-            <Button type="button" variant="outline" onClick={onClose} className="h-[48px] px-7 text-base font-semibold border-2 rounded-[10px]">
+            <Button type="button" variant="outline" onClick={onClose} disabled={submitting} className="h-[48px] px-7 text-base font-semibold border-2 rounded-[10px]">
               Cancel
             </Button>
-            <Button type="submit" className="h-[48px] px-7 text-base font-semibold rounded-[10px] bg-gradient-to-br from-[hsl(var(--modal-icon-from))] to-[hsl(var(--modal-icon-to))] shadow-lg hover:shadow-xl transition-all hover:-translate-y-0.5">
-              {lot ? "Update" : "Add Lot"}
+            <Button type="submit" disabled={submitting} className="h-[48px] px-7 text-base font-semibold rounded-[10px] bg-gradient-to-br from-[hsl(var(--modal-icon-from))] to-[hsl(var(--modal-icon-to))] shadow-lg hover:shadow-xl transition-all hover:-translate-y-0.5">
+              {submitting ? (
+                <>
+                  <Spinner size="sm" className="mr-2" />
+                  {lot ? "Updating..." : "Adding..."}
+                </>
+              ) : (
+                lot ? "Update" : "Add Lot"
+              )}
             </Button>
           </DialogFooter>
         </form>

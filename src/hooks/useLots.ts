@@ -11,6 +11,8 @@ interface UseLotsReturn {
   lots: LotWithWorkers[];
   filteredLots: LotWithWorkers[];
   loading: boolean;
+  mutatingId: string | null;
+  mutatingAction: string | null;
   searchQuery: string;
   setSearchQuery: (query: string) => void;
   addLot: (data: Partial<Lot>, userId?: string) => Promise<boolean>;
@@ -30,6 +32,8 @@ export function useLots(
   const [lots, setLots] = useState<LotWithWorkers[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
+  const [mutatingId, setMutatingId] = useState<string | null>(null);
+  const [mutatingAction, setMutatingAction] = useState<string | null>(null);
   const initialLoadDone = useRef(false);
 
   const isHistory = viewMode === "history";
@@ -81,69 +85,118 @@ export function useLots(
   // CRUD operations
   const addLot = useCallback(
     async (data: Partial<Lot>, userId?: string) => {
-      const inserted = await lotService.addLot(data);
-      if (!inserted) return false;
+      setMutatingId("__new__");
+      setMutatingAction("add");
+      try {
+        const inserted = await lotService.addLot(data);
+        if (!inserted) return false;
 
-      // Auto-join the creator as a worker
-      if (userId) {
-        await lotWorkerService.joinLot(inserted.id, userId);
+        // Auto-join the creator as a worker
+        if (userId) {
+          await lotWorkerService.joinLot(inserted.id, userId);
+        }
+        await fetchLots();
+        return true;
+      } finally {
+        setMutatingId(null);
+        setMutatingAction(null);
       }
-      await fetchLots();
-      return true;
     },
     [fetchLots],
   );
 
   const updateLot = useCallback(
     async (id: string, data: Partial<Lot>) => {
-      const success = await lotService.updateLot(id, data);
-      if (success) await fetchLots();
-      return success;
+      setMutatingId(id);
+      setMutatingAction("update");
+      try {
+        const success = await lotService.updateLot(id, data);
+        if (success) await fetchLots();
+        return success;
+      } finally {
+        setMutatingId(null);
+        setMutatingAction(null);
+      }
     },
     [fetchLots],
   );
 
   const retireLot = useCallback(
     async (id: string) => {
-      const success = await lotService.retireLot(id);
-      if (success) await fetchLots();
-      return success;
+      setMutatingId(id);
+      setMutatingAction("retire");
+      try {
+        const success = await lotService.retireLot(id);
+        if (success) await fetchLots();
+        return success;
+      } finally {
+        setMutatingId(null);
+        setMutatingAction(null);
+      }
     },
     [fetchLots],
   );
 
   const unretireLot = useCallback(
     async (id: string) => {
-      const success = await lotService.unretireLot(id);
-      if (success) await fetchLots();
-      return success;
+      setMutatingId(id);
+      setMutatingAction("unretire");
+      try {
+        const success = await lotService.unretireLot(id);
+        if (success) await fetchLots();
+        return success;
+      } finally {
+        setMutatingId(null);
+        setMutatingAction(null);
+      }
     },
     [fetchLots],
   );
 
   const deleteLot = useCallback(
     async (id: string) => {
-      const success = await lotService.deleteLot(id);
-      if (success) await fetchLots();
-      return success;
+      setMutatingId(id);
+      setMutatingAction("delete");
+      try {
+        const success = await lotService.deleteLot(id);
+        if (success) await fetchLots();
+        return success;
+      } finally {
+        setMutatingId(null);
+        setMutatingAction(null);
+      }
     },
     [fetchLots],
   );
 
   const joinLot = useCallback(
     async (lotId: string, userId: string) => {
-      const success = await lotWorkerService.joinLot(lotId, userId);
-      if (success) await fetchLots();
-      return success;
+      setMutatingId(lotId);
+      setMutatingAction("join");
+      try {
+        const success = await lotWorkerService.joinLot(lotId, userId);
+        if (success) await fetchLots();
+        return success;
+      } finally {
+        setMutatingId(null);
+        setMutatingAction(null);
+      }
     },
     [fetchLots],
   );
 
   const leaveLot = useCallback(
     async (lotId: string, userId: string) => {
-      const success = await lotWorkerService.leaveLot(lotId, userId);
-      if (success) await fetchLots();
-      return success;
+      setMutatingId(lotId);
+      setMutatingAction("leave");
+      try {
+        const success = await lotWorkerService.leaveLot(lotId, userId);
+        if (success) await fetchLots();
+        return success;
+      } finally {
+        setMutatingId(null);
+        setMutatingAction(null);
+      }
     },
     [fetchLots],
   );
@@ -152,6 +205,8 @@ export function useLots(
     lots,
     filteredLots,
     loading,
+    mutatingId,
+    mutatingAction,
     searchQuery,
     setSearchQuery,
     addLot,

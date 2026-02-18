@@ -19,6 +19,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Package } from "lucide-react";
+import { Spinner } from "@/components/ui/spinner";
 import { PalletType, getDescriptionsForType, getAutoGrade } from "@/constants/categories";
 
 interface PalletModalProps {
@@ -26,9 +27,10 @@ interface PalletModalProps {
   onClose: () => void;
   onSubmit: (data: Partial<Pallet>) => void;
   pallet?: Pallet | null;
+  submitting?: boolean;
 }
 
-export function PalletModal({ open, onClose, onSubmit, pallet }: PalletModalProps) {
+export function PalletModal({ open, onClose, onSubmit, pallet, submitting = false }: PalletModalProps) {
   const [palletNumber, setPalletNumber] = useState("");
   const [type, setType] = useState<PalletType | "">("");
   const [grade, setGrade] = useState("");
@@ -43,7 +45,7 @@ export function PalletModal({ open, onClose, onSubmit, pallet }: PalletModalProp
       setType((pallet.type as PalletType) || "");
       setGrade(pallet.grade || "");
       setNotes(pallet.notes || "");
-      
+
       if (pallet.type) {
         const descriptions = getDescriptionsForType(pallet.type as PalletType);
         if (descriptions.includes(pallet.description)) {
@@ -95,7 +97,7 @@ export function PalletModal({ open, onClose, onSubmit, pallet }: PalletModalProp
   const handleDescriptionChange = (value: string) => {
     setSelectedDescription(value);
     setCustomDescription("");
-    
+
     if (type && value !== "OTHER") {
       const autoGrade = getAutoGrade(type as PalletType, value);
       if (autoGrade) {
@@ -106,7 +108,7 @@ export function PalletModal({ open, onClose, onSubmit, pallet }: PalletModalProp
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!palletNumber.trim() || !type) return;
+    if (!palletNumber.trim() || !type || submitting) return;
 
     let finalDescription = "";
     if (shouldShowCustomDescription()) {
@@ -135,9 +137,13 @@ export function PalletModal({ open, onClose, onSubmit, pallet }: PalletModalProp
     });
   };
 
+  const handleOpenChange = (isOpen: boolean) => {
+    if (!isOpen && !submitting) onClose();
+  };
+
   return (
-    <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-h-[90vh] overflow-y-auto max-w-[520px]">
+    <Dialog open={open} onOpenChange={handleOpenChange}>
+      <DialogContent className="max-h-[90vh] overflow-y-auto max-w-[520px]" onPointerDownOutside={(e) => { if (submitting) e.preventDefault(); }} onEscapeKeyDown={(e) => { if (submitting) e.preventDefault(); }}>
         <DialogHeader className="px-8 pt-7 pb-5 -mx-6 -mt-6 bg-gradient-to-br from-[hsl(var(--modal-header-from))] to-[hsl(var(--modal-header-to))] border-b-2">
           <DialogTitle className="text-3xl font-bold flex items-center gap-3">
             <div className="w-9 h-9 bg-gradient-to-br from-[hsl(var(--modal-icon-from))] to-[hsl(var(--modal-icon-to))] rounded-[10px] flex items-center justify-center text-white">
@@ -147,7 +153,7 @@ export function PalletModal({ open, onClose, onSubmit, pallet }: PalletModalProp
           </DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit}>
-          <div className="space-y-7 py-8">
+          <fieldset disabled={submitting} className="space-y-7 py-8">
             <div className="space-y-2.5">
               <Label htmlFor="pallet-number" className="text-[15px] font-semibold">
                 Pallet Number <span className="text-destructive">*</span>
@@ -251,13 +257,20 @@ export function PalletModal({ open, onClose, onSubmit, pallet }: PalletModalProp
                 className="h-[50px] text-[15px] font-medium border-2 rounded-[10px]"
               />
             </div>
-          </div>
+          </fieldset>
           <DialogFooter className="px-8 pb-6 pt-6 -mx-6 -mb-6 bg-muted border-t-2 rounded-b-[16px] gap-3">
-            <Button type="button" variant="outline" onClick={onClose} className="h-[48px] px-7 text-base font-semibold border-2 rounded-[10px]">
+            <Button type="button" variant="outline" onClick={onClose} disabled={submitting} className="h-[48px] px-7 text-base font-semibold border-2 rounded-[10px]">
               Cancel
             </Button>
-            <Button type="submit" className="h-[48px] px-7 text-base font-semibold rounded-[10px] bg-gradient-to-br from-[hsl(var(--modal-icon-from))] to-[hsl(var(--modal-icon-to))] shadow-lg hover:shadow-xl transition-all hover:-translate-y-0.5">
-              {pallet ? "Update" : "Add Pallet"}
+            <Button type="submit" disabled={submitting} className="h-[48px] px-7 text-base font-semibold rounded-[10px] bg-gradient-to-br from-[hsl(var(--modal-icon-from))] to-[hsl(var(--modal-icon-to))] shadow-lg hover:shadow-xl transition-all hover:-translate-y-0.5">
+              {submitting ? (
+                <>
+                  <Spinner size="sm" className="mr-2" />
+                  {pallet ? "Updating..." : "Adding..."}
+                </>
+              ) : (
+                pallet ? "Update" : "Add Pallet"
+              )}
             </Button>
           </DialogFooter>
         </form>

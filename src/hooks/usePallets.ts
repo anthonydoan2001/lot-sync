@@ -9,6 +9,8 @@ interface UsePalletsReturn {
   filteredPallets: Pallet[];
   categorizedPallets: Record<PalletCategory, Pallet[]>;
   loading: boolean;
+  mutatingId: string | null;
+  mutatingAction: string | null;
   searchQuery: string;
   setSearchQuery: (query: string) => void;
   addPallet: (data: Partial<Pallet>) => Promise<boolean>;
@@ -26,6 +28,8 @@ export function usePallets(
   const [pallets, setPallets] = useState<Pallet[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
+  const [mutatingId, setMutatingId] = useState<string | null>(null);
+  const [mutatingAction, setMutatingAction] = useState<string | null>(null);
   const initialLoadDone = useRef(false);
 
   const isHistory = viewMode === "history";
@@ -68,45 +72,80 @@ export function usePallets(
   // CRUD operations
   const addPallet = useCallback(
     async (data: Partial<Pallet>) => {
-      const success = await palletService.addPallet(data);
-      if (success) await fetchPallets();
-      return success;
+      setMutatingId("__new__");
+      setMutatingAction("add");
+      try {
+        const success = await palletService.addPallet(data);
+        if (success) await fetchPallets();
+        return success;
+      } finally {
+        setMutatingId(null);
+        setMutatingAction(null);
+      }
     },
     [fetchPallets],
   );
 
   const updatePallet = useCallback(
     async (id: string, data: Partial<Pallet>) => {
-      const success = await palletService.updatePallet(id, data);
-      if (success) await fetchPallets();
-      return success;
+      setMutatingId(id);
+      setMutatingAction("update");
+      try {
+        const success = await palletService.updatePallet(id, data);
+        if (success) await fetchPallets();
+        return success;
+      } finally {
+        setMutatingId(null);
+        setMutatingAction(null);
+      }
     },
     [fetchPallets],
   );
 
   const retirePallet = useCallback(
     async (id: string) => {
-      const success = await palletService.retirePallet(id);
-      if (success) await fetchPallets();
-      return success;
+      setMutatingId(id);
+      setMutatingAction("retire");
+      try {
+        const success = await palletService.retirePallet(id);
+        if (success) await fetchPallets();
+        return success;
+      } finally {
+        setMutatingId(null);
+        setMutatingAction(null);
+      }
     },
     [fetchPallets],
   );
 
   const unretirePallet = useCallback(
     async (id: string) => {
-      const success = await palletService.unretirePallet(id);
-      if (success) await fetchPallets();
-      return success;
+      setMutatingId(id);
+      setMutatingAction("unretire");
+      try {
+        const success = await palletService.unretirePallet(id);
+        if (success) await fetchPallets();
+        return success;
+      } finally {
+        setMutatingId(null);
+        setMutatingAction(null);
+      }
     },
     [fetchPallets],
   );
 
   const deletePallet = useCallback(
     async (id: string) => {
-      const success = await palletService.deletePallet(id);
-      if (success) await fetchPallets();
-      return success;
+      setMutatingId(id);
+      setMutatingAction("delete");
+      try {
+        const success = await palletService.deletePallet(id);
+        if (success) await fetchPallets();
+        return success;
+      } finally {
+        setMutatingId(null);
+        setMutatingAction(null);
+      }
     },
     [fetchPallets],
   );
@@ -116,6 +155,8 @@ export function usePallets(
     filteredPallets,
     categorizedPallets,
     loading,
+    mutatingId,
+    mutatingAction,
     searchQuery,
     setSearchQuery,
     addPallet,

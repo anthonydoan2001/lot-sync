@@ -7,6 +7,8 @@ import { Pallet } from "@/types/database.types";
 import { groupByRetiredMonth } from "@/utils/formatting";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Spinner } from "@/components/ui/spinner";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -47,10 +49,14 @@ function PalletsContent({ viewMode }: { viewMode: "active" | "history" }) {
   const [editingPallet, setEditingPallet] = useState<Pallet | null>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
   const {
     filteredPallets,
     categorizedPallets,
+    loading,
+    mutatingId,
+    mutatingAction,
     searchQuery,
     setSearchQuery,
     addPallet,
@@ -59,6 +65,8 @@ function PalletsContent({ viewMode }: { viewMode: "active" | "history" }) {
     unretirePallet,
     deletePallet,
   } = usePallets(viewMode, !!user);
+
+  const isSubmitting = mutatingAction === "add" || mutatingAction === "update";
 
   const palletMonthGroups = useMemo(
     () => (viewMode === "history" ? groupByRetiredMonth(filteredPallets) : []),
@@ -81,10 +89,35 @@ function PalletsContent({ viewMode }: { viewMode: "active" | "history" }) {
 
   const handleDeletePallet = async () => {
     if (!deletingId) return;
-    await deletePallet(deletingId);
-    setDeleteDialogOpen(false);
-    setDeletingId(null);
+    setDeleting(true);
+    try {
+      await deletePallet(deletingId);
+      setDeleteDialogOpen(false);
+      setDeletingId(null);
+    } finally {
+      setDeleting(false);
+    }
   };
+
+  const renderPalletCard = (pallet: Pallet, isHistory: boolean) => (
+    <PalletCard
+      key={pallet.id}
+      pallet={pallet}
+      onEdit={(p) => {
+        setEditingPallet(p);
+        setPalletModalOpen(true);
+      }}
+      onRetire={retirePallet}
+      onUnretire={unretirePallet}
+      onDelete={(id) => {
+        setDeletingId(id);
+        setDeleteDialogOpen(true);
+      }}
+      isHistory={isHistory}
+      isMutating={mutatingId === pallet.id}
+      mutatingAction={mutatingId === pallet.id ? mutatingAction : null}
+    />
+  );
 
   if (palletViewMode === "list") {
     return (
@@ -147,7 +180,13 @@ function PalletsContent({ viewMode }: { viewMode: "active" | "history" }) {
         </div>
       </div>
 
-      {filteredPallets.length === 0 ? (
+      {loading ? (
+        <div className="space-y-3">
+          {[...Array(6)].map((_, i) => (
+            <Skeleton key={i} className="h-[60px] w-full rounded-lg" />
+          ))}
+        </div>
+      ) : filteredPallets.length === 0 ? (
         <div className="text-center py-20">
           <div className="inline-flex items-center justify-center w-24 h-24 rounded-full bg-muted/70 mb-4">
             <Package className="h-10 w-10 text-muted-foreground" />
@@ -187,23 +226,7 @@ function PalletsContent({ viewMode }: { viewMode: "active" | "history" }) {
                 </span>
               </div>
               <div className="flex flex-col gap-3">
-                {group.items.map((pallet) => (
-                  <PalletCard
-                    key={pallet.id}
-                    pallet={pallet}
-                    onEdit={(p) => {
-                      setEditingPallet(p);
-                      setPalletModalOpen(true);
-                    }}
-                    onRetire={retirePallet}
-                    onUnretire={unretirePallet}
-                    onDelete={(id) => {
-                      setDeletingId(id);
-                      setDeleteDialogOpen(true);
-                    }}
-                    isHistory={true}
-                  />
-                ))}
+                {group.items.map((pallet) => renderPalletCard(pallet, true))}
               </div>
             </div>
           ))}
@@ -227,23 +250,7 @@ function PalletsContent({ viewMode }: { viewMode: "active" | "history" }) {
                   </div>
                 )}
                 <div className="flex flex-col gap-3">
-                  {categoryPallets.map((pallet) => (
-                    <PalletCard
-                      key={pallet.id}
-                      pallet={pallet}
-                      onEdit={(p) => {
-                        setEditingPallet(p);
-                        setPalletModalOpen(true);
-                      }}
-                      onRetire={retirePallet}
-                      onUnretire={unretirePallet}
-                      onDelete={(id) => {
-                        setDeletingId(id);
-                        setDeleteDialogOpen(true);
-                      }}
-                      isHistory={false}
-                    />
-                  ))}
+                  {categoryPallets.map((pallet) => renderPalletCard(pallet, false))}
                 </div>
               </div>
             );
@@ -259,9 +266,10 @@ function PalletsContent({ viewMode }: { viewMode: "active" | "history" }) {
         }}
         onSubmit={editingPallet ? handleEditPallet : handleAddPallet}
         pallet={editingPallet}
+        submitting={isSubmitting}
       />
 
-      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+      <AlertDialog open={deleteDialogOpen} onOpenChange={(open) => { if (!deleting) setDeleteDialogOpen(open); }}>
         <AlertDialogContent className="border-destructive/20">
           <AlertDialogHeader>
             <div className="mx-auto mb-3 w-12 h-12 rounded-full bg-destructive/10 flex items-center justify-center">
@@ -276,12 +284,23 @@ function PalletsContent({ viewMode }: { viewMode: "active" | "history" }) {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="sm:justify-center">
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel disabled={deleting}>Cancel</AlertDialogCancel>
             <AlertDialogAction
-              onClick={handleDeletePallet}
+              onClick={(e) => {
+                e.preventDefault();
+                handleDeletePallet();
+              }}
+              disabled={deleting}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
-              Delete
+              {deleting ? (
+                <>
+                  <Spinner size="sm" className="mr-2" />
+                  Deleting...
+                </>
+              ) : (
+                "Delete"
+              )}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
