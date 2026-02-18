@@ -49,9 +49,14 @@ const StorageIdentificationSection = () => {
       </div>
 
       <h3 className="text-lg font-semibold mt-8 mb-4">M.2 Sizes</h3>
-      <p className="text-muted-foreground mb-4">
-        M.2 drives are named by their dimensions (width x length in mm).
-      </p>
+            <div className="my-6">
+        <img
+          src="/storage/m2-sizes.png"
+          alt="M.2 SSD sizes comparison showing 2230, 2242, 2260, 2280, and 22110 form factors"
+          className="rounded-lg border w-full"
+        />
+      </div>
+
 
       <div className="overflow-x-auto rounded-lg border">
         <table className="w-full text-sm">
@@ -92,13 +97,6 @@ const StorageIdentificationSection = () => {
         </table>
       </div>
 
-      <div className="my-6">
-        <img
-          src="/storage/m2-sizes.png"
-          alt="M.2 SSD sizes comparison showing 2230, 2242, 2260, 2280, and 22110 form factors"
-          className="rounded-lg border w-full"
-        />
-      </div>
     </article>
   );
 };
