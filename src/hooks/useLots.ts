@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { Lot, Profile } from "@/types/database.types";
 import { lotService } from "@/services/lotService";
 import { lotWorkerService } from "@/services/lotWorkerService";
@@ -25,17 +25,18 @@ interface UseLotsReturn {
 
 export function useLots(
   viewMode: "active" | "history",
-  isAuthenticated: boolean
+  isAuthenticated: boolean,
 ): UseLotsReturn {
   const [lots, setLots] = useState<LotWithWorkers[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
+  const initialLoadDone = useRef(false);
 
   const isHistory = viewMode === "history";
 
   const fetchLots = useCallback(async () => {
     if (!isAuthenticated) return;
-    setLoading(true);
+    if (!initialLoadDone.current) setLoading(true);
     const lotsData = await lotService.fetchLots(isHistory);
 
     // Fetch workers for all lots
@@ -49,6 +50,7 @@ export function useLots(
 
     setLots(lotsWithWorkers);
     setLoading(false);
+    initialLoadDone.current = true;
   }, [isHistory, isAuthenticated]);
 
   // Initial fetch
@@ -71,46 +73,80 @@ export function useLots(
   const filteredLots = useMemo(
     () =>
       lots.filter((lot) =>
-        lot.lot_number.toLowerCase().includes(searchQuery.toLowerCase())
+        lot.lot_number.toLowerCase().includes(searchQuery.toLowerCase()),
       ),
-    [lots, searchQuery]
+    [lots, searchQuery],
   );
 
   // CRUD operations
-  const addLot = useCallback(async (data: Partial<Lot>, userId?: string) => {
-    const inserted = await lotService.addLot(data);
-    if (!inserted) return false;
+  const addLot = useCallback(
+    async (data: Partial<Lot>, userId?: string) => {
+      const inserted = await lotService.addLot(data);
+      if (!inserted) return false;
 
-    // Auto-join the creator as a worker
-    if (userId) {
-      await lotWorkerService.joinLot(inserted.id, userId);
-    }
-    return true;
-  }, []);
+      // Auto-join the creator as a worker
+      if (userId) {
+        await lotWorkerService.joinLot(inserted.id, userId);
+      }
+      await fetchLots();
+      return true;
+    },
+    [fetchLots],
+  );
 
-  const updateLot = useCallback(async (id: string, data: Partial<Lot>) => {
-    return lotService.updateLot(id, data);
-  }, []);
+  const updateLot = useCallback(
+    async (id: string, data: Partial<Lot>) => {
+      const success = await lotService.updateLot(id, data);
+      if (success) await fetchLots();
+      return success;
+    },
+    [fetchLots],
+  );
 
-  const retireLot = useCallback(async (id: string) => {
-    return lotService.retireLot(id);
-  }, []);
+  const retireLot = useCallback(
+    async (id: string) => {
+      const success = await lotService.retireLot(id);
+      if (success) await fetchLots();
+      return success;
+    },
+    [fetchLots],
+  );
 
-  const unretireLot = useCallback(async (id: string) => {
-    return lotService.unretireLot(id);
-  }, []);
+  const unretireLot = useCallback(
+    async (id: string) => {
+      const success = await lotService.unretireLot(id);
+      if (success) await fetchLots();
+      return success;
+    },
+    [fetchLots],
+  );
 
-  const deleteLot = useCallback(async (id: string) => {
-    return lotService.deleteLot(id);
-  }, []);
+  const deleteLot = useCallback(
+    async (id: string) => {
+      const success = await lotService.deleteLot(id);
+      if (success) await fetchLots();
+      return success;
+    },
+    [fetchLots],
+  );
 
-  const joinLot = useCallback(async (lotId: string, userId: string) => {
-    return lotWorkerService.joinLot(lotId, userId);
-  }, []);
+  const joinLot = useCallback(
+    async (lotId: string, userId: string) => {
+      const success = await lotWorkerService.joinLot(lotId, userId);
+      if (success) await fetchLots();
+      return success;
+    },
+    [fetchLots],
+  );
 
-  const leaveLot = useCallback(async (lotId: string, userId: string) => {
-    return lotWorkerService.leaveLot(lotId, userId);
-  }, []);
+  const leaveLot = useCallback(
+    async (lotId: string, userId: string) => {
+      const success = await lotWorkerService.leaveLot(lotId, userId);
+      if (success) await fetchLots();
+      return success;
+    },
+    [fetchLots],
+  );
 
   return {
     lots,
