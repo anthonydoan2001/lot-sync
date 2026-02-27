@@ -1,0 +1,11 @@
+{
+  "manifest_version": 3,
+  "name": "Razor ERP Auto-Fill (Lite)",
+  "version": "1.0",
+  "description": "Create lots from Razor ERP pages",
+  "permissions": ["activeTab", "scripting", "storage"],
+  "host_permissions": ["https://secureitad.razorerp.com/*"],
+  "action": {
+    "default_popup": "popup.html"
+  }
+}
