@@ -438,6 +438,73 @@
     .btn-scan:hover {
       background: #7d3c98;
     }
+
+    /* Master Item Section */
+    .section-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      padding: 10px 0;
+      border-top: 2px solid #ddd;
+      margin-top: 15px;
+      user-select: none;
+    }
+    .section-toggle h4 {
+      margin: 0;
+      color: #333;
+      font-size: 14px;
+    }
+    .section-toggle .toggle-arrow {
+      font-size: 12px;
+      color: #888;
+      transition: transform 0.2s;
+    }
+    .section-toggle .toggle-arrow.open {
+      transform: rotate(90deg);
+    }
+    .master-item-section {
+      display: none;
+      padding-top: 10px;
+    }
+    .master-item-section.show {
+      display: block;
+    }
+    .mi-group-label {
+      font-size: 10px;
+      font-weight: 700;
+      color: #8e44ad;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin: 10px 0 4px;
+      padding-bottom: 2px;
+      border-bottom: 1px solid #e8d5f5;
+    }
+    .mi-group-label:first-child {
+      margin-top: 0;
+    }
+    .form-row.checkbox-row {
+      grid-template-columns: 120px auto;
+    }
+    .form-row.checkbox-row input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      cursor: pointer;
+    }
+    .btn-master-fill {
+      background: #8e44ad;
+      color: white;
+    }
+    .btn-master-fill:hover {
+      background: #7d3c98;
+    }
+    .btn-master-scan {
+      background: #2980b9;
+      color: white;
+    }
+    .btn-master-scan:hover {
+      background: #2471a3;
+    }
   </style>
 </head>
 <body>
@@ -519,15 +586,38 @@
 
     <div class="custom-template">
      <h4>Custom Template</h4>
+      <div class="form-row" style="margin-bottom: 10px;">
+        <label>Category:</label>
+        <select id="templateCategory">
+          <option value="desktop">Desktops</option>
+          <option value="laptop">Laptops</option>
+          <option value="hardDrive">Hard Drives</option>
+        </select>
+      </div>
       <div class="action-buttons">
         <button class="btn btn-save" data-action="save">Save Template</button>
         <button class="btn btn-fill" data-action="fill">Fill Form (Ctrl+Shift+F)</button>
         <button class="btn btn-clear" data-action="clear">Clear All</button>
       </div>
- 
+
       <div class="template-form" id="form-fields"></div>
     </div>
     
+    <!-- Master Item Template Section -->
+    <div class="section-toggle" id="masterItemToggle">
+      <h4>Master Item Template</h4>
+      <span class="toggle-arrow" id="masterItemArrow">&#9654;</span>
+    </div>
+    <div class="master-item-section" id="masterItemSection">
+      <div class="action-buttons">
+        <button class="btn btn-save" id="miSaveBtn">Save</button>
+        <button class="btn btn-master-fill" id="miFillBtn">Fill Master Item</button>
+        <button class="btn btn-master-scan" id="miScanBtn">Scan Page</button>
+        <button class="btn btn-clear" id="miClearBtn">Clear</button>
+      </div>
+      <div class="template-form" id="mi-form-fields"></div>
+    </div>
+
     <div id="status" class="status"></div>
   </div>
   

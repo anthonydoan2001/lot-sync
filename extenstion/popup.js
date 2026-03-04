@@ -15,11 +15,34 @@ const safeChrome =
       };
 
 // ---- FIELD MAPPINGS ----
+// Each field has a `categories` array: which template categories it appears in.
+// "all" = desktop + laptop + hardDrive
 const FIELDS = [
-  { label: "Condition", id: "Condition", selector: "#ac_Condition" },
-  { label: "Location", id: "Location", selector: "#ac_Location" },
-  { label: "Category", id: "Category", selector: "#ac_Category" },
-  { label: "Notes", id: "Notes", selector: 'textarea[name="Notes"]' },
+  // --- Common fields (all categories) ---
+  {
+    label: "Condition",
+    id: "Condition",
+    selector: "#ac_Condition",
+    categories: ["all"],
+  },
+  {
+    label: "Location",
+    id: "Location",
+    selector: "#ac_Location",
+    categories: ["all"],
+  },
+  {
+    label: "Category",
+    id: "Category",
+    selector: "#ac_Category",
+    categories: ["all"],
+  },
+  {
+    label: "Notes",
+    id: "Notes",
+    selector: 'textarea[name="Notes"]',
+    categories: ["all"],
+  },
   {
     label: "Next Step",
     id: "NextStep",
@@ -31,109 +54,363 @@ const FIELDS = [
       { label: "Resale", value: "102" },
       { label: "Scrap", value: "103" },
     ],
+    categories: ["all"],
   },
-  { label: "Packaging", id: "PACKAGING", selector: "#ac_PACKAGING" },
-  { label: "Description", id: "Description", selector: "#ac_Description" },
-  { label: "Weight", id: "Weight", selector: 'input[name="Weight"]' },
+  {
+    label: "Packaging",
+    id: "PACKAGING",
+    selector: "#ac_PACKAGING",
+    categories: ["all"],
+  },
+  {
+    label: "Description",
+    id: "Description",
+    selector: "#ac_Description",
+    categories: ["desktop", "laptop"],
+  },
+  {
+    label: "Weight",
+    id: "Weight",
+    selector: 'input[name="Weight"]',
+    categories: ["all"],
+  },
+
+  // --- Hard Drive core fields (only on hardDrive inventory detail page) ---
+  {
+    label: "Model Search",
+    id: "ModelSearch",
+    selector: 'input[name$="_ModelSearch"]',
+    categories: ["hardDrive"],
+  },
+  {
+    label: "Manufacturer",
+    id: "Manufacturer",
+    selector: 'input[name$="_Manufacturer"]',
+    categories: ["hardDrive"],
+  },
+  {
+    label: "UID",
+    id: "UniqueId",
+    selector: 'input[name="UniqueId"]',
+    categories: ["hardDrive"],
+  },
+  {
+    label: "Serial",
+    id: "Serial",
+    selector: 'input[name="Serial"]',
+    categories: ["hardDrive"],
+  },
+  {
+    label: "Asset Tag",
+    id: "AssetTag",
+    selector: 'input[name="AssetTag"]',
+    categories: ["hardDrive"],
+  },
+  {
+    label: "Quantity",
+    id: "Quantity",
+    selector: 'input[name="Quantity"]',
+    categories: ["hardDrive"],
+  },
+
+  // --- Drive / Storage fields ---
   {
     label: "Form Factor",
     id: "FormFactor",
     selector: "#ac_HardDrive__FormFactor",
+    categories: ["all"],
   },
-  { label: "CPU Type", id: "CPUType", selector: "#ac_CPUType" },
-  { label: "CPU Speed", id: "CPUSpeed", selector: "#ac_CPUSpeed" },
-  { label: "CPU Cores", id: "CPUCores", selector: "#ac_CPUCores" },
-  { label: "Memory", id: "Memory", selector: "#ac_Memory" },
-  { label: "Memory Speed", id: "MemorySpeed", selector: "#ac_MemorySpeed" },
   {
-    label: "Memory Config",
-    id: "MemoryConfiguration",
-    selector: "#ac_MemoryConfiguration",
+    label: "MODEL",
+    id: "MODEL",
+    selector: "#ac_MODEL",
+    categories: ["hardDrive"],
   },
-  { label: "HDD Qty", id: "HDDQty", selector: "#ac_HDDQty" },
-  { label: "HDD Model", id: "HardDriveModel", selector: "#ac_HardDriveModel" },
+  { label: "MPN", id: "MPN", selector: "#ac_MPN", categories: ["hardDrive"] },
+  {
+    label: "HDD Type",
+    id: "HDDType",
+    selector: "#ac_HDDType",
+    categories: ["all"],
+  },
+  {
+    label: "HDD Size",
+    id: "HDDSize",
+    selector: "#ac_HDDSize",
+    categories: ["all"],
+  },
+  {
+    label: "HDD Speed",
+    id: "HDDSpeed",
+    selector: "#ac_HDDSpeed",
+    categories: ["hardDrive"],
+  },
+  {
+    label: "HDD Caddie",
+    id: "HDDCaddie",
+    selector: "#ac_HDDCaddie",
+    categories: ["all"],
+  },
+  {
+    label: "Caddie Part No",
+    id: "CaddiePartNumber",
+    selector: "#ac_CaddiePartNumber",
+    categories: ["hardDrive"],
+  },
+  {
+    label: "Host Serial",
+    id: "HostSerial",
+    selector: "#ac_HostSerial",
+    categories: ["hardDrive"],
+  },
+  {
+    label: "HDD Removed",
+    id: "HDDRemoved",
+    selector: "#ac_HDDRemoved",
+    categories: ["desktop", "laptop"],
+  },
+  {
+    label: "HDD Qty",
+    id: "HDDQty",
+    selector: "#ac_HDDQty",
+    categories: ["desktop", "laptop"],
+  },
+  {
+    label: "HDD Model",
+    id: "HardDriveModel",
+    selector: "#ac_HardDriveModel",
+    categories: ["desktop", "laptop"],
+  },
   {
     label: "HDD Serial",
     id: "HardDriveSerial",
     selector: "#ac_HardDriveSerial",
+    categories: ["desktop", "laptop"],
   },
-  { label: "HDD Type", id: "HDDType", selector: "#ac_HDDType" },
   {
     label: "Storage Medium",
     id: "StorageMedium",
     selector: "#ac_StorageMedium",
+    categories: ["desktop", "laptop"],
   },
-  { label: "HDD Size", id: "HDDSize", selector: "#ac_HDDSize" },
-  { label: "HDD Caddie", id: "HDDCaddie", selector: "#ac_HDDCaddie" },
-  { label: "HDD Removed", id: "HDDRemoved", selector: "#ac_HDDRemoved" },
+
+  // --- Erasure fields ---
   {
     label: "Erasure Method",
     id: "ErasureMethod",
     selector: "#ac_ErasureMethod",
+    categories: ["all"],
   },
   {
     label: "Erasure Results",
     id: "ErasureResults",
     selector: "#ac_ErasureResults",
+    categories: ["all"],
   },
-  { label: "Erasure Date", id: "ErasureDate", selector: "#ac_ErasureDate" },
+  {
+    label: "Erasure Date",
+    id: "ErasureDate",
+    selector: "#ac_ErasureDate",
+    categories: ["all"],
+  },
   {
     label: "Drive Shredded",
     id: "DriveShredded",
     selector: "#ac_DriveShredded",
+    categories: ["all"],
   },
-  { label: "Optical Drive", id: "OpticalDrive", selector: "#ac_OpticalDrive" },
+
+  // --- Grading / QC ---
   {
-    label: "Fingerprint Sens",
-    id: "FingerprintSens",
-    selector: "#ac_FingerprintSens",
+    label: "Pass or Fail",
+    id: "PassorFail",
+    selector: "#ac_PassorFail",
+    categories: ["all"],
   },
-  { label: "NIC", id: "NIC", selector: "#ac_NIC" },
-  { label: "Video Adapter", id: "VideoAdapter", selector: "#ac_VideoAdapter" },
-  { label: "Webcam", id: "Webcam", selector: "#ac_Webcam" },
-  { label: "WiFi", id: "WIFI", selector: "#ac_WIFI" },
-  { label: "Ext Ports", id: "ExtPorts", selector: "#ac_ExtPorts" },
-  { label: "Battery Type", id: "BatteryType", selector: "#ac_BatteryType" },
-  { label: "Battery Life", id: "BatteryLife", selector: "#ac_BatteryLife" },
+  {
+    label: "Fail Reason",
+    id: "FailReason",
+    selector: "#ac_FailReason",
+    categories: ["all"],
+  },
+  {
+    label: "Grade",
+    id: "Grade",
+    selector: "#ac_Grade",
+    categories: ["desktop", "laptop"],
+  },
+  {
+    label: "Repaired",
+    id: "Repaired",
+    selector: "#ac_Repaired",
+    categories: ["desktop", "laptop"],
+  },
+  {
+    label: "Final Grade",
+    id: "FinalGrade",
+    selector: "#ac_FinalGrade",
+    categories: ["all"],
+  },
+
+  // --- System / CPU / Memory (desktop + laptop only) ---
+  {
+    label: "CPU Type",
+    id: "CPUType",
+    selector: "#ac_CPUType",
+    categories: ["desktop", "laptop"],
+  },
+  {
+    label: "CPU Speed",
+    id: "CPUSpeed",
+    selector: "#ac_CPUSpeed",
+    categories: ["desktop", "laptop"],
+  },
+  {
+    label: "CPU Cores",
+    id: "CPUCores",
+    selector: "#ac_CPUCores",
+    categories: ["desktop", "laptop"],
+  },
+  {
+    label: "Memory",
+    id: "Memory",
+    selector: "#ac_Memory",
+    categories: ["desktop", "laptop"],
+  },
+  {
+    label: "Memory Speed",
+    id: "MemorySpeed",
+    selector: "#ac_MemorySpeed",
+    categories: ["desktop", "laptop"],
+  },
+  {
+    label: "Memory Config",
+    id: "MemoryConfiguration",
+    selector: "#ac_MemoryConfiguration",
+    categories: ["desktop", "laptop"],
+  },
+
+  // --- Peripherals (desktop + laptop) ---
+  {
+    label: "Optical Drive",
+    id: "OpticalDrive",
+    selector: "#ac_OpticalDrive",
+    categories: ["desktop", "laptop"],
+  },
+  {
+    label: "NIC",
+    id: "NIC",
+    selector: "#ac_NIC",
+    categories: ["desktop", "laptop"],
+  },
+  {
+    label: "Video Adapter",
+    id: "VideoAdapter",
+    selector: "#ac_VideoAdapter",
+    categories: ["desktop", "laptop"],
+  },
+  {
+    label: "Webcam",
+    id: "Webcam",
+    selector: "#ac_Webcam",
+    categories: ["desktop", "laptop"],
+  },
+  {
+    label: "WiFi",
+    id: "WIFI",
+    selector: "#ac_WIFI",
+    categories: ["desktop", "laptop"],
+  },
+  {
+    label: "Ext Ports",
+    id: "ExtPorts",
+    selector: "#ac_ExtPorts",
+    categories: ["desktop", "laptop"],
+  },
+  {
+    label: "COA",
+    id: "COA",
+    selector: "#ac_COA",
+    categories: ["desktop", "laptop"],
+  },
+
+  // --- Laptop-only fields ---
+  {
+    label: "Battery Type",
+    id: "BatteryType",
+    selector: "#ac_BatteryType",
+    categories: ["laptop"],
+  },
+  {
+    label: "Battery Life",
+    id: "BatteryLife",
+    selector: "#ac_BatteryLife",
+    categories: ["laptop"],
+  },
   {
     label: "Screen Resolution",
     id: "ScreenResolution",
     selector: "#ac_ScreenResolution",
+    categories: ["laptop"],
   },
-  { label: "Screen Size", id: "ScreenSize", selector: "#ac_ScreenSize" },
-  { label: "Touch Screen", id: "TouchScreen", selector: "#ac_TouchScreen" },
-  { label: "COA", id: "COA", selector: "#ac_COA" },
-  { label: "Pass or Fail", id: "PassorFail", selector: "#ac_PassorFail" },
-  { label: "Grade", id: "Grade", selector: "#ac_Grade" },
-  { label: "Fail Reason", id: "FailReason", selector: "#ac_FailReason" },
-  { label: "Repaired", id: "Repaired", selector: "#ac_Repaired" },
-  { label: "Final Grade", id: "FinalGrade", selector: "#ac_FinalGrade" },
+  {
+    label: "Screen Size",
+    id: "ScreenSize",
+    selector: "#ac_ScreenSize",
+    categories: ["laptop"],
+  },
+  {
+    label: "Touch Screen",
+    id: "TouchScreen",
+    selector: "#ac_TouchScreen",
+    categories: ["laptop"],
+  },
+  {
+    label: "Fingerprint Sens",
+    id: "FingerprintSens",
+    selector: "#ac_FingerprintSens",
+    categories: ["laptop"],
+  },
+
+  // --- Test Results ---
   {
     label: "CPU Test Results",
     id: "CPUTestResults",
     selector: "#ac_CPUTestResults",
+    categories: ["desktop", "laptop"],
   },
   {
     label: "Memory Test Results",
     id: "MemoryTestResults",
     selector: "#ac_MemoryTestResults",
+    categories: ["desktop", "laptop"],
   },
   {
     label: "MB Test Results",
     id: "MBTestResults",
     selector: "#ac_MBTestResults",
+    categories: ["desktop", "laptop"],
   },
   {
     label: "LCD Test Results",
     id: "LCDTestResults",
     selector: "#ac_LCDTestResults",
+    categories: ["laptop"],
   },
   {
     label: "KB Test Results",
     id: "KBTestResults",
     selector: "#ac_KBTestResults",
+    categories: ["laptop"],
   },
 ];
+
+// Helper: filter FIELDS for a given category
+function getFieldsForCategory(category) {
+  return FIELDS.filter((f) => {
+    return f.categories.includes("all") || f.categories.includes(category);
+  });
+}
 
 // ---- PRESETS ----
 const PRESETS = {
@@ -292,48 +569,10 @@ const EXCLUDED_SCAN_FIELDS = [
   "FinalGrade",
 ];
 
-const LAPTOP_ONLY_FIELDS = [
-  "BatteryType",
-  "BatteryLife",
-  "ScreenResolution",
-  "ScreenSize",
-  "TouchScreen",
-  "FingerprintSens",
-  "LCDTestResults",
-  "KBTestResults",
-];
-
-const HARD_DRIVE_FIELD_IDS = [
-  "Condition",
-  "Notes",
-  "NextStep",
-  "PACKAGING",
-  "Weight",
-  "FormFactor",
-  "HDDType",
-  "HDDSize",
-  "HDDCaddie",
-  "HDDRemoved",
-  "HDDQty",
-  "HardDriveModel",
-  "StorageMedium",
-  "ErasureMethod",
-  "ErasureResults",
-  "ErasureDate",
-  "DriveShredded",
-  "PassorFail",
-  "Grade",
-  "FailReason",
-];
-
 function getCategoryFields(category) {
-  return FIELDS.filter((f) => {
+  return getFieldsForCategory(category).filter((f) => {
     if (EXCLUDED_SCAN_FIELDS.includes(f.id)) return false;
     if (f.id === "FinalGrade") return false;
-    if (category === "desktop" && LAPTOP_ONLY_FIELDS.includes(f.id))
-      return false;
-    if (category === "hardDrive" && !HARD_DRIVE_FIELD_IDS.includes(f.id))
-      return false;
     return true;
   });
 }
@@ -677,6 +916,408 @@ function setupPresetManagerListeners() {
   }
 }
 
+// ---- MASTER ITEM FIELD MAPPINGS ----
+const MASTER_ITEM_FIELDS = [
+  // --- Basic Info ---
+  { group: "Basic Info" },
+  { label: "Model", id: "mi_model", selector: "#tb_ItemNumber", type: "text" },
+  {
+    label: "Manufacturer",
+    id: "mi_manufacturer",
+    selector: "#tb_Manufacturer",
+    type: "text",
+  },
+  {
+    label: "Type",
+    id: "mi_itemType",
+    selector: "#tb_ItemType",
+    type: "text",
+    default: "Inventory",
+  },
+  {
+    label: "Master Item Title",
+    id: "mi_title",
+    selector: "#tb_Title",
+    type: "text",
+  },
+
+  // --- Attribute Defaults (Hard Drive set) ---
+  { group: "Attribute Defaults" },
+  {
+    label: "Packaging",
+    id: "mi_packaging",
+    selector: "#ac_Attribute_47",
+    type: "autocomplete",
+    default: "SINGLE",
+  },
+  {
+    label: "Form Factor",
+    id: "mi_formFactor",
+    selector: "#ac_Attribute_5022",
+    type: "autocomplete",
+  },
+  {
+    label: "HDD Size",
+    id: "mi_hddSize",
+    selector: "#ac_Attribute_6137",
+    type: "autocomplete",
+  },
+  {
+    label: "HDD Speed",
+    id: "mi_hddSpeed",
+    selector: "#ac_Attribute_6138",
+    type: "autocomplete",
+  },
+  {
+    label: "HDD Type",
+    id: "mi_hddType",
+    selector: "#ac_Attribute_6139",
+    type: "autocomplete",
+  },
+  {
+    label: "Erasure Method",
+    id: "mi_erasureMethod",
+    selector: "#ac_Attribute_6089",
+    type: "autocomplete",
+  },
+  {
+    label: "Erasure Date",
+    id: "mi_erasureDate",
+    selector: "#ac_Attribute_6088",
+    type: "autocomplete",
+  },
+  {
+    label: "Erasure Results",
+    id: "mi_erasureResults",
+    selector: "#ac_Attribute_6090",
+    type: "autocomplete",
+  },
+  {
+    label: "Final Grade",
+    id: "mi_finalGrade",
+    selector: "#ac_Attribute_6129",
+    type: "autocomplete",
+  },
+  {
+    label: "Pass or Fail",
+    id: "mi_passOrFail",
+    selector: "#ac_Attribute_6173",
+    type: "autocomplete",
+  },
+  {
+    label: "MODEL (attr)",
+    id: "mi_modelAttr",
+    selector: "#ac_Attribute_6178",
+    type: "autocomplete",
+  },
+  {
+    label: "MPN (attr)",
+    id: "mi_mpnAttr",
+    selector: "#ac_Attribute_6180",
+    type: "autocomplete",
+  },
+
+  // --- Checkboxes ---
+  { group: "Options" },
+  {
+    label: "Discontinued",
+    id: "mi_discontinued",
+    selector: "#cb_IsDiscontinued",
+    type: "checkbox",
+  },
+];
+
+// ---- MASTER ITEM UI ----
+function buildMasterItemForm() {
+  const container = document.getElementById("mi-form-fields");
+  if (!container) return;
+  container.innerHTML = "";
+
+  MASTER_ITEM_FIELDS.forEach((field) => {
+    if (field.group) {
+      const groupLabel = document.createElement("div");
+      groupLabel.className = "mi-group-label";
+      groupLabel.textContent = field.group;
+      container.appendChild(groupLabel);
+      return;
+    }
+
+    const row = document.createElement("div");
+    row.className =
+      "form-row" + (field.type === "checkbox" ? " checkbox-row" : "");
+
+    if (field.type === "checkbox") {
+      row.innerHTML = `
+        <label>${field.label}:</label>
+        <input type="checkbox" id="field_${field.id}">
+      `;
+    } else {
+      row.innerHTML = `
+        <label>${field.label}:</label>
+        <input type="text" id="field_${field.id}" placeholder="${field.default || ""}">
+      `;
+    }
+    container.appendChild(row);
+  });
+}
+
+function getMasterItemFormData() {
+  const data = {};
+  MASTER_ITEM_FIELDS.forEach((field) => {
+    if (field.group) return;
+    const input = document.getElementById(`field_${field.id}`);
+    if (!input) return;
+
+    if (field.type === "checkbox") {
+      if (input.checked) data[field.id] = true;
+    } else {
+      const val = input.value.trim();
+      if (val) data[field.id] = val;
+    }
+  });
+  return data;
+}
+
+function fillMasterItemFormInputs(data) {
+  MASTER_ITEM_FIELDS.forEach((field) => {
+    if (field.group) return;
+    const input = document.getElementById(`field_${field.id}`);
+    if (!input) return;
+
+    if (field.type === "checkbox") {
+      input.checked = !!data[field.id];
+    } else {
+      input.value = data[field.id] || "";
+    }
+  });
+}
+
+function saveMasterItemTemplate() {
+  const data = getMasterItemFormData();
+  if (Object.keys(data).length === 0) {
+    showStatus("\u26A0 No fields filled to save", true);
+    return;
+  }
+  safeChrome.storage.local.set({ saved_master_item_template: data }, () => {
+    if (chrome.runtime.lastError) {
+      showStatus("Error saving: " + chrome.runtime.lastError.message, true);
+    } else {
+      showStatus("\u2713 Master Item template saved!");
+    }
+  });
+}
+
+function loadMasterItemTemplate() {
+  safeChrome.storage.local.get(["saved_master_item_template"], (result) => {
+    if (result.saved_master_item_template) {
+      fillMasterItemFormInputs(result.saved_master_item_template);
+    }
+  });
+}
+
+function clearMasterItemTemplate() {
+  MASTER_ITEM_FIELDS.forEach((field) => {
+    if (field.group) return;
+    const input = document.getElementById(`field_${field.id}`);
+    if (!input) return;
+    if (field.type === "checkbox") {
+      input.checked = false;
+    } else {
+      input.value = "";
+    }
+  });
+  safeChrome.storage.local.remove(["saved_master_item_template"]);
+  showStatus("\u2713 Master Item template cleared!");
+}
+
+async function fillMasterItemPage() {
+  const data = getMasterItemFormData();
+  if (Object.keys(data).length === 0) {
+    showStatus("\u26A0 No fields filled to submit", true);
+    return;
+  }
+
+  try {
+    const [tab] = await safeChrome.tabs.query({
+      active: true,
+      currentWindow: true,
+    });
+    if (!tab || !tab.id) {
+      showStatus("\u274C No active tab found", true);
+      return;
+    }
+
+    // Build the field list to pass into the page context
+    const fieldList = MASTER_ITEM_FIELDS.filter(
+      (f) => !f.group && data[f.id] !== undefined,
+    ).map((f) => ({
+      id: f.id,
+      selector: f.selector,
+      type: f.type,
+      value: data[f.id],
+    }));
+
+    const results = await safeChrome.scripting.executeScript({
+      target: { tabId: tab.id },
+      func: (fields) => {
+        let filledCount = 0;
+
+        function setAutocomplete(selector, value) {
+          const input = document.querySelector(selector);
+          if (!input) return false;
+          input.value = value;
+          // Set the hidden sibling that stores the actual submitted value
+          const hidden = input.nextElementSibling;
+          if (hidden && hidden.type === "hidden") {
+            hidden.value = value;
+          }
+          // Fire events for Ractive.js data-binding
+          input.dispatchEvent(new Event("input", { bubbles: true }));
+          input.dispatchEvent(new Event("change", { bubbles: true }));
+          input.dispatchEvent(new Event("blur", { bubbles: true }));
+          return true;
+        }
+
+        function setTextField(selector, value) {
+          const input = document.querySelector(selector);
+          if (!input) return false;
+          input.value = value;
+          input.dispatchEvent(new Event("input", { bubbles: true }));
+          input.dispatchEvent(new Event("change", { bubbles: true }));
+          input.dispatchEvent(new Event("blur", { bubbles: true }));
+          return true;
+        }
+
+        function setCheckbox(selector, value) {
+          const input = document.querySelector(selector);
+          if (!input) return false;
+          if (input.checked !== value) {
+            input.checked = value;
+            input.dispatchEvent(new Event("change", { bubbles: true }));
+            input.dispatchEvent(new Event("click", { bubbles: true }));
+          }
+          return true;
+        }
+
+        fields.forEach((field) => {
+          let success = false;
+          if (field.type === "autocomplete") {
+            success = setAutocomplete(field.selector, field.value);
+          } else if (field.type === "checkbox") {
+            success = setCheckbox(field.selector, field.value);
+          } else {
+            success = setTextField(field.selector, field.value);
+          }
+          if (success) filledCount++;
+        });
+
+        // Close any open autocomplete dropdowns
+        try {
+          if (typeof $ !== "undefined" && $.fn && $.fn.autocomplete) {
+            $(".ui-autocomplete-input").autocomplete("close");
+          }
+        } catch (e) {}
+        document
+          .querySelectorAll(".ui-autocomplete")
+          .forEach((menu) => (menu.style.display = "none"));
+        if (document.activeElement) document.activeElement.blur();
+
+        return { success: true, filledCount };
+      },
+      args: [fieldList],
+    });
+
+    if (results && results[0] && results[0].result) {
+      showStatus(
+        `\u2713 Filled ${results[0].result.filledCount} Master Item field(s)!`,
+      );
+    } else {
+      showStatus("\u2713 Master Item form filled!");
+    }
+  } catch (err) {
+    showStatus("Error: " + err.message, true);
+  }
+}
+
+async function scanMasterItemPage() {
+  try {
+    const [tab] = await safeChrome.tabs.query({
+      active: true,
+      currentWindow: true,
+    });
+    if (!tab || !tab.id) {
+      showStatus("\u274C No active tab found", true);
+      return;
+    }
+
+    const fieldDefs = MASTER_ITEM_FIELDS.filter((f) => !f.group).map((f) => ({
+      id: f.id,
+      selector: f.selector,
+      type: f.type,
+    }));
+
+    const results = await safeChrome.scripting.executeScript({
+      target: { tabId: tab.id },
+      func: (fields) => {
+        const values = {};
+        fields.forEach((field) => {
+          const el = document.querySelector(field.selector);
+          if (!el) return;
+          if (field.type === "checkbox") {
+            if (el.checked) values[field.id] = true;
+          } else {
+            const val = el.value ? el.value.trim() : "";
+            if (val) values[field.id] = val;
+          }
+        });
+        return values;
+      },
+      args: [fieldDefs],
+    });
+
+    if (!results || !results[0] || !results[0].result) {
+      showStatus("\u274C Failed to scan Master Item page", true);
+      return;
+    }
+
+    const scannedValues = results[0].result;
+    if (Object.keys(scannedValues).length === 0) {
+      showStatus("\u26A0 No field values found on page", true);
+      return;
+    }
+
+    fillMasterItemFormInputs(scannedValues);
+    showStatus(
+      `\u2713 Scanned ${Object.keys(scannedValues).length} Master Item field(s)`,
+    );
+  } catch (err) {
+    showStatus("Error scanning: " + err.message, true);
+  }
+}
+
+function setupMasterItemListeners() {
+  const toggle = document.getElementById("masterItemToggle");
+  const section = document.getElementById("masterItemSection");
+  const arrow = document.getElementById("masterItemArrow");
+
+  if (toggle && section && arrow) {
+    toggle.addEventListener("click", () => {
+      section.classList.toggle("show");
+      arrow.classList.toggle("open");
+    });
+  }
+
+  const saveBtn = document.getElementById("miSaveBtn");
+  const fillBtn = document.getElementById("miFillBtn");
+  const scanBtn = document.getElementById("miScanBtn");
+  const clearBtn = document.getElementById("miClearBtn");
+
+  if (saveBtn) saveBtn.addEventListener("click", saveMasterItemTemplate);
+  if (fillBtn) fillBtn.addEventListener("click", fillMasterItemPage);
+  if (scanBtn) scanBtn.addEventListener("click", scanMasterItemPage);
+  if (clearBtn) clearBtn.addEventListener("click", clearMasterItemTemplate);
+}
+
 // ---- INIT ----
 document.addEventListener("DOMContentLoaded", init);
 
@@ -691,14 +1332,33 @@ function init() {
   setupCreateLotListeners();
   setupPresetManagerListeners();
   renderUserPresetButtons();
+  buildMasterItemForm();
+  loadMasterItemTemplate();
+  setupMasterItemListeners();
 }
 
 // ---- BUILD FORM ----
-function buildForm() {
+// Track current template category
+let currentTemplateCategory = "desktop";
+
+function buildForm(category) {
+  if (category) currentTemplateCategory = category;
   const container = document.getElementById("form-fields");
   if (!container) return;
-  container.innerHTML = "";
+
+  // Save current values before rebuilding
+  const savedValues = {};
   FIELDS.forEach((field) => {
+    const input = document.getElementById(`field_${field.id}`);
+    if (input && input.value && input.value.trim()) {
+      savedValues[field.id] = input.value.trim();
+    }
+  });
+
+  container.innerHTML = "";
+  const filteredFields = getFieldsForCategory(currentTemplateCategory);
+
+  filteredFields.forEach((field) => {
     // Skip Final Grade field in custom template (auto-filled from Grade)
     if (field.id === "FinalGrade") {
       return;
@@ -708,10 +1368,8 @@ function buildForm() {
     row.className = "form-row";
 
     if (field.isDropdown && field.options) {
-      // Create dropdown select for dropdown fields
       const selectOptions = field.options
         .map((opt) => {
-          // Handle both string options and {label, value} objects
           if (typeof opt === "string") {
             return `<option value="${opt}">${opt}</option>`;
           } else {
@@ -727,13 +1385,18 @@ function buildForm() {
         </select>
       `;
     } else {
-      // Create text input for regular fields
       row.innerHTML = `
         <label>${field.label}:</label>
         <input type="text" id="field_${field.id}" placeholder="">
       `;
     }
     container.appendChild(row);
+
+    // Restore saved value if it exists
+    if (savedValues[field.id]) {
+      const input = document.getElementById(`field_${field.id}`);
+      if (input) input.value = savedValues[field.id];
+    }
   });
 }
 
@@ -745,14 +1408,14 @@ function loadSavedTemplate() {
 }
 
 function fillFormInputs(data) {
+  // If saved data has a category, switch to it first
+  if (data._category) {
+    const catSelect = document.getElementById("templateCategory");
+    if (catSelect) catSelect.value = data._category;
+    buildForm(data._category);
+  }
   Object.keys(data).forEach((key) => {
-    // Skip Final Grade - it's auto-copied from Grade, no input field
-    if (key === "FinalGrade") {
-      console.log(
-        "Skipping Final Grade in UI (will be auto-copied from Grade)",
-      );
-      return;
-    }
+    if (key === "FinalGrade" || key === "_category") return;
     const input = document.getElementById(`field_${key}`);
     if (input) input.value = data[key] || "";
   });
@@ -760,14 +1423,10 @@ function fillFormInputs(data) {
 
 // ---- EVENT LISTENERS ----
 function setupEventListeners() {
-  console.log("Setting up event listeners");
-
   // Presets - pass isPreset=true
   const presetButtons = document.querySelectorAll("[data-preset]");
-  console.log("Found preset buttons:", presetButtons.length);
   presetButtons.forEach((btn) => {
     btn.addEventListener("click", () => {
-      console.log("Preset clicked:", btn.dataset.preset);
       const preset = PRESETS[btn.dataset.preset];
       fillAndSubmit(preset, true); // TRUE = this is a preset button
     });
@@ -775,29 +1434,39 @@ function setupEventListeners() {
 
   // Save / Fill / Clear
   const actionButtons = document.querySelectorAll("[data-action]");
-  console.log("Found action buttons:", actionButtons.length);
   actionButtons.forEach((btn) => {
-    console.log("Registering button:", btn.dataset.action, btn.textContent);
     btn.addEventListener("click", () => {
       const action = btn.dataset.action;
-      console.log("Action button clicked:", action);
       if (action === "save") saveTemplate();
-      else if (action === "fill")
-        fillCustomTemplate(); // fillCustomTemplate calls with isPreset=false
+      else if (action === "fill") fillCustomTemplate();
       else if (action === "clear") clearTemplate();
     });
   });
+
+  // Category dropdown for Custom Template
+  const templateCategory = document.getElementById("templateCategory");
+  if (templateCategory) {
+    templateCategory.addEventListener("change", () => {
+      buildForm(templateCategory.value);
+    });
+  }
 }
 
 // ---- ACTIONS ----
-function saveTemplate() {
+function getVisibleTemplateData() {
   const data = {};
-  FIELDS.forEach((field) => {
+  const filteredFields = getFieldsForCategory(currentTemplateCategory);
+  filteredFields.forEach((field) => {
     const input = document.getElementById(`field_${field.id}`);
     if (input && input.value.trim()) {
       data[field.id] = input.value.trim();
     }
   });
+  return data;
+}
+
+function saveTemplate() {
+  const data = getVisibleTemplateData();
 
   // ALWAYS force Final Grade to match Grade (override any existing value)
   if (data.Grade) {
@@ -805,27 +1474,24 @@ function saveTemplate() {
   }
 
   if (Object.keys(data).length === 0) {
-    showStatus("âš  No fields filled to save", true);
+    showStatus(“\u26A0 No fields filled to save”, true);
     return;
   }
 
+  // Save the selected category alongside the field data
+  data._category = currentTemplateCategory;
+
   safeChrome.storage.local.set({ saved_template: data }, () => {
     if (chrome.runtime.lastError) {
-      showStatus("Error saving: " + chrome.runtime.lastError.message, true);
+      showStatus(“Error saving: “ + chrome.runtime.lastError.message, true);
     } else {
-      showStatus("âœ“ Template saved!");
+      showStatus(“\u2713 Template saved!”);
     }
   });
 }
 
 async function fillCustomTemplate() {
-  const data = {};
-  FIELDS.forEach((field) => {
-    const input = document.getElementById(`field_${field.id}`);
-    if (input && input.value.trim()) {
-      data[field.id] = input.value.trim();
-    }
-  });
+  const data = getVisibleTemplateData();
 
   // ALWAYS force Final Grade to match Grade (override any existing value)
   if (data.Grade) {
@@ -833,7 +1499,7 @@ async function fillCustomTemplate() {
   }
 
   if (Object.keys(data).length === 0) {
-    showStatus("âš  No fields filled to submit", true);
+    showStatus(“\u26A0 No fields filled to submit”, true);
     return;
   }
 
@@ -841,12 +1507,13 @@ async function fillCustomTemplate() {
 }
 
 function clearTemplate() {
-  FIELDS.forEach((field) => {
+  const filteredFields = getFieldsForCategory(currentTemplateCategory);
+  filteredFields.forEach((field) => {
     const input = document.getElementById(`field_${field.id}`);
-    if (input) input.value = "";
+    if (input) input.value = “”;
   });
-  safeChrome.storage.local.remove(["saved_template"]);
-  showStatus("âœ“ Template cleared!");
+  safeChrome.storage.local.remove([“saved_template”]);
+  showStatus(“\u2713 Template cleared!”);
 }
 
 // ---- PAGE INJECTION ----
