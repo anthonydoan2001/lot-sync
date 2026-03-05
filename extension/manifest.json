@@ -3,10 +3,13 @@
   "name": "Razor ERP Auto-Fill",
   "version": "1.1",
   "description": "Auto-fill audit forms in Razor ERP",
-  "permissions": ["activeTab", "scripting", "storage", "notifications"],
+  "permissions": ["activeTab", "scripting", "storage", "notifications", "sidePanel"],
   "host_permissions": ["https://secureitad.razorerp.com/*"],
   "action": {
     "default_popup": "popup.html"
+  },
+  "side_panel": {
+    "default_path": "sidepanel.html"
   },
   "background": {
     "service_worker": "background.js"

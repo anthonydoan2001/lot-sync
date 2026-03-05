@@ -1659,6 +1659,23 @@ function showStatus(message, isError = false) {
   setTimeout(() => status.classList.remove("show"), 3000);
 }
 
+// ---- SIDE PANEL BUTTON ----
+{
+  const sidePanelBtn = document.getElementById("sidePanelToggle");
+  if (sidePanelBtn) {
+    sidePanelBtn.addEventListener("click", async () => {
+      const [tab] = await chrome.tabs.query({
+        active: true,
+        currentWindow: true,
+      });
+      if (tab) {
+        await chrome.sidePanel.open({ tabId: tab.id });
+        window.close();
+      }
+    });
+  }
+}
+
 // ---- SETTINGS MODULE ----
 function setupSettingsListeners() {
   const toggle = document.getElementById("settingsToggle");
