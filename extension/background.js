@@ -151,10 +151,10 @@ const MASTER_ITEM_FIELDS_BG = [
   { id: "mi_formFactor", selector: "#ac_Attribute_5022", type: "autocomplete" },
   { id: "mi_hddSpeed", selector: "#ac_Attribute_6138", type: "autocomplete" },
   { id: "mi_hddType", selector: "#ac_Attribute_6139", type: "autocomplete" },
-  { id: "mi_hddCaddie", selector: "#ac_Attribute_6140", type: "autocomplete" },
+  { id: "mi_hddCaddie", selector: "#ac_Attribute_6134", type: "autocomplete" },
   {
     id: "mi_caddiePartNumber",
-    selector: "#ac_Attribute_6141",
+    selector: "#ac_Attribute_5019",
     type: "autocomplete",
   },
   {
