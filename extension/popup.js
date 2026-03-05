@@ -1136,6 +1136,9 @@ async function fillMasterItemPage() {
             const $input = $(input);
             $input.val(value);
             if (hidden && hidden.type === "hidden") hidden.value = value;
+            const widget =
+              $input.data("ui-autocomplete") || $input.data("autocomplete");
+            if (widget) widget.term = value;
             $input.trigger("input").trigger("change");
             try {
               $input.autocomplete("close");
@@ -1591,6 +1594,9 @@ async function fillAndSubmit(data, isPreset = false) {
                 const $el = $(el);
                 $el.val(value);
                 if (hidden && hidden.type === "hidden") hidden.value = value;
+                const widget =
+                  $el.data("ui-autocomplete") || $el.data("autocomplete");
+                if (widget) widget.term = value;
                 $el.trigger("input").trigger("change");
                 try {
                   $el.autocomplete("close");

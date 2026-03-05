@@ -192,6 +192,9 @@ function fillAutocompleteFields(fields) {
       $input.val(field.value);
       const hidden = input.nextElementSibling;
       if (hidden && hidden.type === "hidden") hidden.value = field.value;
+      const widget =
+        $input.data("ui-autocomplete") || $input.data("autocomplete");
+      if (widget) widget.term = field.value;
       $input.trigger("input").trigger("change");
       try {
         $input.autocomplete("close");
@@ -257,6 +260,22 @@ chrome.commands.onCommand.addListener(async (command) => {
             formData.FinalGrade = currentGrade;
           }
 
+          // Helper to properly fill a jQuery UI autocomplete input
+          function fillAutocomplete(el, value) {
+            const $el = $(el);
+            $el.val(value);
+            const hidden = el.nextElementSibling;
+            if (hidden && hidden.type === "hidden") hidden.value = value;
+            // Update internal term so blur doesn't clear the value
+            const widget =
+              $el.data("ui-autocomplete") || $el.data("autocomplete");
+            if (widget) widget.term = value;
+            $el.trigger("input").trigger("change");
+            try {
+              $el.autocomplete("close");
+            } catch (e) {}
+          }
+
           let filledCount = 0;
           const results = [];
 
@@ -281,16 +300,7 @@ chrome.commands.onCommand.addListener(async (command) => {
                   $.fn &&
                   $.fn.autocomplete
                 ) {
-                  const $el = $(el);
-                  $el.val(value);
-                  const hidden = el.nextElementSibling;
-                  if (hidden && hidden.type === "hidden") {
-                    hidden.value = value;
-                  }
-                  $el.trigger("input").trigger("change");
-                  try {
-                    $el.autocomplete("close");
-                  } catch (e) {}
+                  fillAutocomplete(el, value);
                 } else {
                   el.value = value;
                   const hidden = el.nextElementSibling;
@@ -401,6 +411,9 @@ chrome.commands.onCommand.addListener(async (command) => {
               const hidden = input.nextElementSibling;
               if (hidden && hidden.type === "hidden")
                 hidden.value = field.value;
+              const widget =
+                $input.data("ui-autocomplete") || $input.data("autocomplete");
+              if (widget) widget.term = field.value;
               $input.trigger("input").trigger("change");
               try {
                 $input.autocomplete("close");
