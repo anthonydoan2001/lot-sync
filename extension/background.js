@@ -181,16 +181,29 @@ function fillAutocompleteFields(fields) {
   fields.forEach((field) => {
     const input = document.querySelector(field.selector);
     if (!input) return;
-    input.value = field.value;
-    const hidden = input.nextElementSibling;
-    if (hidden && hidden.type === "hidden") hidden.value = field.value;
-    input.dispatchEvent(new Event("input", { bubbles: true }));
-    input.dispatchEvent(new Event("change", { bubbles: true }));
-    input.dispatchEvent(new Event("blur", { bubbles: true }));
-    if (input.classList.contains("ui-autocomplete-input")) {
-      input.dispatchEvent(new KeyboardEvent("keydown", { bubbles: true }));
-      input.dispatchEvent(new KeyboardEvent("keyup", { bubbles: true }));
+
+    if (
+      input.classList.contains("ui-autocomplete-input") &&
+      typeof $ !== "undefined" &&
+      $.fn &&
+      $.fn.autocomplete
+    ) {
+      const $input = $(input);
+      $input.val(field.value);
+      const hidden = input.nextElementSibling;
+      if (hidden && hidden.type === "hidden") hidden.value = field.value;
+      $input.trigger("input").trigger("change");
+      try {
+        $input.autocomplete("close");
+      } catch (e) {}
+    } else {
+      input.value = field.value;
+      const hidden = input.nextElementSibling;
+      if (hidden && hidden.type === "hidden") hidden.value = field.value;
+      input.dispatchEvent(new Event("input", { bubbles: true }));
+      input.dispatchEvent(new Event("change", { bubbles: true }));
     }
+    input.dispatchEvent(new Event("blur", { bubbles: true }));
     filledCount++;
   });
 
@@ -251,43 +264,49 @@ chrome.commands.onCommand.addListener(async (command) => {
             if (formData[field.id]) {
               const el = document.querySelector(field.selector);
               if (el) {
-                el.value = formData[field.id];
-
-                const hidden = el.nextElementSibling;
-                if (hidden && hidden.type === "hidden") {
-                  hidden.value = formData[field.id];
-                }
+                const value = formData[field.id];
 
                 if (field.isDropdown && el.tagName === "SELECT") {
                   const options = Array.from(el.options);
                   const matchingOption = options.find(
-                    (opt) =>
-                      opt.value === formData[field.id] ||
-                      opt.text === formData[field.id],
+                    (opt) => opt.value === value || opt.text === value,
                   );
                   if (matchingOption) {
                     el.selectedIndex = matchingOption.index;
                   }
+                  el.dispatchEvent(new Event("change", { bubbles: true }));
+                } else if (
+                  el.classList.contains("ui-autocomplete-input") &&
+                  typeof $ !== "undefined" &&
+                  $.fn &&
+                  $.fn.autocomplete
+                ) {
+                  const $el = $(el);
+                  $el.val(value);
+                  const hidden = el.nextElementSibling;
+                  if (hidden && hidden.type === "hidden") {
+                    hidden.value = value;
+                  }
+                  $el.trigger("input").trigger("change");
+                  try {
+                    $el.autocomplete("close");
+                  } catch (e) {}
+                } else {
+                  el.value = value;
+                  const hidden = el.nextElementSibling;
+                  if (hidden && hidden.type === "hidden") {
+                    hidden.value = value;
+                  }
+                  el.dispatchEvent(new Event("input", { bubbles: true }));
+                  el.dispatchEvent(new Event("change", { bubbles: true }));
                 }
-
-                el.dispatchEvent(new Event("input", { bubbles: true }));
-                el.dispatchEvent(new Event("change", { bubbles: true }));
                 el.dispatchEvent(new Event("blur", { bubbles: true }));
-
-                if (el.classList.contains("ui-autocomplete-input")) {
-                  el.dispatchEvent(
-                    new KeyboardEvent("keydown", { bubbles: true }),
-                  );
-                  el.dispatchEvent(
-                    new KeyboardEvent("keyup", { bubbles: true }),
-                  );
-                }
 
                 filledCount++;
                 results.push({
                   field: field.id,
                   success: true,
-                  value: formData[field.id],
+                  value: value,
                 });
               } else {
                 results.push({
@@ -298,6 +317,18 @@ chrome.commands.onCommand.addListener(async (command) => {
               }
             }
           });
+
+          // Close any open autocomplete menus
+          try {
+            if (typeof $ !== "undefined" && $.fn && $.fn.autocomplete) {
+              $(".ui-autocomplete-input").autocomplete("close");
+            }
+          } catch (e) {}
+          document
+            .querySelectorAll(".ui-autocomplete")
+            .forEach((menu) => (menu.style.display = "none"));
+          if (document.activeElement) document.activeElement.blur();
+
           return {
             success: true,
             filledCount: filledCount,
@@ -358,15 +389,35 @@ chrome.commands.onCommand.addListener(async (command) => {
           fields.forEach((field) => {
             const input = document.querySelector(field.selector);
             if (!input) return;
-            input.value = field.value;
-            const hidden = input.nextElementSibling;
-            if (hidden && hidden.type === "hidden") hidden.value = field.value;
-            input.dispatchEvent(new Event("input", { bubbles: true }));
-            input.dispatchEvent(new Event("change", { bubbles: true }));
+
+            if (
+              input.classList.contains("ui-autocomplete-input") &&
+              typeof $ !== "undefined" &&
+              $.fn &&
+              $.fn.autocomplete
+            ) {
+              const $input = $(input);
+              $input.val(field.value);
+              const hidden = input.nextElementSibling;
+              if (hidden && hidden.type === "hidden")
+                hidden.value = field.value;
+              $input.trigger("input").trigger("change");
+              try {
+                $input.autocomplete("close");
+              } catch (e) {}
+            } else {
+              input.value = field.value;
+              const hidden = input.nextElementSibling;
+              if (hidden && hidden.type === "hidden")
+                hidden.value = field.value;
+              input.dispatchEvent(new Event("input", { bubbles: true }));
+              input.dispatchEvent(new Event("change", { bubbles: true }));
+            }
             input.dispatchEvent(new Event("blur", { bubbles: true }));
             filledCount++;
           });
 
+          // Close any open autocomplete menus
           try {
             if (typeof $ !== "undefined" && $.fn && $.fn.autocomplete) {
               $(".ui-autocomplete-input").autocomplete("close");

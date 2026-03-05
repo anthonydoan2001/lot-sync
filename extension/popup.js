@@ -1126,15 +1126,26 @@ async function fillMasterItemPage() {
         function setAutocomplete(selector, value) {
           const input = document.querySelector(selector);
           if (!input) return false;
-          input.value = value;
-          // Set the hidden sibling that stores the actual submitted value
           const hidden = input.nextElementSibling;
-          if (hidden && hidden.type === "hidden") {
-            hidden.value = value;
+          if (
+            input.classList.contains("ui-autocomplete-input") &&
+            typeof $ !== "undefined" &&
+            $.fn &&
+            $.fn.autocomplete
+          ) {
+            const $input = $(input);
+            $input.val(value);
+            if (hidden && hidden.type === "hidden") hidden.value = value;
+            $input.trigger("input").trigger("change");
+            try {
+              $input.autocomplete("close");
+            } catch (e) {}
+          } else {
+            input.value = value;
+            if (hidden && hidden.type === "hidden") hidden.value = value;
+            input.dispatchEvent(new Event("input", { bubbles: true }));
+            input.dispatchEvent(new Event("change", { bubbles: true }));
           }
-          // Fire events for Ractive.js data-binding
-          input.dispatchEvent(new Event("input", { bubbles: true }));
-          input.dispatchEvent(new Event("change", { bubbles: true }));
           input.dispatchEvent(new Event("blur", { bubbles: true }));
           return true;
         }
@@ -1559,46 +1570,44 @@ async function fillAndSubmit(data, isPreset = false) {
           if (formData[field.id]) {
             const el = document.querySelector(field.selector);
             if (el) {
-              // Set the value
-              el.value = formData[field.id];
-
-              // Set the hidden sibling that stores the actual submitted value
+              const value = formData[field.id];
               const hidden = el.nextElementSibling;
-              if (hidden && hidden.type === "hidden") {
-                hidden.value = formData[field.id];
-              }
 
-              // For dropdowns, also try to select by text if value doesn't work
               if (field.isDropdown && el.tagName === "SELECT") {
                 const options = Array.from(el.options);
                 const matchingOption = options.find(
-                  (opt) =>
-                    opt.value === formData[field.id] ||
-                    opt.text === formData[field.id],
+                  (opt) => opt.value === value || opt.text === value,
                 );
                 if (matchingOption) {
                   el.selectedIndex = matchingOption.index;
                 }
+                el.dispatchEvent(new Event("change", { bubbles: true }));
+              } else if (
+                el.classList.contains("ui-autocomplete-input") &&
+                typeof $ !== "undefined" &&
+                $.fn &&
+                $.fn.autocomplete
+              ) {
+                const $el = $(el);
+                $el.val(value);
+                if (hidden && hidden.type === "hidden") hidden.value = value;
+                $el.trigger("input").trigger("change");
+                try {
+                  $el.autocomplete("close");
+                } catch (e) {}
+              } else {
+                el.value = value;
+                if (hidden && hidden.type === "hidden") hidden.value = value;
+                el.dispatchEvent(new Event("input", { bubbles: true }));
+                el.dispatchEvent(new Event("change", { bubbles: true }));
               }
-
-              // Trigger multiple events for autocomplete fields
-              el.dispatchEvent(new Event("input", { bubbles: true }));
-              el.dispatchEvent(new Event("change", { bubbles: true }));
               el.dispatchEvent(new Event("blur", { bubbles: true }));
-
-              // For autocomplete fields, also trigger keyup and keydown
-              if (el.classList.contains("ui-autocomplete-input")) {
-                el.dispatchEvent(
-                  new KeyboardEvent("keydown", { bubbles: true }),
-                );
-                el.dispatchEvent(new KeyboardEvent("keyup", { bubbles: true }));
-              }
 
               filledCount++;
               results.push({
                 field: field.id,
                 success: true,
-                value: formData[field.id],
+                value: value,
               });
             } else {
               results.push({
