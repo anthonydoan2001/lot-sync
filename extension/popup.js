@@ -41,7 +41,7 @@ const FIELDS = [
     label: "Category",
     id: "Category",
     selector: "#ac_Category",
-    categories: ["all"],
+    categories: ["desktop", "laptop"],
   },
   {
     label: "Notes",
@@ -66,6 +66,12 @@ const FIELDS = [
     label: "Packaging",
     id: "PACKAGING",
     selector: "#ac_PACKAGING",
+    isDropdown: true,
+    options: [
+      { label: "SINGLE", value: "SINGLE" },
+      { label: "BAG", value: "BAG" },
+      { label: "BOXED", value: "BOXED" },
+    ],
     categories: ["all"],
   },
   {
@@ -83,39 +89,9 @@ const FIELDS = [
 
   // --- Hard Drive core fields (only on hardDrive inventory detail page) ---
   {
-    label: "Model Search",
-    id: "ModelSearch",
-    selector: 'input[name$="_ModelSearch"]',
-    categories: ["hardDrive"],
-  },
-  {
-    label: "Manufacturer",
-    id: "Manufacturer",
-    selector: 'input[name$="_Manufacturer"]',
-    categories: ["hardDrive"],
-  },
-  {
-    label: "UID",
-    id: "UniqueId",
-    selector: 'input[name="UniqueId"]',
-    categories: ["hardDrive"],
-  },
-  {
-    label: "Serial",
-    id: "Serial",
-    selector: 'input[name="Serial"]',
-    categories: ["hardDrive"],
-  },
-  {
     label: "Asset Tag",
     id: "AssetTag",
     selector: 'input[name="AssetTag"]',
-    categories: ["hardDrive"],
-  },
-  {
-    label: "Quantity",
-    id: "Quantity",
-    selector: 'input[name="Quantity"]',
     categories: ["hardDrive"],
   },
 
@@ -231,6 +207,12 @@ const FIELDS = [
     label: "Pass or Fail",
     id: "PassorFail",
     selector: "#ac_PassorFail",
+    isDropdown: true,
+    options: [
+      { label: "PASS", value: "PASS" },
+      { label: "FAIL", value: "FAIL" },
+      { label: "N/A", value: "N/A" },
+    ],
     categories: ["all"],
   },
   {
@@ -932,6 +914,12 @@ const MASTER_ITEM_FIELDS = [
     selector: "#ac_Attribute_47",
     type: "autocomplete",
     default: "SINGLE",
+    isDropdown: true,
+    options: [
+      { label: "SINGLE", value: "SINGLE" },
+      { label: "BAG", value: "BAG" },
+      { label: "BOXED", value: "BOXED" },
+    ],
   },
   {
     label: "Form Factor",
@@ -1006,6 +994,23 @@ function buildMasterItemForm() {
       row.innerHTML = `
         <label>${field.label}:</label>
         <input type="checkbox" id="field_${field.id}">
+      `;
+    } else if (field.isDropdown && field.options) {
+      const selectOptions = field.options
+        .map((opt) => {
+          if (typeof opt === "string") {
+            return `<option value="${opt}">${opt}</option>`;
+          } else {
+            return `<option value="${opt.value}">${opt.label}</option>`;
+          }
+        })
+        .join("");
+      row.innerHTML = `
+        <label>${field.label}:</label>
+        <select id="field_${field.id}">
+          <option value="">-- Select --</option>
+          ${selectOptions}
+        </select>
       `;
     } else {
       row.innerHTML = `
@@ -1313,8 +1318,8 @@ function buildForm(category) {
   const filteredFields = getFieldsForCategory(currentTemplateCategory);
 
   filteredFields.forEach((field) => {
-    // Skip Final Grade field in custom template (auto-filled from Grade)
-    if (field.id === "FinalGrade") {
+    // Skip Final Grade field for desktop/laptop (auto-filled from Grade)
+    if (field.id === "FinalGrade" && currentTemplateCategory !== "hardDrive") {
       return;
     }
 
