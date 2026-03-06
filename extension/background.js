@@ -303,7 +303,8 @@ chrome.commands.onCommand.addListener(async (command) => {
 
           // Helper to properly fill a jQuery UI autocomplete input
           // Calls the widget's source function directly to get the correct ID
-          function fillAutocomplete(el, value) {
+          // onDone callback is called after the value is set (handles async sources)
+          function fillAutocomplete(el, value, onDone) {
             const $el = $(el);
             const widget =
               $el.data("ui-autocomplete") || $el.data("autocomplete");
@@ -313,6 +314,7 @@ chrome.commands.onCommand.addListener(async (command) => {
               $el.val(item.label || value);
               widget.term = item.label || value;
               $el.trigger("change");
+              if (onDone) onDone();
             }
 
             function fallback() {
@@ -321,6 +323,7 @@ chrome.commands.onCommand.addListener(async (command) => {
               const hidden = el.nextElementSibling;
               if (hidden && hidden.type === "hidden") hidden.value = value;
               $el.trigger("input").trigger("change");
+              if (onDone) onDone();
             }
 
             if (!widget) {
@@ -390,7 +393,9 @@ chrome.commands.onCommand.addListener(async (command) => {
                   $.fn &&
                   $.fn.autocomplete
                 ) {
-                  fillAutocomplete(el, value);
+                  fillAutocomplete(el, value, function () {
+                    el.dispatchEvent(new Event("blur", { bubbles: true }));
+                  });
                 } else {
                   el.value = value;
                   const hidden = el.nextElementSibling;
@@ -399,8 +404,8 @@ chrome.commands.onCommand.addListener(async (command) => {
                   }
                   el.dispatchEvent(new Event("input", { bubbles: true }));
                   el.dispatchEvent(new Event("change", { bubbles: true }));
+                  el.dispatchEvent(new Event("blur", { bubbles: true }));
                 }
-                el.dispatchEvent(new Event("blur", { bubbles: true }));
 
                 filledCount++;
                 results.push({
