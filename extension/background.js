@@ -302,25 +302,29 @@ chrome.commands.onCommand.addListener(async (command) => {
           }
 
           // Helper to properly fill a jQuery UI autocomplete input
-          // Calls the widget's source function directly to get the correct ID
-          // onDone callback is called after the value is set (handles async sources)
+          // Uses the widget's source to look up the correct internal ID,
+          // then directly sets both visible and hidden input values.
           function fillAutocomplete(el, value, onDone) {
             const $el = $(el);
-
-            // Focus first to ensure widget is fully initialized
-            $el.focus();
-
             const widget =
               $el.data("ui-autocomplete") || $el.data("autocomplete");
 
-            function selectItem(item) {
-              widget._trigger("select", null, { item: item });
-              $el.val(item.label || value);
-              widget.term = item.label || value;
-              // Explicitly set the hidden input value (stores the internal ID)
+            function applyItem(item) {
+              const label = item.label || value;
+              const id = item.value || item.id || value;
+              // Set visible input
+              $el.val(label);
+              if (widget) widget.term = label;
+              // Set hidden input (stores internal ID for server)
               const hidden = el.nextElementSibling;
               if (hidden && hidden.type === "hidden") {
-                hidden.value = item.value || item.id || value;
+                hidden.value = id;
+              }
+              // Also try the widget's select handler for any side effects
+              if (widget) {
+                try {
+                  widget._trigger("select", null, { item: item });
+                } catch (e) {}
               }
               $el.trigger("change");
               if (onDone) onDone();
@@ -351,7 +355,7 @@ chrome.commands.onCommand.addListener(async (command) => {
                         item.label === value ||
                         item.label === value.toUpperCase(),
                     ) || results[0];
-                  selectItem(match);
+                  applyItem(match);
                 } else {
                   fallback();
                 }
@@ -365,7 +369,7 @@ chrome.commands.onCommand.addListener(async (command) => {
                       item.label === value.toUpperCase())),
               );
               if (match) {
-                selectItem(
+                applyItem(
                   typeof match === "string"
                     ? { label: match, value: match }
                     : match,
