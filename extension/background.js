@@ -190,15 +190,63 @@ function fillAutocompleteFields(fields) {
     ) {
       const $input = $(input);
       $input.val(field.value);
-      const hidden = input.nextElementSibling;
-      if (hidden && hidden.type === "hidden") hidden.value = field.value;
-      const widget =
-        $input.data("ui-autocomplete") || $input.data("autocomplete");
-      if (widget) widget.term = field.value;
-      $input.trigger("input").trigger("change");
-      try {
-        $input.autocomplete("close");
-      } catch (e) {}
+      $input.autocomplete("search", field.value);
+
+      let attempts = 0;
+      const interval = setInterval(() => {
+        attempts++;
+        const widget =
+          $input.data("ui-autocomplete") || $input.data("autocomplete");
+        if (widget && widget.menu) {
+          const menuItems = widget.menu.element.find(".ui-menu-item");
+          if (menuItems.length > 0) {
+            clearInterval(interval);
+            let found = false;
+            menuItems.each(function () {
+              const itemData =
+                $(this).data("ui-autocomplete-item") ||
+                $(this).data("item.autocomplete");
+              if (
+                itemData &&
+                (itemData.label === field.value ||
+                  itemData.label === field.value.toUpperCase())
+              ) {
+                widget._trigger("select", null, { item: itemData });
+                $input.val(itemData.label || field.value);
+                widget.term = itemData.label || field.value;
+                found = true;
+                return false;
+              }
+            });
+            if (!found) {
+              const first = menuItems.first();
+              const itemData =
+                first.data("ui-autocomplete-item") ||
+                first.data("item.autocomplete");
+              if (itemData) {
+                widget._trigger("select", null, { item: itemData });
+                $input.val(itemData.label || field.value);
+                widget.term = itemData.label || field.value;
+              }
+            }
+            try {
+              $input.autocomplete("close");
+            } catch (e) {}
+            $input.trigger("change");
+          }
+        }
+        if (attempts >= 10) {
+          clearInterval(interval);
+          const w =
+            $input.data("ui-autocomplete") || $input.data("autocomplete");
+          if (w) w.term = field.value;
+          const hidden = input.nextElementSibling;
+          if (hidden && hidden.type === "hidden") hidden.value = field.value;
+          try {
+            $input.autocomplete("close");
+          } catch (e) {}
+        }
+      }, 50);
     } else {
       input.value = field.value;
       const hidden = input.nextElementSibling;
@@ -261,19 +309,67 @@ chrome.commands.onCommand.addListener(async (command) => {
           }
 
           // Helper to properly fill a jQuery UI autocomplete input
+          // Triggers search+select so the widget sets the correct hidden ID
           function fillAutocomplete(el, value) {
             const $el = $(el);
             $el.val(value);
-            const hidden = el.nextElementSibling;
-            if (hidden && hidden.type === "hidden") hidden.value = value;
-            // Update internal term so blur doesn't clear the value
-            const widget =
-              $el.data("ui-autocomplete") || $el.data("autocomplete");
-            if (widget) widget.term = value;
-            $el.trigger("input").trigger("change");
-            try {
-              $el.autocomplete("close");
-            } catch (e) {}
+            $el.autocomplete("search", value);
+
+            let attempts = 0;
+            const interval = setInterval(() => {
+              attempts++;
+              const widget =
+                $el.data("ui-autocomplete") || $el.data("autocomplete");
+              if (widget && widget.menu) {
+                const menuItems = widget.menu.element.find(".ui-menu-item");
+                if (menuItems.length > 0) {
+                  clearInterval(interval);
+                  let found = false;
+                  menuItems.each(function () {
+                    const itemData =
+                      $(this).data("ui-autocomplete-item") ||
+                      $(this).data("item.autocomplete");
+                    if (
+                      itemData &&
+                      (itemData.label === value ||
+                        itemData.label === value.toUpperCase())
+                    ) {
+                      widget._trigger("select", null, { item: itemData });
+                      $el.val(itemData.label || value);
+                      widget.term = itemData.label || value;
+                      found = true;
+                      return false;
+                    }
+                  });
+                  if (!found) {
+                    const first = menuItems.first();
+                    const itemData =
+                      first.data("ui-autocomplete-item") ||
+                      first.data("item.autocomplete");
+                    if (itemData) {
+                      widget._trigger("select", null, { item: itemData });
+                      $el.val(itemData.label || value);
+                      widget.term = itemData.label || value;
+                    }
+                  }
+                  try {
+                    $el.autocomplete("close");
+                  } catch (e) {}
+                  $el.trigger("change");
+                }
+              }
+              if (attempts >= 10) {
+                clearInterval(interval);
+                const w =
+                  $el.data("ui-autocomplete") || $el.data("autocomplete");
+                if (w) w.term = value;
+                const hidden = el.nextElementSibling;
+                if (hidden && hidden.type === "hidden") hidden.value = value;
+                try {
+                  $el.autocomplete("close");
+                } catch (e) {}
+              }
+            }, 50);
           }
 
           let filledCount = 0;
@@ -408,16 +504,69 @@ chrome.commands.onCommand.addListener(async (command) => {
             ) {
               const $input = $(input);
               $input.val(field.value);
-              const hidden = input.nextElementSibling;
-              if (hidden && hidden.type === "hidden")
-                hidden.value = field.value;
-              const widget =
-                $input.data("ui-autocomplete") || $input.data("autocomplete");
-              if (widget) widget.term = field.value;
-              $input.trigger("input").trigger("change");
-              try {
-                $input.autocomplete("close");
-              } catch (e) {}
+              $input.autocomplete("search", field.value);
+
+              let attempts = 0;
+              const interval = setInterval(() => {
+                attempts++;
+                const widget =
+                  $input.data("ui-autocomplete") || $input.data("autocomplete");
+                if (widget && widget.menu) {
+                  const menuItems = widget.menu.element.find(".ui-menu-item");
+                  if (menuItems.length > 0) {
+                    clearInterval(interval);
+                    let found = false;
+                    menuItems.each(function () {
+                      const itemData =
+                        $(this).data("ui-autocomplete-item") ||
+                        $(this).data("item.autocomplete");
+                      if (
+                        itemData &&
+                        (itemData.label === field.value ||
+                          itemData.label === field.value.toUpperCase())
+                      ) {
+                        widget._trigger("select", null, {
+                          item: itemData,
+                        });
+                        $input.val(itemData.label || field.value);
+                        widget.term = itemData.label || field.value;
+                        found = true;
+                        return false;
+                      }
+                    });
+                    if (!found) {
+                      const first = menuItems.first();
+                      const itemData =
+                        first.data("ui-autocomplete-item") ||
+                        first.data("item.autocomplete");
+                      if (itemData) {
+                        widget._trigger("select", null, {
+                          item: itemData,
+                        });
+                        $input.val(itemData.label || field.value);
+                        widget.term = itemData.label || field.value;
+                      }
+                    }
+                    try {
+                      $input.autocomplete("close");
+                    } catch (e) {}
+                    $input.trigger("change");
+                  }
+                }
+                if (attempts >= 10) {
+                  clearInterval(interval);
+                  const w =
+                    $input.data("ui-autocomplete") ||
+                    $input.data("autocomplete");
+                  if (w) w.term = field.value;
+                  const hidden = input.nextElementSibling;
+                  if (hidden && hidden.type === "hidden")
+                    hidden.value = field.value;
+                  try {
+                    $input.autocomplete("close");
+                  } catch (e) {}
+                }
+              }, 50);
             } else {
               input.value = field.value;
               const hidden = input.nextElementSibling;
