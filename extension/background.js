@@ -317,6 +317,11 @@ chrome.commands.onCommand.addListener(async (command) => {
               widget._trigger("select", null, { item: item });
               $el.val(item.label || value);
               widget.term = item.label || value;
+              // Explicitly set the hidden input value (stores the internal ID)
+              const hidden = el.nextElementSibling;
+              if (hidden && hidden.type === "hidden") {
+                hidden.value = item.value || item.id || value;
+              }
               $el.trigger("change");
               if (onDone) onDone();
             }
