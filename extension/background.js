@@ -306,6 +306,10 @@ chrome.commands.onCommand.addListener(async (command) => {
           // onDone callback is called after the value is set (handles async sources)
           function fillAutocomplete(el, value, onDone) {
             const $el = $(el);
+
+            // Focus first to ensure widget is fully initialized
+            $el.focus();
+
             const widget =
               $el.data("ui-autocomplete") || $el.data("autocomplete");
 
@@ -388,10 +392,12 @@ chrome.commands.onCommand.addListener(async (command) => {
                   }
                   el.dispatchEvent(new Event("change", { bubbles: true }));
                 } else if (
-                  el.classList.contains("ui-autocomplete-input") &&
                   typeof $ !== "undefined" &&
                   $.fn &&
-                  $.fn.autocomplete
+                  $.fn.autocomplete &&
+                  (el.classList.contains("ui-autocomplete-input") ||
+                    $(el).data("ui-autocomplete") ||
+                    $(el).data("autocomplete"))
                 ) {
                   fillAutocomplete(el, value, function () {
                     el.dispatchEvent(new Event("blur", { bubbles: true }));
@@ -422,8 +428,6 @@ chrome.commands.onCommand.addListener(async (command) => {
               }
             }
           });
-
-          if (document.activeElement) document.activeElement.blur();
 
           return {
             success: true,
