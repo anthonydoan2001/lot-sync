@@ -39,8 +39,8 @@ export const LAPTOP_SORT_ORDER = [
 ];
 
 export const AIO_SORT_ORDER = [
-  "5-7TH GEN",
-  "↑ 8TH GEN",
+  "B AIO",
+  "C AIO",
   "OTHER",
   "D/F",
 ];
