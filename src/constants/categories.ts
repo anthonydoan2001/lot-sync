@@ -136,6 +136,8 @@ export const getAutoGrade = (palletType: PalletType, desc: string): string | nul
   }
   if (palletType === "AIO") {
     if (desc === "D/F") return "D/F";
+    if (desc === "B AIO") return "B";
+    if (desc === "C AIO") return "C";
   }
   if (palletType === "DISPLAYS") {
     if (desc === "B LCD") return "B";
