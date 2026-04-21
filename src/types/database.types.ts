@@ -20,16 +20,3 @@ export interface Lot {
   created_at: string;
   retired_at: string | null;
 }
-
-export interface Profile {
-  id: string;
-  display_name: string;
-  created_at: string;
-}
-
-export interface LotWorker {
-  id: string;
-  lot_id: string;
-  user_id: string;
-  joined_at: string;
-}

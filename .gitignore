@@ -13,6 +13,11 @@ dist-ssr
 .next
 *.local
 
+# LotSync local data + packaging
+/data
+/release
+/electron/dist
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
