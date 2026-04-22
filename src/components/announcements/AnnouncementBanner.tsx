@@ -1,18 +1,17 @@
+"use client";
+
 import { useState, useEffect, useRef, useCallback } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { useMutation, useQuery } from "convex/react";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Pencil, Check, X, Info } from "lucide-react";
 import { toast } from "sonner";
-
-interface Announcement {
-  id: string;
-  content: string;
-  updated_at: string;
-}
+import { api } from "../../../convex/_generated/api";
 
 export function AnnouncementBanner() {
-  const [announcement, setAnnouncement] = useState<Announcement | null>(null);
+  const announcement = useQuery(api.announcements.get);
+  const upsert = useMutation(api.announcements.upsert);
+
   const [isEditing, setIsEditing] = useState(false);
   const [editContent, setEditContent] = useState("");
   const [loading, setLoading] = useState(false);
@@ -29,27 +28,6 @@ export function AnnouncementBanner() {
     if (isEditing) autoResize();
   }, [isEditing, autoResize]);
 
-  useEffect(() => {
-    fetchAnnouncement();
-  }, []);
-
-  const fetchAnnouncement = async () => {
-    const { data, error } = await supabase
-      .from("announcements")
-      .select("*")
-      .limit(1)
-      .single();
-
-    if (error && error.code !== "PGRST116") {
-      return;
-    }
-
-    if (data) {
-      setAnnouncement(data);
-      setEditContent(data.content);
-    }
-  };
-
   const handleEdit = () => {
     setIsEditing(true);
     setEditContent(announcement?.content || "");
@@ -61,27 +39,18 @@ export function AnnouncementBanner() {
   };
 
   const handleSave = async () => {
-    if (!announcement) return;
-
     setLoading(true);
-    const { error } = await supabase
-      .from("announcements")
-      .update({ content: editContent, updated_at: new Date().toISOString() })
-      .eq("id", announcement.id);
-
-    setLoading(false);
-
-    if (error) {
+    try {
+      await upsert({ content: editContent });
+      setIsEditing(false);
+      toast.success("Announcement saved");
+    } catch {
       toast.error("Failed to save announcement");
-      return;
+    } finally {
+      setLoading(false);
     }
-
-    setAnnouncement({ ...announcement, content: editContent });
-    setIsEditing(false);
-    toast.success("Announcement saved");
   };
 
-  // Don't show if empty and not editing
   if (!announcement?.content && !isEditing) {
     return (
       <div className="flex justify-center mb-4">

@@ -1,5 +1,7 @@
+"use client";
+
 import { useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { useAuthActions } from "@convex-dev/auth/react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,7 +13,7 @@ import {
   CardDescription,
 } from "@/components/ui/card";
 import { toast } from "sonner";
-import { LogIn, UserPlus, Package } from "lucide-react";
+import { LogIn, Package } from "lucide-react";
 
 const USERNAME_REGEX = /^[a-zA-Z0-9_]{3,20}$/;
 
@@ -22,9 +24,9 @@ function toEmail(username: string): string {
 export default function Auth() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [isSignUp, setIsSignUp] = useState(false);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const { signIn } = useAuthActions();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -45,36 +47,15 @@ export default function Auth() {
     const email = toEmail(username);
 
     try {
-      if (isSignUp) {
-        const { error } = await supabase.auth.signUp({
-          email,
-          password,
-          options: { data: { display_name: username } },
-        });
-
-        if (error) {
-          toast.error(error.message);
-          return;
-        }
-
-        toast.success("Account created! You're now signed in.");
-        router.push("/");
-      } else {
-        const { error } = await supabase.auth.signInWithPassword({
-          email,
-          password,
-        });
-
-        if (error) {
-          toast.error("Invalid username or password");
-          return;
-        }
-
-        toast.success("Signed in successfully");
-        router.push("/");
-      }
-    } catch (error: any) {
-      toast.error(error.message || "An error occurred");
+      await signIn("password", {
+        email,
+        password,
+        flow: "signIn",
+      });
+      toast.success("Signed in successfully");
+      router.push("/active/pallets");
+    } catch {
+      toast.error("Invalid username or password");
     } finally {
       setLoading(false);
     }
@@ -90,9 +71,7 @@ export default function Auth() {
           <CardTitle className="text-2xl font-bold tracking-tight">
             LotSync
           </CardTitle>
-          <CardDescription>
-            {isSignUp ? "Create your account" : "Sign in to continue"}
-          </CardDescription>
+          <CardDescription>Sign in to continue</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-3">
@@ -121,11 +100,6 @@ export default function Auth() {
             <Button type="submit" className="w-full h-12" disabled={loading}>
               {loading ? (
                 <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-primary-foreground" />
-              ) : isSignUp ? (
-                <>
-                  <UserPlus className="h-5 w-5 mr-2" />
-                  Sign Up
-                </>
               ) : (
                 <>
                   <LogIn className="h-5 w-5 mr-2" />
@@ -134,16 +108,6 @@ export default function Auth() {
               )}
             </Button>
           </form>
-          <p className="text-center text-sm text-muted-foreground mt-4">
-            {isSignUp ? "Already have an account?" : "Don't have an account?"}{" "}
-            <button
-              type="button"
-              onClick={() => setIsSignUp(!isSignUp)}
-              className="text-primary underline-offset-4 hover:underline font-medium"
-            >
-              {isSignUp ? "Sign In" : "Sign Up"}
-            </button>
-          </p>
         </CardContent>
       </Card>
     </div>

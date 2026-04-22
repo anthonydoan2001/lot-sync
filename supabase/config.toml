@@ -1,4 +1,0 @@
-project_id = "puzfnwfimroyapapfyhn"
-
-[functions.validate-access]
-verify_jwt = false

@@ -99,11 +99,11 @@ function LotsContent({ viewMode }: { viewMode: "active" | "history" }) {
   };
 
   const handleJoinLot = async (lotId: string) => {
-    if (user) await joinLot(lotId, user.id);
+    if (user) await joinLot(lotId);
   };
 
   const handleLeaveLot = async (lotId: string) => {
-    if (user) await leaveLot(lotId, user.id);
+    if (user) await leaveLot(lotId);
   };
 
   const handleDeleteLot = async () => {

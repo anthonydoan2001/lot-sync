@@ -1,56 +1,45 @@
-import { useState, useEffect } from "react";
-import { User, Session } from "@supabase/supabase-js";
-import { supabase } from "@/integrations/supabase/client";
-import { Profile } from "@/types/database.types";
+"use client";
 
-export function useAuth() {
-  const [user, setUser] = useState<User | null>(null);
-  const [session, setSession] = useState<Session | null>(null);
-  const [profile, setProfile] = useState<Profile | null>(null);
-  const [loading, setLoading] = useState(true);
+import { useAuthActions } from "@convex-dev/auth/react";
+import { useConvexAuth, useQuery } from "convex/react";
+import { api } from "../../convex/_generated/api";
 
-  const fetchProfile = async (userId: string) => {
-    const { data } = await supabase
-      .from("profiles")
-      .select("*")
-      .eq("id", userId)
-      .single();
-    setProfile(data);
+export interface AuthUser {
+  id: string;
+}
+
+export interface AuthProfile {
+  display_name: string;
+}
+
+interface UseAuthResult {
+  user: AuthUser | null;
+  profile: AuthProfile | null;
+  loading: boolean;
+  signOut: () => Promise<void>;
+}
+
+export function useAuth(): UseAuthResult {
+  const { isAuthenticated, isLoading } = useConvexAuth();
+  const { signOut: convexSignOut } = useAuthActions();
+  const current = useQuery(
+    api.profiles.current,
+    isAuthenticated ? {} : "skip",
+  );
+
+  const loading = isLoading || (isAuthenticated && current === undefined);
+
+  const user: AuthUser | null = current ? { id: current.id } : null;
+  const profile: AuthProfile | null = current?.displayName
+    ? { display_name: current.displayName }
+    : null;
+
+  return {
+    user,
+    profile,
+    loading,
+    signOut: async () => {
+      await convexSignOut();
+    },
   };
-
-  useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        setSession(session);
-        setUser(session?.user ?? null);
-        setLoading(false);
-
-        if (session?.user) {
-          // Defer profile fetch to avoid Supabase client deadlock
-          setTimeout(() => fetchProfile(session.user.id), 0);
-        } else {
-          setProfile(null);
-        }
-      }
-    );
-
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      setLoading(false);
-
-      if (session?.user) {
-        fetchProfile(session.user.id);
-      }
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
-
-  const signOut = async () => {
-    await supabase.auth.signOut();
-    setProfile(null);
-  };
-
-  return { user, session, profile, loading, signOut };
 }

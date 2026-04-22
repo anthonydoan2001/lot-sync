@@ -1,7 +1,11 @@
-import { useState, useEffect, useMemo, useCallback, useRef } from "react";
+"use client";
+
+import { useMemo, useState } from "react";
+import { useQuery, useMutation } from "convex/react";
+import { toast } from "sonner";
 import { Lot, Profile } from "@/types/database.types";
-import { lotService } from "@/services/lotService";
-import { lotWorkerService } from "@/services/lotWorkerService";
+import { api } from "../../convex/_generated/api";
+import type { Id } from "../../convex/_generated/dataModel";
 
 export interface LotWithWorkers extends Lot {
   workers: Profile[];
@@ -20,8 +24,8 @@ interface UseLotsReturn {
   retireLot: (id: string) => Promise<boolean>;
   unretireLot: (id: string) => Promise<boolean>;
   deleteLot: (id: string) => Promise<boolean>;
-  joinLot: (lotId: string, userId: string) => Promise<boolean>;
-  leaveLot: (lotId: string, userId: string) => Promise<boolean>;
+  joinLot: (lotId: string) => Promise<boolean>;
+  leaveLot: (lotId: string) => Promise<boolean>;
   refetch: () => Promise<void>;
 }
 
@@ -29,51 +33,50 @@ export function useLots(
   viewMode: "active" | "history",
   isAuthenticated: boolean,
 ): UseLotsReturn {
-  const [lots, setLots] = useState<LotWithWorkers[]>([]);
-  const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [mutatingId, setMutatingId] = useState<string | null>(null);
   const [mutatingAction, setMutatingAction] = useState<string | null>(null);
-  const initialLoadDone = useRef(false);
 
   const isHistory = viewMode === "history";
 
-  const fetchLots = useCallback(async () => {
-    if (!isAuthenticated) return;
-    if (!initialLoadDone.current) setLoading(true);
-    const lotsData = await lotService.fetchLots(isHistory);
+  const lotsQueryResult = useQuery(
+    api.lots.list,
+    isAuthenticated ? { retired: isHistory } : "skip",
+  );
+  const lotsData = useMemo(() => lotsQueryResult ?? [], [lotsQueryResult]);
 
-    // Fetch workers for all lots
-    const lotIds = lotsData.map((l) => l.id);
-    const workersMap = await lotWorkerService.getWorkersForLots(lotIds);
+  const lotIds = useMemo(
+    () => lotsData.map((l) => l.id as unknown as Id<"lots">),
+    [lotsData],
+  );
 
-    const lotsWithWorkers: LotWithWorkers[] = lotsData.map((lot) => ({
-      ...lot,
-      workers: workersMap[lot.id] || [],
+  const workersQueryResult = useQuery(
+    api.workers.forLots,
+    isAuthenticated && lotIds.length > 0 ? { lotIds } : "skip",
+  );
+  const workersFlat = useMemo(
+    () => workersQueryResult ?? [],
+    [workersQueryResult],
+  );
+
+  const lots: LotWithWorkers[] = useMemo(() => {
+    const byLot: Record<string, Profile[]> = {};
+    for (const w of workersFlat) {
+      if (!byLot[w.lotId]) byLot[w.lotId] = [];
+      byLot[w.lotId].push({
+        id: w.userId,
+        display_name: w.displayName,
+        created_at: "",
+      });
+    }
+    return lotsData.map((l) => ({
+      ...l,
+      workers: byLot[l.id as string] ?? [],
     }));
+  }, [lotsData, workersFlat]);
 
-    setLots(lotsWithWorkers);
-    setLoading(false);
-    initialLoadDone.current = true;
-  }, [isHistory, isAuthenticated]);
+  const loading = lotsQueryResult === undefined;
 
-  // Initial fetch
-  useEffect(() => {
-    fetchLots();
-  }, [fetchLots]);
-
-  // Real-time subscription for lots and lot_workers
-  useEffect(() => {
-    if (!isAuthenticated) return;
-    const unsubLots = lotService.subscribeToChanges(fetchLots);
-    const unsubWorkers = lotWorkerService.subscribeToChanges(fetchLots);
-    return () => {
-      unsubLots();
-      unsubWorkers();
-    };
-  }, [isHistory, isAuthenticated, fetchLots]);
-
-  // Filter lots by search query
   const filteredLots = useMemo(
     () =>
       lots.filter((lot) =>
@@ -82,124 +85,105 @@ export function useLots(
     [lots, searchQuery],
   );
 
-  // CRUD operations
-  const addLot = useCallback(
-    async (data: Partial<Lot>, userId?: string) => {
-      setMutatingId("__new__");
-      setMutatingAction("add");
-      try {
-        const inserted = await lotService.addLot(data);
-        if (!inserted) return false;
+  const createLot = useMutation(api.lots.create);
+  const updateLotMut = useMutation(api.lots.update);
+  const retireLotMut = useMutation(api.lots.retire);
+  const unretireLotMut = useMutation(api.lots.unretire);
+  const removeLotMut = useMutation(api.lots.remove);
+  const joinLotMut = useMutation(api.workers.join);
+  const leaveLotMut = useMutation(api.workers.leave);
 
-        // Auto-join the creator as a worker
-        if (userId) {
-          await lotWorkerService.joinLot(inserted.id, userId);
-        }
-        await fetchLots();
-        return true;
-      } finally {
-        setMutatingId(null);
-        setMutatingAction(null);
-      }
-    },
-    [fetchLots],
-  );
+  const wrapMutation = async <T,>(
+    id: string,
+    action: string,
+    errorMsg: string,
+    successMsg: string | null,
+    fn: () => Promise<T>,
+  ): Promise<boolean> => {
+    setMutatingId(id);
+    setMutatingAction(action);
+    try {
+      await fn();
+      if (successMsg) toast.success(successMsg);
+      return true;
+    } catch (err) {
+      const message = err instanceof Error ? err.message : errorMsg;
+      toast.error(message);
+      return false;
+    } finally {
+      setMutatingId(null);
+      setMutatingAction(null);
+    }
+  };
 
-  const updateLot = useCallback(
-    async (id: string, data: Partial<Lot>) => {
-      setMutatingId(id);
-      setMutatingAction("update");
-      try {
-        const success = await lotService.updateLot(id, data);
-        if (success) await fetchLots();
-        return success;
-      } finally {
-        setMutatingId(null);
-        setMutatingAction(null);
-      }
-    },
-    [fetchLots],
-  );
+  const addLot = async (data: Partial<Lot>) => {
+    return wrapMutation(
+      "__new__",
+      "add",
+      "Failed to add lot",
+      "Lot added successfully",
+      async () => {
+        await createLot({
+          lot_number: data.lot_number as string,
+          contents: data.contents as string,
+          io: data.io ?? null,
+        });
+      },
+    );
+  };
 
-  const retireLot = useCallback(
-    async (id: string) => {
-      setMutatingId(id);
-      setMutatingAction("retire");
-      try {
-        const success = await lotService.retireLot(id);
-        if (success) await fetchLots();
-        return success;
-      } finally {
-        setMutatingId(null);
-        setMutatingAction(null);
-      }
-    },
-    [fetchLots],
-  );
+  const updateLot = async (id: string, data: Partial<Lot>) =>
+    wrapMutation(id, "update", "Failed to update lot", "Lot updated successfully", async () => {
+      await updateLotMut({
+        id: id as unknown as Id<"lots">,
+        lot_number: data.lot_number,
+        contents: data.contents,
+        io: data.io ?? undefined,
+      });
+    });
 
-  const unretireLot = useCallback(
-    async (id: string) => {
-      setMutatingId(id);
-      setMutatingAction("unretire");
-      try {
-        const success = await lotService.unretireLot(id);
-        if (success) await fetchLots();
-        return success;
-      } finally {
-        setMutatingId(null);
-        setMutatingAction(null);
-      }
-    },
-    [fetchLots],
-  );
+  const retireLot = async (id: string) =>
+    wrapMutation(
+      id,
+      "retire",
+      "Failed to retire lot",
+      "Lot retired successfully",
+      async () => {
+        await retireLotMut({ id: id as unknown as Id<"lots"> });
+      },
+    );
 
-  const deleteLot = useCallback(
-    async (id: string) => {
-      setMutatingId(id);
-      setMutatingAction("delete");
-      try {
-        const success = await lotService.deleteLot(id);
-        if (success) await fetchLots();
-        return success;
-      } finally {
-        setMutatingId(null);
-        setMutatingAction(null);
-      }
-    },
-    [fetchLots],
-  );
+  const unretireLot = async (id: string) =>
+    wrapMutation(
+      id,
+      "unretire",
+      "Failed to unretire lot",
+      "Lot unretired successfully",
+      async () => {
+        await unretireLotMut({ id: id as unknown as Id<"lots"> });
+      },
+    );
 
-  const joinLot = useCallback(
-    async (lotId: string, userId: string) => {
-      setMutatingId(lotId);
-      setMutatingAction("join");
-      try {
-        const success = await lotWorkerService.joinLot(lotId, userId);
-        if (success) await fetchLots();
-        return success;
-      } finally {
-        setMutatingId(null);
-        setMutatingAction(null);
-      }
-    },
-    [fetchLots],
-  );
+  const deleteLot = async (id: string) =>
+    wrapMutation(
+      id,
+      "delete",
+      "Failed to delete lot",
+      "Lot deleted successfully",
+      async () => {
+        await removeLotMut({ id: id as unknown as Id<"lots"> });
+      },
+    );
 
-  const leaveLot = useCallback(
-    async (lotId: string, userId: string) => {
-      setMutatingId(lotId);
-      setMutatingAction("leave");
-      try {
-        const success = await lotWorkerService.leaveLot(lotId, userId);
-        if (success) await fetchLots();
-        return success;
-      } finally {
-        setMutatingId(null);
-        setMutatingAction(null);
-      }
-    },
-    [fetchLots],
-  );
+  const joinLot = async (lotId: string) =>
+    wrapMutation(lotId, "join", "Failed to join lot", "Joined lot", async () => {
+      await joinLotMut({ lotId: lotId as unknown as Id<"lots"> });
+    });
+
+  const leaveLot = async (lotId: string) =>
+    wrapMutation(lotId, "leave", "Failed to leave lot", "Left lot", async () => {
+      await leaveLotMut({ lotId: lotId as unknown as Id<"lots"> });
+    });
 
   return {
     lots,
@@ -216,6 +200,8 @@ export function useLots(
     deleteLot,
     joinLot,
     leaveLot,
-    refetch: fetchLots,
+    refetch: async () => {
+      // Convex queries are reactive — refetch is a no-op. Kept for API compat.
+    },
   };
 }
