@@ -1,5 +1,5 @@
 import { memo } from "react";
-import { Lot } from "@/types/database.types";
+import { LotWithWorkers } from "@/hooks/useLots";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -7,17 +7,20 @@ import {
   TooltipTrigger,
   TooltipContent,
 } from "@/components/ui/tooltip";
-import { Pencil, Archive, Trash2 } from "lucide-react";
+import { Pencil, Archive, Trash2, UserPlus, UserMinus } from "lucide-react";
 import { Spinner } from "@/components/ui/spinner";
 import { formatDate } from "@/utils/formatting";
 
 interface LotCardProps {
-  lot: Lot;
-  onEdit: (lot: Lot) => void;
+  lot: LotWithWorkers;
+  onEdit: (lot: LotWithWorkers) => void;
   onRetire: (id: string) => void;
   onUnretire: (id: string) => void;
   onDelete: (id: string) => void;
   isHistory?: boolean;
+  currentUserId?: string;
+  onJoin?: (lotId: string) => void;
+  onLeave?: (lotId: string) => void;
   isMutating?: boolean;
   mutatingAction?: string | null;
 }
@@ -29,9 +32,17 @@ export const LotCard = memo(function LotCard({
   onUnretire,
   onDelete,
   isHistory = false,
+  currentUserId,
+  onJoin,
+  onLeave,
   isMutating = false,
   mutatingAction,
 }: LotCardProps) {
+  const workers = lot.workers || [];
+  const isWorker = currentUserId
+    ? workers.some((w) => w.id === currentUserId)
+    : false;
+
   return (
     <div className="group flex items-center gap-3 px-5 py-4 rounded-lg border border-l-2 border-l-border hover:border-l-primary bg-card hover:bg-muted/50 transition-colors duration-150">
       <span className="font-mono text-lg font-bold text-foreground uppercase shrink-0">
@@ -46,7 +57,62 @@ export const LotCard = memo(function LotCard({
         {lot.contents}
       </span>
 
+      {workers.length > 0 && (
+        <div className="flex items-center gap-1.5 flex-wrap shrink-0">
+          {workers.map((worker) => (
+            <Badge
+              key={worker.id}
+              variant={worker.id === currentUserId ? "default" : "secondary"}
+              className="text-xs"
+            >
+              {worker.display_name}
+            </Badge>
+          ))}
+        </div>
+      )}
+
       <div className="flex items-center gap-1 shrink-0 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
+        {!isHistory &&
+          currentUserId &&
+          (isWorker ? (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  onClick={() => onLeave?.(lot.id)}
+                  disabled={isMutating}
+                  className="h-8 w-8 text-orange-500 hover:bg-orange-500/20"
+                >
+                  {isMutating && mutatingAction === "leave" ? (
+                    <Spinner size="sm" />
+                  ) : (
+                    <UserMinus className="h-4 w-4" />
+                  )}
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Leave lot</TooltipContent>
+            </Tooltip>
+          ) : (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  onClick={() => onJoin?.(lot.id)}
+                  disabled={isMutating}
+                  className="h-8 w-8 text-green-600 hover:bg-green-600/20"
+                >
+                  {isMutating && mutatingAction === "join" ? (
+                    <Spinner size="sm" />
+                  ) : (
+                    <UserPlus className="h-4 w-4" />
+                  )}
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Join lot</TooltipContent>
+            </Tooltip>
+          ))}
         {!isHistory ? (
           <>
             <Tooltip>

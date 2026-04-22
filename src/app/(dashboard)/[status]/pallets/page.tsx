@@ -20,6 +20,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Plus, List, Edit, Package, Search, AlertTriangle } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
 import { usePallets } from "@/hooks/usePallets";
 import { CATEGORY_ORDER } from "@/constants/categories";
 import { PalletCard, PalletListView, PalletModal } from "@/components/pallets";
@@ -42,6 +43,7 @@ export default function PalletsPage({
 }
 
 function PalletsContent({ viewMode }: { viewMode: "active" | "history" }) {
+  const { user } = useAuth();
   const [palletViewMode, setPalletViewMode] = useState<"card" | "list">("card");
   const [palletModalOpen, setPalletModalOpen] = useState(false);
   const [editingPallet, setEditingPallet] = useState<Pallet | null>(null);
@@ -62,7 +64,7 @@ function PalletsContent({ viewMode }: { viewMode: "active" | "history" }) {
     retirePallet,
     unretirePallet,
     deletePallet,
-  } = usePallets(viewMode);
+  } = usePallets(viewMode, !!user);
 
   const isSubmitting = mutatingAction === "add" || mutatingAction === "update";
 

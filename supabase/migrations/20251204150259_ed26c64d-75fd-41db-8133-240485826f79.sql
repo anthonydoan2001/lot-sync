@@ -1,0 +1,1 @@
+ALTER TABLE pallets ADD COLUMN notes text DEFAULT NULL;

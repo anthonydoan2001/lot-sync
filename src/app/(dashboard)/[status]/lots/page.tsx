@@ -4,6 +4,7 @@ import { useState, useMemo } from "react";
 import { notFound } from "next/navigation";
 import { use } from "react";
 import { Lot } from "@/types/database.types";
+import { LotWithWorkers } from "@/hooks/useLots";
 import { groupByRetiredMonth, groupByIO } from "@/utils/formatting";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -20,6 +21,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Plus, Box, Search, AlertTriangle } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
 import { useLots } from "@/hooks/useLots";
 import { LotCard, LotModal } from "@/components/lots";
 import { AnnouncementBanner } from "@/components/announcements";
@@ -41,8 +43,9 @@ export default function LotsPage({
 }
 
 function LotsContent({ viewMode }: { viewMode: "active" | "history" }) {
+  const { user } = useAuth();
   const [lotModalOpen, setLotModalOpen] = useState(false);
-  const [editingLot, setEditingLot] = useState<Lot | null>(null);
+  const [editingLot, setEditingLot] = useState<LotWithWorkers | null>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
@@ -59,7 +62,9 @@ function LotsContent({ viewMode }: { viewMode: "active" | "history" }) {
     retireLot,
     unretireLot,
     deleteLot,
-  } = useLots(viewMode);
+    joinLot,
+    leaveLot,
+  } = useLots(viewMode, !!user);
 
   const isSubmitting = mutatingAction === "add" || mutatingAction === "update";
 
@@ -80,7 +85,7 @@ function LotsContent({ viewMode }: { viewMode: "active" | "history" }) {
   );
 
   const handleAddLot = async (data: Partial<Lot>) => {
-    const success = await addLot(data);
+    const success = await addLot(data, user?.id);
     if (success) setLotModalOpen(false);
   };
 
@@ -91,6 +96,14 @@ function LotsContent({ viewMode }: { viewMode: "active" | "history" }) {
       setLotModalOpen(false);
       setEditingLot(null);
     }
+  };
+
+  const handleJoinLot = async (lotId: string) => {
+    if (user) await joinLot(lotId, user.id);
+  };
+
+  const handleLeaveLot = async (lotId: string) => {
+    if (user) await leaveLot(lotId, user.id);
   };
 
   const handleDeleteLot = async () => {
@@ -105,7 +118,7 @@ function LotsContent({ viewMode }: { viewMode: "active" | "history" }) {
     }
   };
 
-  const renderLotCard = (lot: Lot, isHistory: boolean) => (
+  const renderLotCard = (lot: LotWithWorkers, isHistory: boolean) => (
     <LotCard
       key={lot.id}
       lot={lot}
@@ -120,6 +133,9 @@ function LotsContent({ viewMode }: { viewMode: "active" | "history" }) {
         setDeleteDialogOpen(true);
       }}
       isHistory={isHistory}
+      currentUserId={user?.id}
+      onJoin={handleJoinLot}
+      onLeave={handleLeaveLot}
       isMutating={mutatingId === lot.id}
       mutatingAction={mutatingId === lot.id ? mutatingAction : null}
     />

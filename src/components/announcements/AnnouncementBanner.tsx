@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
+import { supabase } from "@/integrations/supabase/client";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Pencil, Check, X, Info } from "lucide-react";
@@ -8,12 +9,6 @@ interface Announcement {
   id: string;
   content: string;
   updated_at: string;
-}
-
-interface Envelope<T> {
-  success: boolean;
-  data?: T;
-  error?: string;
 }
 
 export function AnnouncementBanner() {
@@ -39,12 +34,19 @@ export function AnnouncementBanner() {
   }, []);
 
   const fetchAnnouncement = async () => {
-    const res = await fetch("/api/announcement");
-    const env = (await res.json()) as Envelope<Announcement | null>;
-    if (!env.success) return;
-    if (env.data) {
-      setAnnouncement(env.data);
-      setEditContent(env.data.content);
+    const { data, error } = await supabase
+      .from("announcements")
+      .select("*")
+      .limit(1)
+      .single();
+
+    if (error && error.code !== "PGRST116") {
+      return;
+    }
+
+    if (data) {
+      setAnnouncement(data);
+      setEditContent(data.content);
     }
   };
 
@@ -62,24 +64,24 @@ export function AnnouncementBanner() {
     if (!announcement) return;
 
     setLoading(true);
-    const res = await fetch("/api/announcement", {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id: announcement.id, content: editContent }),
-    });
-    const env = (await res.json()) as Envelope<Announcement>;
+    const { error } = await supabase
+      .from("announcements")
+      .update({ content: editContent, updated_at: new Date().toISOString() })
+      .eq("id", announcement.id);
+
     setLoading(false);
 
-    if (!env.success || !env.data) {
-      toast.error(env.error ?? "Failed to save announcement");
+    if (error) {
+      toast.error("Failed to save announcement");
       return;
     }
 
-    setAnnouncement(env.data);
+    setAnnouncement({ ...announcement, content: editContent });
     setIsEditing(false);
     toast.success("Announcement saved");
   };
 
+  // Don't show if empty and not editing
   if (!announcement?.content && !isEditing) {
     return (
       <div className="flex justify-center mb-4">

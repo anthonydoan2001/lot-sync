@@ -21,7 +21,10 @@ interface UsePalletsReturn {
   refetch: () => Promise<void>;
 }
 
-export function usePallets(viewMode: "active" | "history"): UsePalletsReturn {
+export function usePallets(
+  viewMode: "active" | "history",
+  isAuthenticated: boolean,
+): UsePalletsReturn {
   const [pallets, setPallets] = useState<Pallet[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
@@ -32,17 +35,26 @@ export function usePallets(viewMode: "active" | "history"): UsePalletsReturn {
   const isHistory = viewMode === "history";
 
   const fetchPallets = useCallback(async () => {
+    if (!isAuthenticated) return;
     if (!initialLoadDone.current) setLoading(true);
     const data = await palletService.fetchPallets(isHistory);
     setPallets(data);
     setLoading(false);
     initialLoadDone.current = true;
-  }, [isHistory]);
+  }, [isHistory, isAuthenticated]);
 
+  // Initial fetch
   useEffect(() => {
     fetchPallets();
   }, [fetchPallets]);
 
+  // Real-time subscription
+  useEffect(() => {
+    if (!isAuthenticated) return;
+    return palletService.subscribeToChanges(fetchPallets);
+  }, [isHistory, isAuthenticated, fetchPallets]);
+
+  // Filter pallets by search query
   const filteredPallets = useMemo(
     () =>
       pallets.filter((pallet) =>
@@ -51,11 +63,13 @@ export function usePallets(viewMode: "active" | "history"): UsePalletsReturn {
     [pallets, searchQuery],
   );
 
+  // Categorize and sort pallets
   const categorizedPallets = useMemo(
     () => categorizePallets(filteredPallets),
     [filteredPallets],
   );
 
+  // CRUD operations
   const addPallet = useCallback(
     async (data: Partial<Pallet>) => {
       setMutatingId("__new__");

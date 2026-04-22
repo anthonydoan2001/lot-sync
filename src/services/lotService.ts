@@ -1,86 +1,115 @@
+import { supabase } from "@/integrations/supabase/client";
 import { Lot } from "@/types/database.types";
 import { toast } from "sonner";
 
-interface Envelope<T> {
-  success: boolean;
-  data?: T;
-  error?: string;
-}
-
-async function call<T>(path: string, init?: RequestInit): Promise<Envelope<T>> {
-  const res = await fetch(path, {
-    ...init,
-    headers: {
-      "Content-Type": "application/json",
-      ...(init?.headers ?? {}),
-    },
-  });
-  return (await res.json()) as Envelope<T>;
-}
-
 export const lotService = {
   fetchLots: async (isHistory: boolean): Promise<Lot[]> => {
-    const env = await call<Lot[]>(`/api/lots?retired=${isHistory ? 1 : 0}`);
-    if (!env.success) {
-      toast.error(env.error ?? "Failed to fetch lots");
+    const { data, error } = await supabase
+      .from("lots")
+      .select("*")
+      .eq("is_retired", isHistory)
+      .order(isHistory ? "retired_at" : "created_at", { ascending: false });
+
+    if (error) {
+      toast.error("Failed to fetch lots");
+      console.error(error);
       return [];
     }
-    return env.data ?? [];
+
+    return data || [];
   },
 
   addLot: async (data: Partial<Lot>): Promise<Lot | null> => {
-    const env = await call<Lot>("/api/lots", {
-      method: "POST",
-      body: JSON.stringify(data),
-    });
-    if (!env.success || !env.data) {
-      toast.error(env.error ?? "Failed to add lot");
+    const { data: inserted, error } = await supabase
+      .from("lots")
+      .insert([data as any])
+      .select()
+      .single();
+
+    if (error) {
+      toast.error("Failed to add lot");
+      console.error(error);
       return null;
     }
+
     toast.success("Lot added successfully");
-    return env.data;
+    return inserted;
   },
 
   updateLot: async (id: string, data: Partial<Lot>): Promise<boolean> => {
-    const env = await call<Lot>(`/api/lots/${id}`, {
-      method: "PATCH",
-      body: JSON.stringify(data),
-    });
-    if (!env.success) {
-      toast.error(env.error ?? "Failed to update lot");
+    const { error } = await supabase.from("lots").update(data).eq("id", id);
+
+    if (error) {
+      toast.error("Failed to update lot");
+      console.error(error);
       return false;
     }
+
     toast.success("Lot updated successfully");
     return true;
   },
 
   retireLot: async (id: string): Promise<boolean> => {
-    const env = await call<Lot>(`/api/lots/${id}/retire`, { method: "POST" });
-    if (!env.success) {
-      toast.error(env.error ?? "Failed to retire lot");
+    const { error } = await supabase
+      .from("lots")
+      .update({ is_retired: true, retired_at: new Date().toISOString() })
+      .eq("id", id);
+
+    if (error) {
+      toast.error("Failed to retire lot");
+      console.error(error);
       return false;
     }
+
     toast.success("Lot retired successfully");
     return true;
   },
 
   unretireLot: async (id: string): Promise<boolean> => {
-    const env = await call<Lot>(`/api/lots/${id}/unretire`, { method: "POST" });
-    if (!env.success) {
-      toast.error(env.error ?? "Failed to unretire lot");
+    const { error } = await supabase
+      .from("lots")
+      .update({ is_retired: false, retired_at: null })
+      .eq("id", id);
+
+    if (error) {
+      toast.error("Failed to unretire lot");
+      console.error(error);
       return false;
     }
+
     toast.success("Lot unretired successfully");
     return true;
   },
 
   deleteLot: async (id: string): Promise<boolean> => {
-    const env = await call<null>(`/api/lots/${id}`, { method: "DELETE" });
-    if (!env.success) {
-      toast.error(env.error ?? "Failed to delete lot");
+    const { error } = await supabase.from("lots").delete().eq("id", id);
+
+    if (error) {
+      toast.error("Failed to delete lot");
+      console.error(error);
       return false;
     }
+
     toast.success("Lot deleted successfully");
     return true;
+  },
+
+  subscribeToChanges: (callback: () => void) => {
+    const channel = supabase
+      .channel("lots-changes")
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "lots",
+        },
+        callback,
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   },
 };
